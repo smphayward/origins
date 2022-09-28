@@ -1,0 +1,32 @@
+@import "~@angular/material/prebuilt-themes/indigo-pink.css";
+
+.search-div {
+  background-color: darkslategray;
+  text-align: center;
+}
+.example-spacer {
+  flex: 1 1 auto;
+}
+
+.search-results-div {
+  margin: 5px;
+}
+
+body {
+  background-color: black;
+}
+
+.img-small {
+  
+  max-width: 200px;
+  max-height: 200px;
+  margin: 5px;
+}
+
+.img-large {
+  
+  max-width: 400px;
+  max-height: 400px;
+  margin: 5px;
+}
+

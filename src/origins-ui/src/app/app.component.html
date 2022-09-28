@@ -1,0 +1,32 @@
+<div id="menu-bar">
+  <mat-toolbar color="primary">
+    
+    <!-- Hamburger Menu Not Used Yet -->
+    <button mat-icon-button class="example-icon" aria-label="Example icon-button with menu icon">
+      <mat-icon>menu</mat-icon>
+    </button>
+    <span>Origins</span>
+
+    <span class="example-spacer"></span>
+    <div class="example-spacer">
+      <button mat-icon-button (click)="onGetAll()">
+        <mat-icon>all_inclusive</mat-icon>
+      </button>
+      <input #search  matInput placeholder="" value="justyn joshua cadets" style="width: 500px" [(ngModel)]="searchText" (keyup.enter)="onSearch()" >
+      <button mat-icon-button (click)="onSearch()">
+        <mat-icon>search</mat-icon>
+      </button>
+    </div>
+
+    <mat-slide-toggle [(ngModel)]="useLargeImages" (change)="largeImagesChanged()">Large Images</mat-slide-toggle>
+
+  </mat-toolbar>
+</div>
+
+<div id="search-results">
+  <ngx-masonry>
+    <div ngxMasonryItem class="masonry-item" *ngFor="let result of searchResults; let i = index;">
+      <img  [ngClass]="{'img-small': useLargeImages === false, 'img-large': useLargeImages }" src="{{result._links.thumb._href}}" (click)="openDialog(i)">
+    </div>
+  </ngx-masonry>
+</div>

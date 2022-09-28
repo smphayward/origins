@@ -1,0 +1,24 @@
+<div class="dialog-window" style="overflow:hidden">
+  <button style="float:left;" mat-fab color="primary" (click)="showPreviousImage()" >
+    <mat-icon>navigate_before</mat-icon>
+  </button>
+  <button style="float:right;" style="float:right;" mat-fab color="primary"  (click)="closeDialog()">
+    <mat-icon>close</mat-icon>
+  </button> 
+  <button style="float:right;" style="float:right;" mat-fab color="primary" (click)="showNextImage()">
+    <mat-icon>navigate_next</mat-icon>
+  </button> 
+
+  <div style="overflow:hidden;">
+    <img src="{{currentRecord?._links?.webdav?._href}}">
+    <a download="{{currentRecord?._links?.webdav?._href}}" href="" target="_blank" mat-fab color="primary"><mat-icon>download</mat-icon></a>
+    <b>{{currentRecord.filename}}{{currentRecord.fileExtension}}</b>
+  </div>
+ 
+  <div>
+    <div *ngFor="let item of currentRecordAsAny | keyvalue">
+      <span><b>{{item.key}}:</b> {{item.value}}</span>
+    </div>
+  
+</div>
+</div>
