@@ -1,6 +1,8 @@
+<!-- I want this menu-bar stuck to the top of the screen -->
+<!-- The search results can scroll but this toolbar should always be in view -->
 <div id="menu-bar">
   <mat-toolbar color="primary">
-    
+
     <!-- Hamburger Menu Not Used Yet -->
     <button mat-icon-button class="example-icon" aria-label="Example icon-button with menu icon">
       <mat-icon>menu</mat-icon>
@@ -8,6 +10,10 @@
     <span>Origins</span>
 
     <span class="example-spacer"></span>
+
+    <!-- I think the search box and its two icons should shrink to fit a small phone nicely  -->
+    <!-- But on a full-screen brower on a PC, I think it should maybe not take the WHOLE width available -->
+    <!-- You know what I mean. It has to feel right on the two platforms. -->
     <div class="example-spacer">
       <button mat-icon-button (click)="onGetAll()">
         <mat-icon>all_inclusive</mat-icon>
@@ -23,6 +29,8 @@
   </mat-toolbar>
 </div>
 
+<!-- As mentioned above, this thing should scroll without moving the toolbar out of view -->
+<!-- Yet it should also take up the whole rest of the screen -->
 <div id="search-results">
   <ngx-masonry>
     <div ngxMasonryItem class="masonry-item" *ngFor="let result of searchResults; let i = index;">

@@ -1,3 +1,14 @@
+<!-- This whole window is a pile of puke -->
+<!-- You know what I'm trying to build -->
+<!-- Looks good on phone or PC at whatever size -->
+<!-- Looks good with portrait and landscame images -->
+<!-- 
+  Oh... if you want an accorion panel or something for the info at the bottom (or whever you put it)
+  then let me know. There's an Angular Material component for that. You don't have to mess with 
+  JavaScript or anything.
+-->
+
+
 <div class="dialog-window" style="overflow:hidden">
   <button style="float:left;" mat-fab color="primary" (click)="showPreviousImage()" >
     <mat-icon>navigate_before</mat-icon>
@@ -10,8 +21,8 @@
   </button> 
 
   <div style="overflow:hidden;">
-    <img src="{{currentRecord?._links?.webdav?._href}}">
-    <a download="{{currentRecord?._links?.webdav?._href}}" href="" target="_blank" mat-fab color="primary"><mat-icon>download</mat-icon></a>
+    <img src="{{currentRecord._links?.webdav?._href}}">
+    <a download="{{currentRecord._links?.webdav?._href}}" href="" target="_blank" mat-fab color="primary"><mat-icon>download</mat-icon></a>
     <b>{{currentRecord.filename}}{{currentRecord.fileExtension}}</b>
   </div>
  
