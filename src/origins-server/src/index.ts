@@ -124,7 +124,6 @@ app.use(expressWinston.logger({
 }));
 
 // Parsing
-//app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json());
 
 // Middleware
@@ -145,14 +144,14 @@ app.get("/", (req, res) => {
 });
 
 // API
-app.use("/collections", createCollectionsRouter(collectionProvider).router());
-app.use("/index", createIndexRouter(indexProvider).router());
+app.use("/api/collections", createCollectionsRouter(collectionProvider).router());
+app.use("/api/index", createIndexRouter(indexProvider).router());
 app.use(
-  "/processing",
+  "/api/processing",
   createProcessingRouter(collectionProvider, processingProvider)
 );
-app.use("/webdav", createWebDAVRouter(collectionProvider));
-app.use("/thumbnails", createThumbnailRouter(thumbnailProvider));
+app.use("/api/webdav", createWebDAVRouter(collectionProvider));
+app.use("/api/thumbnails", createThumbnailRouter(thumbnailProvider));
 // app.use("/index", createIndexRouter(databaseProvider));
 // app.use("/search", createSearchRouter(databaseProvider));
 
