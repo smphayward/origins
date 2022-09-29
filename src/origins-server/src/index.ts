@@ -21,14 +21,56 @@ import { FileInfoExtractionProvider } from "./extraction/FileInfoExtractionProvi
 import { ProbeImageSizeExtractionProvider } from "./extraction/ProbeImageSizeExtractionProvider";
 import { KeywordExtractionProvider } from "./extraction/KeywordExtractionProvider";
 import { createThumbnailRouter } from "./thumbnails/thumbnail-router-factory";
+import chalk from 'chalk';
 
-// Configuration
-const port = 8080;
+import commandLineArgs from 'command-line-args';
+
+console.log(chalk.blue(`
+
+ ██████  ██████  ██  ██████  ██ ███    ██ ███████ 
+██    ██ ██   ██ ██ ██       ██ ████   ██ ██      
+██    ██ ██████  ██ ██   ███ ██ ██ ██  ██ ███████ 
+██    ██ ██   ██ ██ ██    ██ ██ ██  ██ ██      ██ 
+ ██████  ██   ██ ██  ██████  ██ ██   ████ ███████ 
+
+`));
+
+//  ██████  ██████  ███    ██ ███████ ██  ██████  
+// ██      ██    ██ ████   ██ ██      ██ ██       
+// ██      ██    ██ ██ ██  ██ █████   ██ ██   ███ 
+// ██      ██    ██ ██  ██ ██ ██      ██ ██    ██ 
+//  ██████  ██████  ██   ████ ██      ██  ██████  
+
+console.log('Reading command line arguments...');
+console.log();
+const optionDefinitions = [
+  { name: 'ui-dir', type: String, defaultValue: './ui/' },
+  { name: 'thumbnails-dir', type: String, defaultValue: './thumbnails/' },
+  { name: 'port', type: Number, defaultValue: 8080 }
+];
+
+const options = commandLineArgs(optionDefinitions);
+
+// Not using loop for this because we might include passwords at some point
+console.log(chalk.white('ui-dir: ') + options['ui-dir']);
+console.log(chalk.white('thumbnails-dir: ') + options['thumbnails-dir']);
+console.log(chalk.white('port: ') + options['port']);
+
+console.log();
+
+
+// ██████  ███████ ██████  ███████ ███    ██ ██████  ███████ ███    ██  ██████ ██ ███████ ███████ 
+// ██   ██ ██      ██   ██ ██      ████   ██ ██   ██ ██      ████   ██ ██      ██ ██      ██      
+// ██   ██ █████   ██████  █████   ██ ██  ██ ██   ██ █████   ██ ██  ██ ██      ██ █████   ███████ 
+// ██   ██ ██      ██      ██      ██  ██ ██ ██   ██ ██      ██  ██ ██ ██      ██ ██           ██ 
+// ██████  ███████ ██      ███████ ██   ████ ██████  ███████ ██   ████  ██████ ██ ███████ ███████ 
+
+console.log('Setting up dependencies...');
+
 const elasticsearchClientOptions: ClientOptions = {
   node: "http://192.168.2.160:9200",
 };
 
-// Providers & repositories
 const collectionProvider = new ElasticsearchCollectionProvider({
   indexName: "origins_collections",
   elasticsearchClientOptions,
@@ -81,8 +123,7 @@ const extractionProvider = new AggregateExtractionProvider(
 
 const thumbnailProvider = new ThumbnailProvider(
   {
-    rootThumbnailDirectory:
-      "/home/shaun/repos/origins/origins-test-folders/thumbnails",
+    rootThumbnailDirectory: options['thumbnails-dir']
   },
   indexProvider
 );
@@ -94,11 +135,34 @@ const processingProvider = new ProcessingProvider(
 );
 
 // Setup Database
-(async () => {
-  console.log("Ensuring elasticsearch indexes exist");
-  await collectionProvider.ensureIndexExists();
-  await indexProvider.ensureIndexExists();
+console.log('Setting up database...');
+const setupDatabasePromise = (async () => {
+  console.log("Ensuring collection provider index exist...");
+  try {
+    await collectionProvider.ensureIndexExists();
+    console.log("Collection provider index exists.")
+  } catch (error) {
+    console.log(chalk.red('Error!'));
+    console.log(error);
+  }
+
+  console.log("Ensuring index provider index exist...");
+  try {
+    await indexProvider.ensureIndexExists();
+    console.log("Index provider index exists.")
+  } catch (error) {
+    console.log(chalk.red('Error!'));
+    console.log(error);
+  }
 })();
+
+// ██   ██ ████████ ████████ ██████  
+// ██   ██    ██       ██    ██   ██ 
+// ███████    ██       ██    ██████  
+// ██   ██    ██       ██    ██      
+// ██   ██    ██       ██    ██      
+
+console.log('Setting up HTTP...');
 
 // Express
 const app = express();
@@ -128,7 +192,7 @@ app.use(bodyParser.json());
 
 // Middleware
 app.use(function (req, res, next) {
-  const originsRequestUrlWithoutPath = `${req.protocol}://${req.hostname}:${port}`;
+  const originsRequestUrlWithoutPath = `${req.protocol}://${req.hostname}:${options.port}`;
   req.headers[
     "_originsRequestUrlWithoutPath"
   ] = originsRequestUrlWithoutPath;
@@ -136,11 +200,6 @@ app.use(function (req, res, next) {
     "_originsRequestUrl"
   ] = `${originsRequestUrlWithoutPath}${req.originalUrl}`;
   return next();
-});
-
-// UI
-app.get("/", (req, res) => {
-  res.send("Hello, world!");
 });
 
 // API
@@ -155,7 +214,11 @@ app.use("/api/thumbnails", createThumbnailRouter(thumbnailProvider));
 // app.use("/index", createIndexRouter(databaseProvider));
 // app.use("/search", createSearchRouter(databaseProvider));
 
+// UI
+app.use(express.static(options['ui-dir']));
+
 // Start listening
-app.listen(port, () => {
-  console.log(`Origins REST API server started at http://localhost:${port}`);
+console.log("Starting Origins server...");
+app.listen(options.port, () => {
+  console.log(`Origins server started at http://localhost:${options.port}`);
 });
