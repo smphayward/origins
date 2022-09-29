@@ -12,19 +12,11 @@ export class SearchService {
   constructor(private http: HttpClient) {}
 
   getAll(): Observable<IndexRecord[]> {
-    if (!environment.production) {
-      return of(shuffle(mockDataLots));
-    }
-    return this.http.get<IndexRecord[]>('http://localhost:8080/index');
+    return of(shuffle(mockDataLots));
   }
 
   search(query: string): Observable<IndexRecord[]> {
-    if (!environment.production) {
-      return of(mockData); // Yeah... this doesn't search
-    }
-    return this.http.get<IndexRecord[]>(
-      'http://localhost:8080/index/search?q=' + encodeURI(query)
-    );
+    return of(mockData.slice(10, 20)); // Yeah... this doesn't search
   }
 }
 
