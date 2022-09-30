@@ -17,21 +17,27 @@ export class ThumbnailProvider {
   }
 
   public async GenerateThumbnail(
-    indexRecordId: string, 
+    indexRecordId: string,
     regenerateIfExists: boolean,
-    sourceAbsolutePath?: string) {
-
+    sourceAbsolutePath?: string
+  ) {
     console.log(`Generating thumbnail for '${indexRecordId}'.`);
 
     // Make sure we have the source path
-    if(!sourceAbsolutePath) {
+    if (!sourceAbsolutePath) {
       const indexResponse: any = await this._indexProvider.get(indexRecordId);
-      if(!indexResponse) {
-        throw new Error('sourceAbsolutePath not specified and could not find index record for item.');
+      if (!indexResponse) {
+        throw new Error(
+          "sourceAbsolutePath not specified and could not find index record for item."
+        );
       }
-      sourceAbsolutePath = indexResponse[IndexRecordFields.fileAbsolutePath] as string;
-      if(!sourceAbsolutePath) {
-        throw new Error('fileAbsolutePath property does not exist on index record');
+      sourceAbsolutePath = indexResponse[
+        IndexRecordFields.fileAbsolutePath
+      ] as string;
+      if (!sourceAbsolutePath) {
+        throw new Error(
+          "fileAbsolutePath property does not exist on index record"
+        );
       }
     }
 
@@ -41,11 +47,11 @@ export class ThumbnailProvider {
       indexRecordId + ".jpg"
     );
 
-      // Short-circuit if exists and we shouldn't regenerate
-      if(!regenerateIfExists && fsSync.existsSync(destinationAbsolutePath)){
-        return destinationAbsolutePath;
-      }
-
+    // Short-circuit if exists and we shouldn't regenerate
+    if (!regenerateIfExists && fsSync.existsSync(destinationAbsolutePath)) {
+      console.log(`Thumbnail '${destinationAbsolutePath}' already exists. Not regenerating.`);
+      return destinationAbsolutePath;
+    }
 
     let error: any = null;
 
@@ -65,7 +71,7 @@ export class ThumbnailProvider {
         return image
           .resize(width, height)
           .quality(60)
-          
+
           .write(destinationAbsolutePath, (writeErr) => {
             error = writeErr;
           });
@@ -79,6 +85,8 @@ export class ThumbnailProvider {
     if (error) {
       throw error;
     }
+
+    console.log(`Thumbnail '${destinationAbsolutePath}' written.`);
 
     return destinationAbsolutePath;
   }
