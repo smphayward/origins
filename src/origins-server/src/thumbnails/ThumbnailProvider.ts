@@ -6,6 +6,7 @@ import { IndexRecordFields } from "../index/models";
 
 export interface ThumbnailProviderConfig {
   rootThumbnailDirectory: string;
+  imageNotFoundPlaceholderFile: string;
 }
 
 export class ThumbnailProvider {
@@ -51,6 +52,12 @@ export class ThumbnailProvider {
     if (!regenerateIfExists && fsSync.existsSync(destinationAbsolutePath)) {
       console.log(`Thumbnail '${destinationAbsolutePath}' already exists. Not regenerating.`);
       return destinationAbsolutePath;
+    }
+
+    // Make sure the absolute source path exists
+    if(!fsSync.existsSync(sourceAbsolutePath)){
+      console.error(`Cannot generate thumbnail for '${sourceAbsolutePath}'. File does not exist.`);
+      return this._config.imageNotFoundPlaceholderFile;
     }
 
     let error: any = null;

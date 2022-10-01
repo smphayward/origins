@@ -24,6 +24,7 @@ import { createThumbnailRouter } from "./thumbnails/thumbnail-router-factory";
 import chalk from 'chalk';
 
 import commandLineArgs from 'command-line-args';
+import { ManagerNotFound } from "webdav-server";
 
 console.log(chalk.blue(`
 
@@ -46,7 +47,8 @@ console.log();
 const optionDefinitions = [
   { name: 'ui-dir', type: String, defaultValue: './ui/' },
   { name: 'thumbnails-dir', type: String, defaultValue: './thumbnails/' },
-  { name: 'port', type: Number, defaultValue: 8080 }
+  { name: 'port', type: Number, defaultValue: 8080 },
+  { name: 'image-not-found', type: String, defaultValue: './assets/image-not-ManagerNotFound.jpg' }
 ];
 
 const options = commandLineArgs(optionDefinitions);
@@ -55,6 +57,7 @@ const options = commandLineArgs(optionDefinitions);
 console.log(chalk.white('ui-dir: ') + options['ui-dir']);
 console.log(chalk.white('thumbnails-dir: ') + options['thumbnails-dir']);
 console.log(chalk.white('port: ') + options['port']);
+console.log(chalk.white('image-not-found: ') + options['image-not-found']);
 
 console.log();
 
@@ -123,7 +126,8 @@ const extractionProvider = new AggregateExtractionProvider(
 
 const thumbnailProvider = new ThumbnailProvider(
   {
-    rootThumbnailDirectory: options['thumbnails-dir']
+    rootThumbnailDirectory: options['thumbnails-dir'],
+    imageNotFoundPlaceholderFile: options['image-not-found']
   },
   indexProvider
 );

@@ -4,9 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "webpack": "rimraf ./dist && webpack",
-    "build": "rimraf ./dist && tsc",
-    "start": "npm run build-tsc && node dist/index.js --ui-dir '../origins-ui/dist/origins-ui' --thumbnails-dir '../../samples/thumbnails' ",
+    "copy-assets": "cp -r ./assets ./dist",
+    "webpack": "rimraf ./dist && webpack && npm run copy-assets",
+    "build": "rimraf ./dist && tsc && npm run copy-assets",
+    "start": "npm run build && node dist/index.js --ui-dir '../origins-ui/dist/origins-ui' --thumbnails-dir '../../samples/thumbnails' ",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
