@@ -55,6 +55,7 @@ export class ProcessingProvider {
     
     if (!this._config.fileExtensions.image.includes(path.parse(absolutePath).ext)) {
       console.log(`File type not supported: ${absolutePath}`);
+      return;
     }
 
     console.log(`Processing file: ${absolutePath}`);
