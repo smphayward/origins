@@ -32,9 +32,9 @@ export const createProcessingRouter = (
       console.log(`Processing '${relativePath}' in collection '${collectionId}'.`);
       const decodedRelativePath = decodeURI(relativePath);
       await processingProvider.processPath(result, decodedRelativePath, -1); // TODO: get depth from header
-      console.log('Processing finished.');
+      console.log('Processing completed.');
 
-      return res.status(200).send("Processing succeeded.");
+      return res.status(200).send("Processing completed.");
 
       // TODO: Put this in a queue and offload it to a worker process?
       // For now, we'll just do it in process with blocking
