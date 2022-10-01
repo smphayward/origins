@@ -95,10 +95,14 @@ export class ElasticsearchDocumentProvider<TDocument extends Document>
       const exists = await this._client.indices.exists({
         index: this._config.indexName
       });
-      if(exists) return;
+      if(exists) {
+        console.log(`Index '${this._config.indexName}' already exists.`);
+        return;
+      }
       await this._client.indices.create({
         index: this._config.indexName,
       });
+      console.log(`Index '${this._config.indexName}' created.`);
     } catch (error) {
       if (
         error instanceof errors.ResponseError &&

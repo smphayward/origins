@@ -146,8 +146,9 @@ const processingProvider = new ProcessingProvider(
 // Setup Database
 console.log('Setting up database...');
 const setupDatabasePromise = (async () => {
-  console.log("Ensuring collection provider index exist...");
+  
   try {
+    console.log("Ensuring collection provider index exist...");
     await collectionProvider.ensureIndexExists();
     console.log("Collection provider index exists.")
   } catch (error) {
@@ -155,14 +156,31 @@ const setupDatabasePromise = (async () => {
     console.log(error);
   }
 
-  console.log("Ensuring index provider index exist...");
   try {
+    console.log("Ensuring index provider index exist...");
     await indexProvider.ensureIndexExists();
     console.log("Index provider index exists.")
   } catch (error) {
     console.log(chalk.red('Error!'));
     console.log(error);
   }
+
+  const configCollectionIds = Object.keys(config.collections);
+  if (configCollectionIds.length > 0) {
+    console.log("Configuration includes collections. Ensuring they exist...");
+    configCollectionIds.forEach(async (id) => {
+      const collection = config.collections[id];
+      try {
+        console.log(`Putting collection '${id}'`);
+        await collectionProvider.put(collection);
+        console.log(`Finished putting collection '${id}'`);
+      } catch (error) {
+        console.log(chalk.red("Error!"));
+        console.log(error);
+      }
+    });
+  }
+
 })();
 
 // ██   ██ ████████ ████████ ██████  
