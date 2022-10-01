@@ -23,6 +23,7 @@ import { KeywordExtractionProvider } from "./extraction/KeywordExtractionProvide
 import { createThumbnailRouter } from "./thumbnails/thumbnail-router-factory";
 import chalk from 'chalk';
 import { getConfig } from "./config/ConfigFactory";
+import { createHealthRouter } from "./health/health-router-factory";
 
 
 
@@ -209,6 +210,9 @@ app.use(function (req, res, next) {
   ] = `${originsRequestUrlWithoutPath}${req.originalUrl}`;
   return next();
 });
+
+// Health
+app.use('/health', createHealthRouter());
 
 // API
 app.use("/api/collections", createCollectionsRouter(collectionProvider).router());
