@@ -1,3 +1,3 @@
 #! /bin/bash
 
-docker build . -t "smphayward/origins-server"
+sudo docker build . -t "smphayward/origins-server"
