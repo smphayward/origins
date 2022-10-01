@@ -22,7 +22,7 @@ export class ThumbnailProvider {
     regenerateIfExists: boolean,
     sourceAbsolutePath?: string
   ) {
-    console.log(`Generating thumbnail for '${indexRecordId}'.`);
+    console.log(`Generating thumbnail: '${indexRecordId}'.`);
 
     // Make sure we have the source path
     if (!sourceAbsolutePath) {
@@ -50,13 +50,13 @@ export class ThumbnailProvider {
 
     // Short-circuit if exists and we shouldn't regenerate
     if (!regenerateIfExists && fsSync.existsSync(destinationAbsolutePath)) {
-      console.log(`Thumbnail '${destinationAbsolutePath}' already exists. Not regenerating.`);
+      console.log(`Thumbnail already exists. Not regenerating: '${destinationAbsolutePath}'`);
       return destinationAbsolutePath;
     }
 
     // Make sure the absolute source path exists
     if(!fsSync.existsSync(sourceAbsolutePath)){
-      console.error(`Cannot generate thumbnail for '${sourceAbsolutePath}'. File does not exist.`);
+      console.error(`Cannot generate thumbnail. File does not exist: '${sourceAbsolutePath}'`);
       return this._config.imageNotFoundPlaceholderFile;
     }
 
@@ -64,6 +64,9 @@ export class ThumbnailProvider {
 
     const promise = Jimp.read(sourceAbsolutePath)
       .then((image) => {
+
+        console.error(`Original image read: '${sourceAbsolutePath}'`);
+
         let width = image.getWidth();
         let height = image.getHeight();
 
@@ -74,6 +77,9 @@ export class ThumbnailProvider {
           height = 500;
           width = Jimp.AUTO;
         }
+
+        console.error(`Generating and saving: '${destinationAbsolutePath}'`);
+
         (image.bitmap as any).exifBuffer = undefined;
         return image
           .resize(width, height)
@@ -93,7 +99,7 @@ export class ThumbnailProvider {
       throw error;
     }
 
-    console.log(`Thumbnail '${destinationAbsolutePath}' written.`);
+    console.log(`Thumbnail written: '${destinationAbsolutePath}'`);
 
     return destinationAbsolutePath;
   }
