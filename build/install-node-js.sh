@@ -1,12 +1,7 @@
-# Building Origins
+#! /bin/bash
 
-## Install Node.js
-
-### Ubuntu
-
-TODO: Find a better way
-Quick and dirty here for dev purposes
-
+# Crappy steps I found in a hurry
+# TODO: Make this a much better experience
 
 sudo apt-get update
 sudo apt install nodejs
