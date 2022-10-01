@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "copy-assets": "cp -r ./assets ./dist",
+    "copy-assets": "cp -rv ./assets ./dist",
     "webpack": "rimraf ./dist && webpack && npm run copy-assets",
     "build": "rimraf ./dist && tsc && npm run copy-assets",
     "start": "npm run build && node dist/index.js --ui-dir '../origins-ui/dist/origins-ui' --thumbnails-dir '../../samples/thumbnails' ",
