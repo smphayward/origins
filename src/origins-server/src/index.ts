@@ -22,9 +22,10 @@ import { ProbeImageSizeExtractionProvider } from "./extraction/ProbeImageSizeExt
 import { KeywordExtractionProvider } from "./extraction/KeywordExtractionProvider";
 import { createThumbnailRouter } from "./thumbnails/thumbnail-router-factory";
 import chalk from 'chalk';
+import { getConfig } from "./config/ConfigFactory";
 
-import commandLineArgs from 'command-line-args';
-import { ManagerNotFound } from "webdav-server";
+
+
 
 console.log(chalk.blue(`
 
@@ -42,27 +43,22 @@ console.log(chalk.blue(`
 // ██      ██    ██ ██  ██ ██ ██      ██ ██    ██ 
 //  ██████  ██████  ██   ████ ██      ██  ██████  
 
-const defaultElasticsearchHost = process.env['ELASTICSEARCH_HOSTS'] ?? 'http://localhost:9200';
+const config = getConfig();
 
-console.log('Reading command line arguments...');
-console.log();
-const optionDefinitions = [
-  { name: 'ui-dir', type: String, defaultValue: './ui/' },
-  { name: 'thumbnails-dir', type: String, defaultValue: './thumbnails/' },
-  { name: 'port', type: Number, defaultValue: 8080 },
-  { name: 'not-found-placeholder', type: String, defaultValue: './assets/image-not-found.jpg' },
-  { name: 'elasticsearch-host', type: String, defaultValue: defaultElasticsearchHost}
-];
-
-const options = commandLineArgs(optionDefinitions);
 
 // Not using loop for this because we might include passwords at some point
-console.log(chalk.white('ui-dir: ') + options['ui-dir']);
-console.log(chalk.white('thumbnails-dir: ') + options['thumbnails-dir']);
-console.log(chalk.white('port: ') + options['port']);
-console.log(chalk.white('not-found-placeholder: ') + options['not-found-placeholder']);
-console.log(chalk.white('elasticsearch-host: ') + options['elasticsearch-host']);
+// Only specific things should be output.
 
+console.log();
+console.log('--- Configuration ---');
+console.log();
+console.log(chalk.white('Server port:   ') + chalk.cyanBright(config.server.port));
+console.log(chalk.white('UI Dir:        ') + chalk.cyanBright(config.uiDirectory));
+console.log(chalk.white('Thumbnail Dir: ') + chalk.cyanBright(config.thumbnailsDirectory));
+console.log(chalk.white('Placeholder:   ') + chalk.cyanBright(config.fileNotFoundPlaceholder));
+console.log(chalk.white('ES Host:       ') + chalk.cyanBright(config.elasticsearch.host));
+console.log(chalk.white('Collections:   ') + chalk.cyanBright(JSON.stringify( config.collections)));
+ 
 console.log();
 
 
@@ -72,10 +68,14 @@ console.log();
 // ██   ██ ██      ██      ██      ██  ██ ██ ██   ██ ██      ██  ██ ██ ██      ██ ██           ██ 
 // ██████  ███████ ██      ███████ ██   ████ ██████  ███████ ██   ████  ██████ ██ ███████ ███████ 
 
+console.log();
+console.log('--- Dependencies ---');
+console.log();
+
 console.log('Setting up dependencies...');
 
 const elasticsearchClientOptions: ClientOptions = {
-  node: options['elasticsearch-host'],
+  node: config.elasticsearch.host,
 };
 
 const collectionProvider = new ElasticsearchCollectionProvider({
@@ -130,8 +130,8 @@ const extractionProvider = new AggregateExtractionProvider(
 
 const thumbnailProvider = new ThumbnailProvider(
   {
-    rootThumbnailDirectory: options['thumbnails-dir'],
-    imageNotFoundPlaceholderFile: options['not-found-placeholder']
+    rootThumbnailDirectory: config.thumbnailsDirectory,
+    imageNotFoundPlaceholderFile: config.fileNotFoundPlaceholder
   },
   indexProvider
 );
@@ -200,7 +200,7 @@ app.use(bodyParser.json());
 
 // Middleware
 app.use(function (req, res, next) {
-  const originsRequestUrlWithoutPath = `${req.protocol}://${req.hostname}:${options.port}`;
+  const originsRequestUrlWithoutPath = `${req.protocol}://${req.hostname}:${config.server.port}`;
   req.headers[
     "_originsRequestUrlWithoutPath"
   ] = originsRequestUrlWithoutPath;
@@ -223,10 +223,10 @@ app.use("/api/thumbnails", createThumbnailRouter(thumbnailProvider));
 // app.use("/search", createSearchRouter(databaseProvider));
 
 // UI
-app.use(express.static(options['ui-dir']));
+app.use(express.static(config.uiDirectory));
 
 // Start listening
 console.log("Starting Origins server...");
-app.listen(options.port, () => {
-  console.log(`Origins server started at http://localhost:${options.port}`);
+app.listen(config.server.port, () => {
+  console.log(`Origins server started at http://localhost:${config.server.port}`);
 });
