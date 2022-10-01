@@ -91,7 +91,7 @@ const getConfigFromCommandLineArgs = () => {
 };
 
 const getConfigFromEnvironmentVariables = () => {
-  const collectionPrefix = "COLLECTION:";
+  const collectionPrefix = 'COLLECTION_';
 
   const collections = Object.keys(process.env)
     .filter(
