@@ -22,12 +22,20 @@ echo "--- Create Output Dir ---"
 mkdir -v $OUTPUT_DIR
 echo
 
+echo "--- Install Origins Server Dependencies ---"
+( cd $SERVER_DIR; npm install )
+echo
+
 echo "--- Build Origins Server ---"
 ( cd $SERVER_DIR; npm run webpack )
 echo
 
 echo "--- Copy Origins Server Bits ---"
 cp -rv "${SERVER_DIR}/dist/." ${OUTPUT_DIR}
+echo
+
+echo "--- Install Origins UI Dependencies ---"
+( cd $UI_DIR; npm install )
 echo
 
 echo "--- Build Origins UI ---"
