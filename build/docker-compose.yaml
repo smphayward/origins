@@ -44,7 +44,7 @@ services:
     image: smphayward/origins-server
     container_name: origins-server
     volumes:
-      - thumbnails:/usr/origins/thumbnails
+      - origins-thumbnails:/usr/origins/thumbnails
       # TODO: Map photo directories for collections
       # - collections/demo-data:/usr/origins/collections/demo-data
 
@@ -56,4 +56,6 @@ services:
 
 volumes:
   elasticsearch-data:
+    driver: local
+  origins-thumbnails:
     driver: local
