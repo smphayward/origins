@@ -138,6 +138,7 @@ const thumbnailProvider = new ThumbnailProvider(
 );
 
 const processingProvider = new ProcessingProvider(
+  config,
   extractionProvider,
   indexProvider,
   thumbnailProvider

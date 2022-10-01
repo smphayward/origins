@@ -7,31 +7,24 @@ import { ThumbnailProvider } from "../thumbnails/ThumbnailProvider";
 import { ExtractionProvider } from "../extraction/ExtractionProvider";
 import { IndexProvider } from "../index/IndexProvider";
 import { IndexRecord } from "../index/models";
+import { Config } from "../config/ConfigFactory";
 
 export class ProcessingProvider {
-  private readonly _extractionProvider: ExtractionProvider;
-  private readonly _indexProvider: IndexProvider;
-  private readonly _thumbnailProvider: ThumbnailProvider;
-
   constructor(
-    extractionProvider: ExtractionProvider,
-    indexProvider: IndexProvider,
-    thumbnailProvider: ThumbnailProvider
-  ) {
-    this._extractionProvider = extractionProvider;
-    this._indexProvider = indexProvider;
-    this._thumbnailProvider = thumbnailProvider;
-  }
+    private readonly _config: Config,
+    private readonly _extractionProvider: ExtractionProvider,
+    private readonly _indexProvider: IndexProvider,
+    private readonly _thumbnailProvider: ThumbnailProvider
+  ) {}
 
   public async processPath(
     collection: Collection,
     relativePath: string, // Relative to the collection's path
     depth: number
   ): Promise<void> {
-
     // Normalize the relative path to always start with /
-    if(!relativePath.startsWith('/')){
-      relativePath = '/' + relativePath;
+    if (!relativePath.startsWith("/")) {
+      relativePath = "/" + relativePath;
     }
 
     // Make sure depth is an integer
@@ -48,10 +41,9 @@ export class ProcessingProvider {
       await this.processFile(collection, relativePath, absolutePath);
     }
 
-    if(pathType === FileSystemObjectType.Directory) {
+    if (pathType === FileSystemObjectType.Directory) {
       await this.processDirectory(collection, absolutePath, depth);
     }
-    
   }
 
   // ----- HELPER METHODS ----- //
@@ -60,13 +52,17 @@ export class ProcessingProvider {
     relativePath: string, // Relative to the collection's path
     absolutePath: string
   ): Promise<void> {
+    
+    if (!this._config.fileExtensions.image.includes(path.parse(absolutePath).ext)) {
+      console.log(`File type not supported: ${absolutePath}`);
+    }
 
     console.log(`Processing file: ${absolutePath}`);
 
     // Normalize the relative path to always start with /
     // This is important when making the id
-    if(!relativePath.startsWith('/')){
-      relativePath = '/' + relativePath;
+    if (!relativePath.startsWith("/")) {
+      relativePath = "/" + relativePath;
     }
 
     // Extract information
@@ -83,12 +79,12 @@ export class ProcessingProvider {
     };
 
     // Add extracted information
-    for(const prop in extractedData) {
+    for (const prop in extractedData) {
       indexRecord[prop] = extractedData[prop];
     }
 
     // Push the index record
-    await this._indexProvider.put(indexRecord)
+    await this._indexProvider.put(indexRecord);
 
     // Generate thumbnail
     await this._thumbnailProvider.GenerateThumbnail(
@@ -104,7 +100,6 @@ export class ProcessingProvider {
     absolutePath: string,
     depth: number
   ): Promise<void> {
-
     console.log(`Processing directory: ${absolutePath}`);
     try {
       const children = await fs.readdir(absolutePath, {
@@ -116,9 +111,12 @@ export class ProcessingProvider {
 
         if (child.isFile()) {
           // Relative to the collection's root
-          const relativePath = childAbsolutePath.substring(collection.rootDirectory.length);
+          const relativePath = childAbsolutePath.substring(
+            collection.rootDirectory.length
+          );
           await this.processFile(collection, relativePath, childAbsolutePath);
-        } else if (child.isDirectory() && depth !== 0) { // This is indentionally !== 0. If someone specifies -1 then depth is infinite.
+        } else if (child.isDirectory() && depth !== 0) {
+          // This is indentionally !== 0. If someone specifies -1 then depth is infinite.
           await this.processDirectory(collection, childAbsolutePath, depth--);
         }
       }
@@ -126,8 +124,5 @@ export class ProcessingProvider {
       console.log("Failed to read directory.");
       console.log(err);
     }
-
-
   }
-
 }

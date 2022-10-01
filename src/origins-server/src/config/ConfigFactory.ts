@@ -1,29 +1,39 @@
 import commandLineArgs from "command-line-args";
 import chalk from "chalk";
-import { Collection, CollectionDictionary } from "../collections/models";
+import { CollectionDictionary } from "../collections/models";
 
 interface ServerConfig {
   port: number;
+}
+
+interface FileExtensions {
+  image: string[]
 }
 
 interface ElasticsearchConfig {
   host: string;
 }
 
-interface Config {
+export interface Config {
+  
   // Server
   server: ServerConfig;
 
-  // Directories
+  // Files Directories
   uiDirectory: string;
   thumbnailsDirectory: string;
   fileNotFoundPlaceholder: string;
+
+  // File Extensions
+  fileExtensions: FileExtensions;
+  
 
   // Elasticsearch
   elasticsearch: ElasticsearchConfig;
 
   // Collections to ensure exist on startup
   collections: CollectionDictionary;
+
 }
 
 export const defaultConfig: Config = {
@@ -36,6 +46,10 @@ export const defaultConfig: Config = {
   uiDirectory: "./ui/",
   thumbnailsDirectory: "./thumbnails/",
   fileNotFoundPlaceholder: "./assets/image-not-found.jpg",
+
+  fileExtensions: {
+    image: [ ".jpg", ".png", ".gif" ],
+  },
 
   // Elasticsearch
   elasticsearch: {
@@ -159,6 +173,9 @@ export const getConfig = (): Config => {
       cla.fileNotFoundPlaceholder ??
       env.fileNotFoundPlaceholder ??
       defaultConfig.fileNotFoundPlaceholder,
+
+    // Extensions
+    fileExtensions: defaultConfig.fileExtensions,
 
     // Elasticsearch
     elasticsearch: {
