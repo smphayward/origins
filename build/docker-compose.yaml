@@ -2,12 +2,6 @@ version: "3.7"
 
 services:
 
-# ███████ ██       █████  ███████ ████████ ██  ██████ 
-# ██      ██      ██   ██ ██         ██    ██ ██      
-# █████   ██      ███████ ███████    ██    ██ ██      
-# ██      ██      ██   ██      ██    ██    ██ ██      
-# ███████ ███████ ██   ██ ███████    ██    ██  ██████ 
-
   # Elasticsearch has no security configured
   # Not configured with ideal memory management
   # Much work is required on this section
@@ -42,6 +36,20 @@ services:
       - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
     ports:
       - 5601:5601
+    depends_on:
+      - elasticsearch
+    restart: unless-stopped
+
+  origins-server:
+    image: smphayward/origins-server
+    container_name: origins-server
+    volumes:
+      - thumbnails:/usr/origins/thumbnails
+      # TODO: Map photo directories for collections
+      # - collections/demo-data:/usr/origins/collections/demo-data
+
+    ports:
+      - 8080:8080
     depends_on:
       - elasticsearch
     restart: unless-stopped
