@@ -42,13 +42,16 @@ console.log(chalk.blue(`
 // ██      ██    ██ ██  ██ ██ ██      ██ ██    ██ 
 //  ██████  ██████  ██   ████ ██      ██  ██████  
 
+const defaultElasticsearchHost = process.env['ELASTICSEARCH_HOSTS'] ?? 'http://localhost:9200';
+
 console.log('Reading command line arguments...');
 console.log();
 const optionDefinitions = [
   { name: 'ui-dir', type: String, defaultValue: './ui/' },
   { name: 'thumbnails-dir', type: String, defaultValue: './thumbnails/' },
   { name: 'port', type: Number, defaultValue: 8080 },
-  { name: 'not-found-placeholder', type: String, defaultValue: './assets/image-not-found.jpg' }
+  { name: 'not-found-placeholder', type: String, defaultValue: './assets/image-not-found.jpg' },
+  { name: 'elasticsearch-host', type: String, defaultValue: defaultElasticsearchHost}
 ];
 
 const options = commandLineArgs(optionDefinitions);
@@ -58,6 +61,7 @@ console.log(chalk.white('ui-dir: ') + options['ui-dir']);
 console.log(chalk.white('thumbnails-dir: ') + options['thumbnails-dir']);
 console.log(chalk.white('port: ') + options['port']);
 console.log(chalk.white('not-found-placeholder: ') + options['not-found-placeholder']);
+console.log(chalk.white('elasticsearch-host: ') + options['elasticsearch-host']);
 
 console.log();
 
@@ -71,7 +75,7 @@ console.log();
 console.log('Setting up dependencies...');
 
 const elasticsearchClientOptions: ClientOptions = {
-  node: "http://192.168.2.160:9200",
+  node: options['elasticsearch-host'],
 };
 
 const collectionProvider = new ElasticsearchCollectionProvider({
