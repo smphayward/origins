@@ -1,6 +1,7 @@
 import express, { Router } from "express";
 import { Document } from "./Document";
 import { DocumentProvider } from "./DocumentProvider";
+import { QueryStringParser } from "./QueryStringParser";
 
 export interface RequestContext {
   requestUrlWithoutPath: string;
@@ -10,7 +11,8 @@ export interface RequestContext {
 
 
 export const createDocumentRouter = <TDocument extends Document>(
-  documentProvider: DocumentProvider<TDocument>
+  documentProvider: DocumentProvider<TDocument>,
+  queryStringParser: QueryStringParser
 ) => {
   const router = express.Router();
 
@@ -46,10 +48,15 @@ export const createDocumentRouter = <TDocument extends Document>(
     return formattedDocuments;
   }
 
+  
+
   // Setup the Routes
   router
     .get("/", async (req, res) => {
-      const documents = await documentProvider.getAll();
+
+      const qs = queryStringParser.parseGetMany(req);
+
+      const documents = await documentProvider.getAll(qs.maxResults, qs.continuationToken);
       const formattedDocuments = formatDocuments(documents, req);
       return res.send(formattedDocuments);
     })

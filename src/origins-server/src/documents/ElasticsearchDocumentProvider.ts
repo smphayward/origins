@@ -1,6 +1,8 @@
 import { Client, ClientOptions, errors, estypes } from "@elastic/elasticsearch";
 import { Document } from "./Document";
 import { DocumentProvider } from "./DocumentProvider";
+import base64Url from 'base64url';
+import { SortResults } from "@elastic/elasticsearch/lib/api/types";
 
 export interface ElasticsearchDocumentProviderConfig {
   indexName: string;
@@ -19,15 +21,21 @@ export class ElasticsearchDocumentProvider<TDocument extends Document>
     this._client = new Client(config.elasticsearchClientOptions);
   }
 
-  public async getAll(): Promise<TDocument[]> {
-    return await this.searchInternal({
-      prefix: {
-        id: {
-          value: this._idPrefix,
+  public async getAll(
+    maxResults: number = 25,
+    continuationToken: string | null = null
+  ): Promise<TDocument[]> {
+    return await this.searchInternal(
+      {
+        prefix: {
+          id: {
+            value: this._idPrefix,
+          },
         },
       },
-    });
-
+      maxResults,
+      continuationToken
+    );
   }
 
   public async get(id: string): Promise<TDocument | null> {
@@ -81,21 +89,27 @@ export class ElasticsearchDocumentProvider<TDocument extends Document>
     }
   }
 
-  public async search(lucene: string): Promise<TDocument[]> {
+  public async search(
+    lucene: string,
+    maxResults: number = 25,
+    continuationToken: string | null = null
+  ): Promise<TDocument[]> {
     return await this.searchInternal({
       query_string: {
         query: lucene,
       },
-    });
+    },
+    maxResults,
+    continuationToken);
   }
 
   // ----- Non-interface members ----- //
   public async ensureIndexExists(): Promise<void> {
     try {
       const exists = await this._client.indices.exists({
-        index: this._config.indexName
+        index: this._config.indexName,
       });
-      if(exists) {
+      if (exists) {
         console.log(`Index '${this._config.indexName}' already exists.`);
         return;
       }
@@ -122,17 +136,58 @@ export class ElasticsearchDocumentProvider<TDocument extends Document>
   }
 
   private async searchInternal(
-    query: estypes.QueryDslQueryContainer
+    query: estypes.QueryDslQueryContainer,
+    maxResults: number = 25,
+    continuationToken: string | null = null
   ): Promise<TDocument[]> {
     // Where starts with _idPrefix
     const response = await this._client.search<TDocument>({
       index: this._config.indexName,
+
       query,
-      size: 1000, // TODO: Support continuations
+      sort: [
+        // {_uid: "asc" },
+        //{ _uid: {"order" : "asc" , "missing" : "_last" , "unmapped_type" :"string"} }
+        { _score: { order: "desc" } },
+        // Replace this with a date/time stamp stored as an integer
+        { fileSizeBytes: { order: "asc" } },
+        // { "@timestamp" : "desc" },
+        //{ "_uid": {"order" : "asc" , "missing" : "_last" , "unmapped_type" :"string"} }
+      ],
+      size: maxResults, // TODO: Support continuations
+      search_after: this.parseContinuationToken(continuationToken),
     });
+
+    // TODO: Make TDocument include _links and add the link to "get more" here, if possible
+    // Though maybe not in this class but rather in DocumentRouterFactory
+    const newContinuationToken = this.createContinuationToken(response);
+    console.log(`continuation token: ${newContinuationToken}`);
+
     return response.hits.hits
       .map((h) => h._source)
       .filter((c) => c)
-      .map(c => c)  as TDocument[];
+      .map((c) => c) as TDocument[];
+  }
+
+  private createContinuationToken(
+    response: estypes.SearchResponse<
+      TDocument,
+      Record<string, estypes.AggregationsAggregate>
+    >
+  ): string | null {
+    const sort = response?.hits?.hits[response?.hits?.hits?.length - 1]?.sort;
+    if (sort) {
+      return base64Url.encode(JSON.stringify(sort));
+    }
+    return null;
+  }
+
+  private parseContinuationToken(
+    continuationToken: string | null
+  ): SortResults | undefined {
+    if (!continuationToken) {
+      return undefined;
+    }
+    return JSON.parse(base64Url.decode(continuationToken)) as SortResults;
   }
 }

@@ -1,14 +1,18 @@
 import express, { Router } from "express";
 import { v2 as webdav } from "webdav-server";
 import { createDocumentRouter } from "../documents/DocumentRouterFactory";
+import { QueryStringParser } from "../documents/QueryStringParser";
 import { WebDAVServerFactory } from "../web-dav/web-dav-server-factory";
 import { CollectionProvider } from "./CollectionProvider";
 import { Collection } from "./models";
 
 
-export const createCollectionsRouter = (collectionProvider: CollectionProvider) => {
-  return createDocumentRouter(collectionProvider);
-}
+export const createCollectionsRouter = (
+  collectionProvider: CollectionProvider,
+  queryStringParser: QueryStringParser
+) => {
+  return createDocumentRouter(collectionProvider, queryStringParser);
+};
 
 // export const createCollectionsRouter = (
 //   collectionProvider: CollectionProvider): Router => {

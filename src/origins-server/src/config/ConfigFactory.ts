@@ -53,7 +53,7 @@ export const defaultConfig: Config = {
 
   // Elasticsearch
   elasticsearch: {
-    host: "http://localhost:9200",
+    host: "http://192.168.2.226:9200" //"http://localhost:9200",
   },
 
   // Collections

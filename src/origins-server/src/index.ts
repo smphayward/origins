@@ -24,6 +24,7 @@ import { createThumbnailRouter } from "./thumbnails/thumbnail-router-factory";
 import chalk from 'chalk';
 import { getConfig } from "./config/ConfigFactory";
 import { createHealthRouter } from "./health/health-router-factory";
+import { QueryStringParser } from "./documents/QueryStringParser";
 
 
 
@@ -144,6 +145,8 @@ const processingProvider = new ProcessingProvider(
   thumbnailProvider
 );
 
+const queryStringParser = new QueryStringParser();
+
 // Setup Database
 console.log('Setting up database...');
 const setupDatabasePromise = (async () => {
@@ -234,8 +237,8 @@ app.use(function (req, res, next) {
 app.use('/health', createHealthRouter());
 
 // API
-app.use("/api/collections", createCollectionsRouter(collectionProvider).router());
-app.use("/api/index", createIndexRouter(indexProvider).router());
+app.use("/api/collections", createCollectionsRouter(collectionProvider, queryStringParser).router());
+app.use("/api/index", createIndexRouter(indexProvider, queryStringParser).router());
 app.use(
   "/api/processing",
   createProcessingRouter(collectionProvider, processingProvider)
