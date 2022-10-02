@@ -17,7 +17,9 @@ import { LightboxComponent } from './lightbox/lightbox.component';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { NgxMasonryModule } from 'ngx-masonry';
 import {MatSlideToggleModule} from '@angular/material/slide-toggle';
-
+import {MatExpansionModule} from '@angular/material/expansion';
+import {MatGridListModule} from '@angular/material/grid-list';
+import {MatChipsModule} from '@angular/material/chips';
 @NgModule({
   declarations: [AppComponent, LightboxComponent],
   imports: [
@@ -35,6 +37,9 @@ import {MatSlideToggleModule} from '@angular/material/slide-toggle';
     MatToolbarModule,
     NgxMasonryModule,
     MatSlideToggleModule,
+    MatExpansionModule,
+    MatGridListModule,
+    MatChipsModule,
   ],
   providers: [],
   bootstrap: [AppComponent],

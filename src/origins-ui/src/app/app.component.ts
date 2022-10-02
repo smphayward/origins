@@ -1,9 +1,8 @@
 import { Component, ElementRef, ViewChild } from '@angular/core';
 import { SearchService } from './services/search.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { LightboxComponent } from './lightbox/lightbox.component';
-import { IndexRecord } from './interfaces/index-record';
 import { NgxMasonryComponent } from 'ngx-masonry';
 
 @Component({
@@ -67,9 +66,13 @@ export class AppComponent {
   }
 
   openDialog(index: number) {
-    const dialogRef = this.dialog.open(LightboxComponent, {
-      data: { records: this.searchResults, index }
-    });
+    const cfg: MatDialogConfig = {
+      data: { records: this.searchResults, index },
+      height: "80%",
+      width: "80%",
+       
+    };
+    const dialogRef = this.dialog.open(LightboxComponent, cfg);
 
     dialogRef.afterClosed().subscribe(result => {
       console.log(`Dialog result: ${result}`);

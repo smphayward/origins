@@ -10,6 +10,7 @@ import { MatDialogRef } from '@angular/material/dialog';
 })
 export class LightboxComponent implements OnInit {
 
+  panelOpenState = true;
   currentRecord: IndexRecord = blankIndexRecord;
   currentRecordAsAny: object = {};
   currentIndex: number = 0;
