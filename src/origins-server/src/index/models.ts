@@ -1,4 +1,4 @@
-import { Document } from "../documents/Document";
+import { Document } from "../documents/models";
 
 export interface IndexRecord extends Document {
   id: string;

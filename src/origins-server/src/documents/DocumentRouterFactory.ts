@@ -1,5 +1,5 @@
 import express, { Router } from "express";
-import { Document } from "./Document";
+import { Document } from "./models";
 import { DocumentProvider } from "./DocumentProvider";
 import { QueryStringParser } from "./QueryStringParser";
 
@@ -56,9 +56,14 @@ export const createDocumentRouter = <TDocument extends Document>(
 
       const qs = queryStringParser.parseGetMany(req);
 
-      const documents = await documentProvider.getAll(qs.maxResults, qs.continuationToken);
-      const formattedDocuments = formatDocuments(documents, req);
-      return res.send(formattedDocuments);
+      const result = await documentProvider.getAll(qs.maxResults, qs.continuationToken);
+
+      const final = {
+        continuationToken: result.continuationToken,
+        documents: formatDocuments(result.documents, req)
+      }
+      return res.send(final);
+
     })
     .get("/search", async (req, res) => {
       const query = req.query.q as string;
@@ -66,11 +71,14 @@ export const createDocumentRouter = <TDocument extends Document>(
         return res.status(400).send("Parameter 'q' not specified.");
       }
       // Get the documents
-      const documents = await documentProvider.search(query);
+      const result = await documentProvider.search(query);
       // Format documents
-      const formattedDocuments = formatDocuments(documents, req);
+      const final = {
+        continuationToken: result.continuationToken,
+        documents: formatDocuments(result.documents, req)
+      }
       // All done
-      return res.status(200).send(formattedDocuments);
+      return res.status(200).send(final);
     })
     .get("/:id", async (req, res) => {
       const documentId = req.params.id as string;

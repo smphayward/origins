@@ -1,5 +1,5 @@
 import { Client, ClientOptions, errors, estypes } from "@elastic/elasticsearch";
-import { Document } from "./Document";
+import { Document, MultipleDocumentsResult } from "./models";
 import { DocumentProvider } from "./DocumentProvider";
 import base64Url from 'base64url';
 import { SortResults } from "@elastic/elasticsearch/lib/api/types";
@@ -24,7 +24,7 @@ export class ElasticsearchDocumentProvider<TDocument extends Document>
   public async getAll(
     maxResults: number = 25,
     continuationToken: string | null = null
-  ): Promise<TDocument[]> {
+  ): Promise<MultipleDocumentsResult< TDocument>> {
     return await this.searchInternal(
       {
         prefix: {
@@ -93,7 +93,7 @@ export class ElasticsearchDocumentProvider<TDocument extends Document>
     lucene: string,
     maxResults: number = 25,
     continuationToken: string | null = null
-  ): Promise<TDocument[]> {
+  ): Promise<MultipleDocumentsResult< TDocument>> {
     return await this.searchInternal({
       query_string: {
         query: lucene,
@@ -139,7 +139,7 @@ export class ElasticsearchDocumentProvider<TDocument extends Document>
     query: estypes.QueryDslQueryContainer,
     maxResults: number = 25,
     continuationToken: string | null = null
-  ): Promise<TDocument[]> {
+  ): Promise<MultipleDocumentsResult< TDocument>> {
     // Where starts with _idPrefix
     const response = await this._client.search<TDocument>({
       index: this._config.indexName,
@@ -163,10 +163,15 @@ export class ElasticsearchDocumentProvider<TDocument extends Document>
     const newContinuationToken = this.createContinuationToken(response);
     console.log(`continuation token: ${newContinuationToken}`);
 
-    return response.hits.hits
+    const documents = response.hits.hits
       .map((h) => h._source)
       .filter((c) => c)
       .map((c) => c) as TDocument[];
+
+      return {
+        documents,
+        continuationToken: newContinuationToken
+      }
   }
 
   private createContinuationToken(
@@ -174,16 +179,16 @@ export class ElasticsearchDocumentProvider<TDocument extends Document>
       TDocument,
       Record<string, estypes.AggregationsAggregate>
     >
-  ): string | null {
+  ): string | undefined {
     const sort = response?.hits?.hits[response?.hits?.hits?.length - 1]?.sort;
     if (sort) {
       return base64Url.encode(JSON.stringify(sort));
     }
-    return null;
+    return undefined;
   }
 
   private parseContinuationToken(
-    continuationToken: string | null
+    continuationToken: string | undefined | null
   ): SortResults | undefined {
     if (!continuationToken) {
       return undefined;
