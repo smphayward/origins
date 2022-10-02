@@ -62,10 +62,11 @@ export class ThumbnailProvider {
 
     let error: any = null;
 
+    console.error(`Reading original: '${sourceAbsolutePath}'`);
     const promise = Jimp.read(sourceAbsolutePath)
       .then((image) => {
 
-        console.error(`Original image read: '${sourceAbsolutePath}'`);
+        console.error(`Finished reading original: '${sourceAbsolutePath}'`);
 
         let width = image.getWidth();
         let height = image.getHeight();
