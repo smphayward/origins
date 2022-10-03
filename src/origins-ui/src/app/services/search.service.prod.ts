@@ -23,7 +23,7 @@ export class SearchService {
   getAll(continuationToken?: string): Observable<MultipleIndexRecordsResult> {
     let url=`/api/index?max=${this._maxResults}`;
     if(continuationToken){
-      url += `?continue=${continuationToken}`;
+      url += `&continue=${continuationToken}`;
     }
     return this.http.get<MultipleIndexRecordsResult>(url);
   }
