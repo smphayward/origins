@@ -9,6 +9,13 @@ body {
   flex: 1 1 auto;
 }
 
+@media (max-width: 768px) {
+  .hide-if-narrow {
+    display: none;
+  }
+}
+
+
 /* Contents */
 
 .img-small {
