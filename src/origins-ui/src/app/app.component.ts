@@ -5,6 +5,7 @@ import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { LightboxComponent } from './lightbox/lightbox.component';
 import { NgxMasonryComponent } from 'ngx-masonry';
 import { IndexRecord, MultipleIndexRecordsResult } from './interfaces/index-record';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-root',
@@ -21,114 +22,145 @@ export class AppComponent {
     public dialog: MatDialog
   ) {}
 
-
-
   useLargeImages = false;
   searchText = '';
 
   title = 'origins-ui';
   x = { y: 'z' };
-  
-  searchResults: IndexRecord[] = [  ];
+
+  searchResults: IndexRecord[] = [];
   continuationToken: string | undefined = undefined;
   lastSearchText: string | undefined = undefined;
   // Last query? to know what to call for loadMore
 
+  // ███████ ██    ██ ███████ ███    ██ ████████     ██   ██  █████  ███    ██ ██████  ██      ███████ ██████
+  // ██      ██    ██ ██      ████   ██    ██        ██   ██ ██   ██ ████   ██ ██   ██ ██      ██      ██   ██
+  // █████   ██    ██ █████   ██ ██  ██    ██        ███████ ███████ ██ ██  ██ ██   ██ ██      █████   ██████
+  // ██       ██  ██  ██      ██  ██ ██    ██        ██   ██ ██   ██ ██  ██ ██ ██   ██ ██      ██      ██   ██
+  // ███████   ████   ███████ ██   ████    ██        ██   ██ ██   ██ ██   ████ ██████  ███████ ███████ ██   ██
+
   onGetAll = () => {
-    // READ THIS LINK!!!
-    // TODO: https://medium.com/egen/using-angular-httpclient-the-right-way-60c65146e5d9
-    
-    this.searchService.getAll().subscribe((resp) => {
-      this.handleResults(resp, false);
-      this.lastSearchText = undefined;
-    });
+    this.getAllOrSearch();
   };
 
   onSearch = () => {
     if (this.searchText.trim().length === 0) {
       this.searchElement.nativeElement.focus();
-      this.openSnackBar("Please enter search text");
+      this.openSnackBar('Please enter search text');
       return;
     }
-
-    this.searchService.search(this.searchText).subscribe((resp) => {
-      this.handleResults(resp, false);
-      this.lastSearchText = this.searchText.trim();
-    });
+    this.getAllOrSearch(this.searchText);
   };
 
-  private handleResults(results: MultipleIndexRecordsResult, isContinuation: boolean) {
-    if(!results?.documents){
+  onScroll(event: any) {
+    // visible height + pixel scrolled >= total height
+
+    if (
+      event.target.offsetHeight + event.target.scrollTop >=
+      event.target.scrollHeight
+    ) {
+      this.getMoreResults();
+    }
+  }
+
+  onLargeImagesChanged() {
+    this.masonry.layout();
+  }
+
+  //  ██████  ███████ ████████     ██████  ███████  ██████  ██████  ██████  ██████  ███████
+  // ██       ██         ██        ██   ██ ██      ██      ██    ██ ██   ██ ██   ██ ██
+  // ██   ███ █████      ██        ██████  █████   ██      ██    ██ ██████  ██   ██ ███████
+  // ██    ██ ██         ██        ██   ██ ██      ██      ██    ██ ██   ██ ██   ██      ██
+  //  ██████  ███████    ██        ██   ██ ███████  ██████  ██████  ██   ██ ██████  ███████
+
+  private getAllOrSearch(searchText?: string) {
+    // READ THIS LINK!!!
+    // TODO: https://medium.com/egen/using-angular-httpclient-the-right-way-60c65146e5d9
+
+    let observable: Observable<MultipleIndexRecordsResult>;
+    if (searchText) {
+      observable = this.searchService.search(this.searchText);
+      this.lastSearchText = this.searchText.trim();
+      this.openSnackBar('Searching...');
+    } else {
+      observable = this.searchService.getAll();
+      this.lastSearchText = undefined;
+      this.openSnackBar('Getting all...');
+    }
+    
+    observable.subscribe((resp) => {
+      this.handleResults(resp, false);
+    });
+  }
+
+  private getMoreResults() {
+    if (this.continuationToken) {
+      //this.openSnackBar("Loading more...");
+      if (this.lastSearchText) {
+        // It was a search
+      } else {
+        // It was a get-all
+        this.searchService.getAll(this.continuationToken).subscribe((resp) => {
+          this.handleResults(resp, true);
+          this.lastSearchText = undefined;
+        });
+      }
+    }
+  }
+
+  private handleResults(
+    results: MultipleIndexRecordsResult,
+    isContinuation: boolean
+  ) {
+    if (!results?.documents) {
       this.openSnackBar(`Something went wrong`);
       return;
     }
-    if(results.documents.length === 0){
-      this.openSnackBar(`No more results found.`);
+    if (results.documents.length === 0) {
+      if (isContinuation) {
+        this.openSnackBar(`No more results found.`);
+      } else {
+        this.openSnackBar(`No results found.`);
+      }
+
       return;
     }
     console.log(results.documents);
 
-    if(isContinuation){
+    if (isContinuation) {
       this.openSnackBar(`Received ${results.documents.length} MORE results`);
-      this.searchResults = [... this.searchResults, ...results.documents]  ;
+      this.searchResults = [...this.searchResults, ...results.documents];
       this.masonry.layout();
-    }
-    else{
+    } else {
       this.openSnackBar(`Received ${results.documents.length} results`);
       this.searchResults = results.documents;
     }
     this.continuationToken = results.continuationToken;
-    
   }
 
+  // ███████ ██   ██  ██████  ██     ██     ████████ ██   ██ ██ ███    ██  ██████  ███████
+  // ██      ██   ██ ██    ██ ██     ██        ██    ██   ██ ██ ████   ██ ██       ██
+  // ███████ ███████ ██    ██ ██  █  ██        ██    ███████ ██ ██ ██  ██ ██   ███ ███████
+  //      ██ ██   ██ ██    ██ ██ ███ ██        ██    ██   ██ ██ ██  ██ ██ ██    ██      ██
+  // ███████ ██   ██  ██████   ███ ███         ██    ██   ██ ██ ██   ████  ██████  ███████
+
   openSnackBar = (message: string) => {
-    console.log(`snack on this: ${message}`)
+    console.log(`snack on this: ${message}`);
     this.snackBar.open(message, undefined, {
       duration: 4000,
     });
-  }
+  };
 
   openDialog(index: number) {
     const cfg: MatDialogConfig = {
       data: { records: this.searchResults, index },
-      height: "80%",
-      width: "80%",
-       
+      height: '80%',
+      width: '80%',
     };
     const dialogRef = this.dialog.open(LightboxComponent, cfg);
 
-    dialogRef.afterClosed().subscribe(result => {
+    dialogRef.afterClosed().subscribe((result) => {
       console.log(`Dialog result: ${result}`);
     });
   }
-
-  largeImagesChanged() {
-    this.masonry.layout();
-  }
-  
-  onScroll(event: any) {
-    // visible height + pixel scrolled >= total height 
-    
-    if (event.target.offsetHeight + event.target.scrollTop >= event.target.scrollHeight) {
-      if(this.continuationToken){
-        //this.openSnackBar("Loading more...");
-        if(this.lastSearchText){
-          // It was a search
-        } else {
-          // It was a get-all
-          this.searchService.getAll(this.continuationToken).subscribe((resp) => {
-            this.handleResults(resp, true);
-            this.lastSearchText = undefined;
-          });
-        }
-        
-
-      }
-      // Load more
-      
-      console.log("End");
-    }
-}
-
-
 }
