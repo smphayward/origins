@@ -140,6 +140,7 @@ export class ElasticsearchDocumentProvider<TDocument extends Document>
     maxResults: number = 25,
     continuationToken: string | null = null
   ): Promise<MultipleDocumentsResult< TDocument>> {
+    console.log(`Getting up to '${maxResults}' results with continuation token '${continuationToken}'.`);
     // Where starts with _idPrefix
     const response = await this._client.search<TDocument>({
       index: this._config.indexName,

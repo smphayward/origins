@@ -1,3 +1,7 @@
+interface Link {
+  _href: string;
+}
+
 export interface Document {
   id: string;
 }
