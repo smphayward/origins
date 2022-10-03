@@ -6,6 +6,9 @@ export class QueryStringParser {
 
   public  parseGetMany(req: express.Request) {
 
+
+    console.log(req.query);
+
     const maxResults = req.query.max;
     const continuationToken = req.query.continue;
 

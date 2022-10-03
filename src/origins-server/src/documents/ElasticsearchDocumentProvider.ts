@@ -25,6 +25,7 @@ export class ElasticsearchDocumentProvider<TDocument extends Document>
     maxResults: number = 25,
     continuationToken: string | null = null
   ): Promise<MultipleDocumentsResult< TDocument>> {
+    console.log(`Getting up to '${maxResults}' results with continuation token '${continuationToken}'.`);
     return await this.searchInternal(
       {
         prefix: {
@@ -94,6 +95,7 @@ export class ElasticsearchDocumentProvider<TDocument extends Document>
     maxResults: number = 25,
     continuationToken: string | null = null
   ): Promise<MultipleDocumentsResult< TDocument>> {
+    console.log(`Searching up to '${maxResults}' results with continuation token '${continuationToken}'.`);
     return await this.searchInternal({
       query_string: {
         query: lucene,
@@ -140,7 +142,6 @@ export class ElasticsearchDocumentProvider<TDocument extends Document>
     maxResults: number = 25,
     continuationToken: string | null = null
   ): Promise<MultipleDocumentsResult< TDocument>> {
-    console.log(`Getting up to '${maxResults}' results with continuation token '${continuationToken}'.`);
     // Where starts with _idPrefix
     const response = await this._client.search<TDocument>({
       index: this._config.indexName,
@@ -155,7 +156,7 @@ export class ElasticsearchDocumentProvider<TDocument extends Document>
         // { "@timestamp" : "desc" },
         //{ "_uid": {"order" : "asc" , "missing" : "_last" , "unmapped_type" :"string"} }
       ],
-      size: maxResults, // TODO: Support continuations
+      size: maxResults, 
       search_after: this.parseContinuationToken(continuationToken),
     });
 
