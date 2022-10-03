@@ -13,6 +13,7 @@ export class SearchService {
 
   
   // TODO: Configure how many results come at a time somehow
+  private readonly _maxResults = 60;
 
   private readonly _emptyResult: MultipleIndexRecordsResult = {
     continuationToken: undefined,
@@ -20,7 +21,7 @@ export class SearchService {
   }
 
   getAll(continuationToken?: string): Observable<MultipleIndexRecordsResult> {
-    let url='/api/index';
+    let url=`/api/index?max=${this._maxResults}`;
     if(continuationToken){
       url += `?continue=${continuationToken}`;
     }
@@ -34,7 +35,7 @@ export class SearchService {
     if(!query || query.trim().length === 0){
       return of(this._emptyResult);
     }
-    let url = '/api/index/search?q=' + encodeURI(query);
+    let url = `/api/index/search?q=${encodeURI(query)}&max=${this._maxResults}`;
     if(continuationToken){
       url += `&continue=${continuationToken}`;
     }
