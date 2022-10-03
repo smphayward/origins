@@ -1,7 +1,16 @@
+interface Document {
+  id: string;
+}
+
+export interface MultipleDocumentsResult<TDocument extends Document> {
+  documents: TDocument[];
+  continuationToken?: string;
+}
+
 interface Link {
   _href: string;
 }
-export interface IndexRecord {
+export interface IndexRecord extends Document {
   id: string;
   collectionId: string;
   fileRelativePath: string;
@@ -14,11 +23,14 @@ export interface IndexRecord {
   mime: string;
   height: number;
   width: number;
-  _links?: {
-    thumb?: Link;
+  _links: {
+    thumb: Link;
     webdav?: Link;
     self?: Link;
   }
+}
+
+export interface MultipleIndexRecordsResult extends MultipleDocumentsResult<IndexRecord> {
 }
 
 export const blankIndexRecord: IndexRecord = {
@@ -34,5 +46,9 @@ export const blankIndexRecord: IndexRecord = {
   mime: '',
   height: 0,
   width: 0,
-  _links: {}
+  _links: {
+    thumb: {
+      _href: ''
+    }
+  }
 }

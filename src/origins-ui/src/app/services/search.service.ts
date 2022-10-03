@@ -1,7 +1,10 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { IndexRecord } from '../interfaces/index-record';
+import {
+  IndexRecord,
+  MultipleIndexRecordsResult,
+} from '../interfaces/index-record';
 import { environment } from 'src/environments/environment';
 import { of } from 'rxjs';
 
@@ -11,12 +14,40 @@ import { of } from 'rxjs';
 export class SearchService {
   constructor(private http: HttpClient) {}
 
-  getAll(): Observable<IndexRecord[]> {
-    return of(shuffle(mockDataLots));
+  // TODO: Configure how we specify how many records to give
+
+  private readonly _maxResults = 60;
+  private readonly _records = shuffle(mockDataLots);
+
+  getAll(continuationToken?: string): Observable<MultipleIndexRecordsResult> {
+    let startAt = 0;
+    if (continuationToken) {
+      startAt = Number(continuationToken);
+    }
+
+    console.log(`Getting up to ${this._maxResults} records starting at index ${startAt} from total of ${this._records.length} possible records`)
+
+    const documents = this._records.slice(startAt, startAt + this._maxResults);
+
+    console.log(`Got ${documents.length} records.`);
+
+    const nextStartIndex = startAt + this._maxResults;
+    let nextContinuationToken: string | undefined = nextStartIndex.toString();
+    if (nextStartIndex >= this._records.length) {
+      nextContinuationToken = undefined;
+    }
+    return of({
+      continuationToken: nextContinuationToken,
+      documents,
+    });
   }
 
-  search(query: string): Observable<IndexRecord[]> {
-    return of(mockData.slice(10, 20)); // Yeah... this doesn't search
+  search(
+    query: string,
+    continuationToken?: string
+  ): Observable<MultipleIndexRecordsResult> {
+    // Yeah... this doesn't search. :-D
+    return this.getAll(continuationToken);
   }
 }
 
@@ -238,22 +269,28 @@ const mockData: IndexRecord[] = [
   ),
 ];
 
-
-const mockDataLots: IndexRecord[] = shuffle(mockData).concat(shuffle(mockData)).concat(shuffle(mockData)).concat(shuffle(mockData)).concat(shuffle(mockData)).concat(shuffle(mockData));
+const mockDataLots: IndexRecord[] = shuffle(mockData)
+  .concat(shuffle(mockData))
+  .concat(shuffle(mockData))
+  .concat(shuffle(mockData))
+  .concat(shuffle(mockData))
+  .concat(shuffle(mockData));
 
 function shuffle<T>(array: T[]): T[] {
-  let currentIndex = array.length,  randomIndex;
+  let currentIndex = array.length,
+    randomIndex;
 
   // While there remain elements to shuffle.
   while (currentIndex != 0) {
-
     // Pick a remaining element.
     randomIndex = Math.floor(Math.random() * currentIndex);
     currentIndex--;
 
     // And swap it with the current element.
     [array[currentIndex], array[randomIndex]] = [
-      array[randomIndex], array[currentIndex]];
+      array[randomIndex],
+      array[currentIndex],
+    ];
   }
 
   return array;

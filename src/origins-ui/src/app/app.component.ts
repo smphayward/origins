@@ -4,6 +4,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { LightboxComponent } from './lightbox/lightbox.component';
 import { NgxMasonryComponent } from 'ngx-masonry';
+import { IndexRecord, MultipleIndexRecordsResult } from './interfaces/index-record';
 
 @Component({
   selector: 'app-root',
@@ -27,21 +28,19 @@ export class AppComponent {
 
   title = 'origins-ui';
   x = { y: 'z' };
-  searchResults: any[] = [
-    // { thumb: "http://localhost:8080/thumbnails/xsq50ZFuYbpmPB2v882AUU_dEpKNe5Kwmy7On9xzlv0.jpg"},
-    // { thumb: "http://localhost:8080/thumbnails/QOmqAI-H_lQCwX3CXln4CUF1sVyMObn4gsvKCZc9EfA.jpg"},
-    // { thumb: "http://localhost:8080/thumbnails/7g95Hswj4-AOJf33dNVDM0Yr_Blzpe7F2ohPHxslYjo.jpg"},
-    // { thumb: "http://localhost:8080/thumbnails/6LPYZPOYLn113DofRP3YVZGSKZSudpAU66KhktKg03A.jpg"},
-    // { thumb: "http://localhost:8080/thumbnails/I59vC7wcXV2TXHYadri1V-uBrj5EfHAI4fYSBojz1Ko.jpg"},
-  ];
+  
+  searchResults: IndexRecord[] = [  ];
+  continuationToken: string | undefined = undefined;
+  lastSearchText: string | undefined = undefined;
+  // Last query? to know what to call for loadMore
 
   onGetAll = () => {
     // READ THIS LINK!!!
     // TODO: https://medium.com/egen/using-angular-httpclient-the-right-way-60c65146e5d9
-
+    
     this.searchService.getAll().subscribe((resp) => {
-        this.searchResults = resp as [];
-        this.openSnackBar("Received results get all");
+      this.handleResults(resp, false);
+      this.lastSearchText = undefined;
     });
   };
 
@@ -53,13 +52,37 @@ export class AppComponent {
     }
 
     this.searchService.search(this.searchText).subscribe((resp) => {
-        this.searchResults = resp as [];
-        this.searchElement.nativeElement.focus();
-        this.openSnackBar("Received results of search");
+      this.handleResults(resp, false);
+      this.lastSearchText = this.searchText.trim();
     });
   };
 
+  private handleResults(results: MultipleIndexRecordsResult, isContinuation: boolean) {
+    if(!results?.documents){
+      this.openSnackBar(`Something went wrong`);
+      return;
+    }
+    if(results.documents.length === 0){
+      this.openSnackBar(`No more results found.`);
+      return;
+    }
+    console.log(results.documents);
+
+    if(isContinuation){
+      this.openSnackBar(`Received ${results.documents.length} MORE results`);
+      this.searchResults = [... this.searchResults, ...results.documents]  ;
+      this.masonry.layout();
+    }
+    else{
+      this.openSnackBar(`Received ${results.documents.length} results`);
+      this.searchResults = results.documents;
+    }
+    this.continuationToken = results.continuationToken;
+    
+  }
+
   openSnackBar = (message: string) => {
+    console.log(`snack on this: ${message}`)
     this.snackBar.open(message, undefined, {
       duration: 4000,
     });
@@ -83,6 +106,29 @@ export class AppComponent {
     this.masonry.layout();
   }
   
+  onScroll(event: any) {
+    // visible height + pixel scrolled >= total height 
+    
+    if (event.target.offsetHeight + event.target.scrollTop >= event.target.scrollHeight) {
+      if(this.continuationToken){
+        //this.openSnackBar("Loading more...");
+        if(this.lastSearchText){
+          // It was a search
+        } else {
+          // It was a get-all
+          this.searchService.getAll(this.continuationToken).subscribe((resp) => {
+            this.handleResults(resp, true);
+            this.lastSearchText = undefined;
+          });
+        }
+        
+
+      }
+      // Load more
+      
+      console.log("End");
+    }
+}
 
 
 }

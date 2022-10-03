@@ -1,20 +1,15 @@
-
-
-.search-div {
-  background-color: darkslategray;
-  text-align: center;
+body {
+  background-color: black;
 }
+
+/* Header */
+
+
 .example-spacer {
   flex: 1 1 auto;
 }
 
-.search-results-div {
-  margin: 5px;
-}
-
-body {
-  background-color: black;
-}
+/* Contents */
 
 .img-small {
   
@@ -30,3 +25,39 @@ body {
   margin: 5px;
 }
 
+
+/* Footer */
+
+/* #footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  height: 2.5rem;
+} */
+
+/* #footer {
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  width: 100%;
+} */
+
+#footer {
+  position:fixed;
+  left:0px;
+  bottom:0px;
+  height:30px;
+  width:100%;
+  background:#999;
+}
+
+/* Boneyard */
+
+/* .search-div {
+  background-color: darkslategray;
+  text-align: center;
+} */
+
+/* .search-results-div {
+  margin: 5px;
+} */
