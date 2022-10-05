@@ -2,12 +2,12 @@
   "name": "origins-server",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "origins-server.js",
   "scripts": {
     "copy-assets": "cp -rv ./assets ./dist",
     "webpack": "rimraf ./dist && webpack && npm run copy-assets",
     "build": "rimraf ./dist && tsc && npm run copy-assets",
-    "start": "npm run build && node dist/index.js --dir-ui '../origins-ui/dist/origins-ui' --dir-thumbnails '../../samples/thumbnails' ",
+    "start": "npm run build && node dist/origins-server.js --dir-ui '../origins-ui/dist/origins-ui' --dir-thumbnails '../../samples/thumbnails' ",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
