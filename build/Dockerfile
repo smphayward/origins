@@ -18,4 +18,4 @@ WORKDIR /usr/origins
 COPY ./dist .
 
 EXPOSE 8080
-CMD [ "node", "index.js" ]
+CMD [ "node", "origins-server.js" ]
