@@ -17,20 +17,24 @@ export const createIndexRouter = (indexProvider: IndexProvider,
     }
     let links: any = {
       thumb: {
-        _href: urlJoin(
-          //context.requestUrlWithoutPath,
-          "api",
-          "thumbnails",
-          documentId + ".jpg"
-        ),
+        _href:
+          "/" +
+          urlJoin(
+            //context.requestUrlWithoutPath,
+            "api",
+            "thumbnails",
+            documentId + ".jpg"
+          ),
       },
       self: {
-        _ref: urlJoin(
-          //context.requestUrlWithoutPath,
-          "api",
-          "index",
-          documentId
-        ),
+        _ref:
+          "/" +
+          urlJoin(
+            //context.requestUrlWithoutPath,
+            "api",
+            "index",
+            documentId
+          ),
       },
     };
     const collectionId = document[IndexRecordFields.collectionId] as
@@ -41,7 +45,7 @@ export const createIndexRouter = (indexProvider: IndexProvider,
       | null;
     if (collectionId && relativePath) {
       links.webdav = {
-        _href: urlJoin(
+        _href: "/" + urlJoin(
           //context.requestUrlWithoutPath,
           "api",
           "webdav",
