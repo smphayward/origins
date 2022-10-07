@@ -1,0 +1,38 @@
+<!-- https://www.w3schools.com/howto/howto_css_modals.asp -->
+<!-- The Modal -->
+<div 
+  id="image-lightbox-modal-backdrop" 
+  class="modal" 
+  [ngStyle]="{'display': (isVisible$ | async) ? 'block' : 'none'}">
+
+  <!-- Modal content -->
+  <div class="modal-content" style="display: flex;flex-direction: column;align-items: center; padding: 10px">
+    <div style="flex-grow: 1; width: 100%">
+      
+      <button mat-icon-button (click)="close()" class="close-button" >
+        <mat-icon>close</mat-icon>
+      </button> 
+
+      <button mat-icon-button (click)="showPrevious()" class="prev-nav-button" >
+        <mat-icon>navigate_before</mat-icon>
+      </button>
+      <div 
+        [style.background-image]="'url(' + (imageSource$ | async) + ')'"
+        class="lightbox-image">
+      </div>
+      <button mat-icon-button  (click)="showNext()" class="next-nav-button" >
+        <mat-icon >navigate_next</mat-icon>
+      </button>     
+      <a download="{{ imageSource$ | async }}" href="" target="_blank" mat-icon-button class="download-button">
+        <mat-icon>download</mat-icon>
+      </a>
+    </div>
+
+    <!-- <div style="background-color: purple; width: 100%;">
+      <h1>Blah!</h1>
+    </div> -->
+    
+
+  </div>
+
+</div>

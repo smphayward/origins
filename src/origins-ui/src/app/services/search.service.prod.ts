@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { MultipleIndexRecordsResult } from '../interfaces/index-record';
 import { environment } from 'src/environments/environment';
 import { of } from 'rxjs';
+import { MultipleIndexRecordsResult } from '../store/models';
 
 @Injectable({
   providedIn: 'root',
@@ -25,7 +25,8 @@ export class SearchService {
     if(continuationToken){
       url += `&continue=${continuationToken}`;
     }
-    return this.http.get<MultipleIndexRecordsResult>(url);
+    return this.http
+      .get<MultipleIndexRecordsResult>(url);
   }
 
   
@@ -39,7 +40,8 @@ export class SearchService {
     if(continuationToken){
       url += `&continue=${continuationToken}`;
     }
-    return this.http.get<MultipleIndexRecordsResult>(url);
+    return this.http
+      .get<MultipleIndexRecordsResult>(url);
   }
 
 

@@ -1,0 +1,5 @@
+<div ngxMasonryItem class="masonry-item">
+  <img 
+    [ngClass]="{'img-small': useLargeImages === false, 'img-large': useLargeImages }"
+    src="{{imageSource}}" (click)="onClick()">
+</div>

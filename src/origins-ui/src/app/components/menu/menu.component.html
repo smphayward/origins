@@ -1,0 +1,45 @@
+<button mat-icon-button [matMenuTriggerFor]="menu" class="example-icon" aria-label="Example icon-button with menu icon">
+  <mat-icon>menu</mat-icon>
+</button>
+<span>Origins</span>
+
+<mat-menu #menu="matMenu" >
+  <button mat-menu-item color="primary">
+    <mat-icon>dialpad</mat-icon>
+    <span>Redial</span>
+  </button>
+  <button mat-menu-item disabled>
+    <mat-icon>voicemail</mat-icon>
+    <span>Check voice mail</span>
+  </button>
+  <button mat-menu-item>
+    <mat-icon>notifications_off</mat-icon>
+    <span>Disable alerts</span>
+  </button>
+  
+  <!-- <mat-slide-toggle mat-menu-item class="hide-if-narrow" >Large Images</mat-slide-toggle> -->
+  
+</mat-menu>
+
+
+<!-- <button [matMenuTriggerFor]="menu" mat-icon-button class="example-icon" aria-label="Example icon-button with menu icon">
+  <mat-icon>menu</mat-icon>
+</button>
+<mat-menu #menu="matMenu">
+  <button mat-menu-item>
+    <mat-icon>dialpad</mat-icon>
+    <span>Redial</span>
+  </button>
+  <button mat-menu-item disabled>
+    <mat-icon>voicemail</mat-icon>
+    <span>Check voice mail</span>
+  </button>
+  <button mat-menu-item>
+    <mat-icon>notifications_off</mat-icon>
+    <span>Disable alerts</span>
+    
+  </button>
+  
+  <mat-slide-toggle mat-menu-item class="hide-if-narrow" >Large Images</mat-slide-toggle>
+  
+</mat-menu> -->

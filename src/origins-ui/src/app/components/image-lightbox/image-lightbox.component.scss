@@ -1,0 +1,84 @@
+/* The Modal (background) */
+.modal {
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Sit on top */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgb(0,0,0); /* Fallback color */
+  background-color: rgba(0,0,0,0.6); /* Black w/ opacity */
+}
+
+/* Modal Content/Box */
+.modal-content {
+
+  // Size and Position
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 80%;
+  height: 80%;
+
+  // General Appearance
+  background-color: rgb(0,0,0); /* Fallback color */
+  background-color: rgba(0,0,0,0.8); /* Black w/ opacity */  
+  border: 2px solid #888;
+  
+
+}
+
+.lightbox-image {
+  background-repeat:no-repeat; 
+  background-position: center; 
+  background-size:contain; 
+  width: 100%; 
+  height: 100%;
+}
+
+.button {
+  position:absolute; 
+  transform: scale(2);
+  background-color: rgb(0,0,0);
+  background-color: rgba(0,0,0,0.8);
+  color: white;
+
+}
+
+.button:hover {
+  background-color:  rgb(64,64,64);
+  background-color: rgba(64,64,64,0.8);
+}
+
+
+.nav-button {
+  @extend .button;  
+  
+  top: 50%;
+  transform: translateY(-50%) scale(2);
+}
+
+.prev-nav-button {
+  @extend .nav-button;
+  left: 2%; 
+}
+
+.next-nav-button {
+  @extend .nav-button;
+  right: 2%; 
+}
+
+.close-button {
+  @extend .button;
+  right: 2%; 
+  top: 4%;
+}
+
+.download-button {
+  @extend .button;
+  right: 2%; 
+  bottom: 4%;
+}

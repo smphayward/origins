@@ -1,0 +1,8 @@
+<button mat-icon-button (click)="onGetAll()">
+  <mat-icon>all_inclusive</mat-icon>
+</button>
+<input #search matInput placeholder="" value="justyn joshua cadets" style="width: 60%;min-width: 350px;max-width: 600px;" [(ngModel)]="searchText"
+  (keyup.enter)="onSearch()">
+<button mat-icon-button (click)="onSearch()">
+  <mat-icon>search</mat-icon>
+</button>

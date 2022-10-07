@@ -1,0 +1,9 @@
+<div>
+  <ngx-masonry>
+    <app-search-results-masonry-item 
+      *ngFor="let result of searchResults$ | async; let i = index;"
+      [imageSource]="result._links.thumb._href"
+      [useLargeImages]="useLargeImages$ | async" (click)="onClick(i)">
+    </app-search-results-masonry-item>
+  </ngx-masonry>
+</div>

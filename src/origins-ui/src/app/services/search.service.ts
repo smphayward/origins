@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 import {
   IndexRecord,
   MultipleIndexRecordsResult,
-} from '../interfaces/index-record';
+} from '../store/models';
 import { environment } from 'src/environments/environment';
 import { of } from 'rxjs';
 
@@ -87,7 +87,7 @@ const generateMockRecord = (
   };
 };
 
-const mockData: IndexRecord[] = [
+export const mockData: IndexRecord[] = [
   generateMockRecord(
     '001',
     'animals',
