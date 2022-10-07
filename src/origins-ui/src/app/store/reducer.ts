@@ -1,9 +1,5 @@
-import { MatOptionSelectionChange } from '@angular/material/core';
-import { createReducer, on, StateObservable } from '@ngrx/store';
-import { emptyObjectsAreNotAllowedInProps } from '@ngrx/store/src/models';
-import { mockData } from '../services/search.service';
-
-import { changeOptions, clearLightboxItem, getAll, resultLoaded, showLightboxItem, showNextLightboxItem, showPreviousLightboxItem } from './actions';
+import { createReducer, on } from '@ngrx/store';
+import { changeOptions, clearLightboxItem, resultLoaded, showLightboxItem, showNextLightboxItem, showPreviousLightboxItem } from './actions';
 import { IndexRecord, Options } from './models';
 
 export interface AppState {
