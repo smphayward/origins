@@ -50,7 +50,7 @@ services:
       - origins-thumbnails:/usr/origins/thumbnails
       - /mnt/Family-Photos/sorted:/usr/origins/collections/family-photos
     ports:
-      - 8080:8080
+      - 80:8080
     depends_on:
       - elasticsearch
     restart: unless-stopped
