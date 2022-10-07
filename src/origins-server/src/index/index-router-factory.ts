@@ -18,7 +18,7 @@ export const createIndexRouter = (indexProvider: IndexProvider,
     let links: any = {
       thumb: {
         _href: urlJoin(
-          context.requestUrlWithoutPath,
+          //context.requestUrlWithoutPath,
           "api",
           "thumbnails",
           documentId + ".jpg"
@@ -26,7 +26,7 @@ export const createIndexRouter = (indexProvider: IndexProvider,
       },
       self: {
         _ref: urlJoin(
-          context.requestUrlWithoutPath,
+          //context.requestUrlWithoutPath,
           "api",
           "index",
           documentId
@@ -42,7 +42,7 @@ export const createIndexRouter = (indexProvider: IndexProvider,
     if (collectionId && relativePath) {
       links.webdav = {
         _href: urlJoin(
-          context.requestUrlWithoutPath,
+          //context.requestUrlWithoutPath,
           "api",
           "webdav",
           document.collectionId,
