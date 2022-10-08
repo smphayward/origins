@@ -250,6 +250,7 @@ app.use("/api/thumbnails", createThumbnailRouter(thumbnailProvider));
 
 // UI
 app.use(express.static(config.uiDirectory));
+app.use('/assets',express.static('./assets/'));
 
 // Start listening
 console.log("Starting Origins server...");

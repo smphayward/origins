@@ -1,6 +1,6 @@
 import express, { Router } from "express";
 import { Document } from "./models";
-import { DocumentProvider } from "./DocumentProvider";
+import { DocumentProvider, DocumentSortCondition } from "./DocumentProvider";
 import { QueryStringParser } from "./QueryStringParser";
 
 export interface RequestContext {
@@ -12,7 +12,8 @@ export interface RequestContext {
 
 export const createDocumentRouter = <TDocument extends Document>(
   documentProvider: DocumentProvider<TDocument>,
-  queryStringParser: QueryStringParser
+  queryStringParser: QueryStringParser,
+  defaultSort: DocumentSortCondition[]
 ) => {
   const router = express.Router();
 
@@ -56,7 +57,11 @@ export const createDocumentRouter = <TDocument extends Document>(
 
       const qs = queryStringParser.parseGetMany(req);
 
-      const result = await documentProvider.getAll(qs.maxResults, qs.continuationToken);
+      const result = await documentProvider.getAll(
+        qs.maxResults,
+        qs.continuationToken,
+        defaultSort
+      );
 
       const final = {
         continuationToken: result.continuationToken,
@@ -66,12 +71,17 @@ export const createDocumentRouter = <TDocument extends Document>(
 
     })
     .get("/search", async (req, res) => {
-      const query = req.query.q as string;
-      if (!query) {
+      const qs = queryStringParser.parseSearch(req);
+      if(!qs.query){
         return res.status(400).send("Parameter 'q' not specified.");
       }
       // Get the documents
-      const result = await documentProvider.search(query);
+      const result = await documentProvider.search(
+        qs.query,
+        qs.maxResults,
+        qs.continuationToken,
+        defaultSort
+      );
       // Format documents
       const final = {
         continuationToken: result.continuationToken,

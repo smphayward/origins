@@ -9,7 +9,12 @@ export const createIndexRouter = (indexProvider: IndexProvider,
   queryStringParser: QueryStringParser) => {
   return createDocumentRouter(
     indexProvider,
-    queryStringParser
+    queryStringParser,
+    [{
+      field: "fileSizeBytes",
+      order: "asc"
+    }]
+
   ).onFormatDocument((document: any, context) => {
     const documentId = document[IndexRecordFields.id] as string | null;
     if (!documentId) {

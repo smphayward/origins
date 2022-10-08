@@ -1,6 +1,6 @@
 import { Client, ClientOptions, errors, estypes } from "@elastic/elasticsearch";
 import { Document, MultipleDocumentsResult } from "./models";
-import { DocumentProvider } from "./DocumentProvider";
+import { DocumentProvider, DocumentSortCondition } from "./DocumentProvider";
 import base64Url from 'base64url';
 import { SortResults } from "@elastic/elasticsearch/lib/api/types";
 
@@ -8,6 +8,8 @@ export interface ElasticsearchDocumentProviderConfig {
   indexName: string;
   elasticsearchClientOptions: ClientOptions;
 }
+
+
 
 export class ElasticsearchDocumentProvider<TDocument extends Document>
   implements DocumentProvider<TDocument>
@@ -23,7 +25,8 @@ export class ElasticsearchDocumentProvider<TDocument extends Document>
 
   public async getAll(
     maxResults: number = 25,
-    continuationToken: string | null = null
+    continuationToken: string | null = null,
+    sort: DocumentSortCondition[] = []
   ): Promise<MultipleDocumentsResult< TDocument>> {
     console.log(`Getting up to '${maxResults}' results with continuation token '${continuationToken}'.`);
     return await this.searchInternal(
@@ -34,6 +37,7 @@ export class ElasticsearchDocumentProvider<TDocument extends Document>
           },
         },
       },
+      sort,
       maxResults,
       continuationToken
     );
@@ -93,7 +97,8 @@ export class ElasticsearchDocumentProvider<TDocument extends Document>
   public async search(
     lucene: string,
     maxResults: number = 25,
-    continuationToken: string | null = null
+    continuationToken: string | null = null,
+    sort: DocumentSortCondition[] = []
   ): Promise<MultipleDocumentsResult< TDocument>> {
     console.log(`Searching up to '${maxResults}' results with continuation token '${continuationToken}'.`);
     return await this.searchInternal({
@@ -101,6 +106,7 @@ export class ElasticsearchDocumentProvider<TDocument extends Document>
         query: lucene,
       },
     },
+    sort,
     maxResults,
     continuationToken);
   }
@@ -139,6 +145,7 @@ export class ElasticsearchDocumentProvider<TDocument extends Document>
 
   private async searchInternal(
     query: estypes.QueryDslQueryContainer,
+    sort: DocumentSortCondition[] = [],
     maxResults: number = 25,
     continuationToken: string | null = null
   ): Promise<MultipleDocumentsResult< TDocument>> {
@@ -151,8 +158,10 @@ export class ElasticsearchDocumentProvider<TDocument extends Document>
         // {_uid: "asc" },
         //{ _uid: {"order" : "asc" , "missing" : "_last" , "unmapped_type" :"string"} }
         { _score: { order: "desc" } },
+        ...sort.map(sort => ({ [sort.field]: { order: sort.order }}))
+
         // Replace this with a date/time stamp stored as an integer
-        { fileSizeBytes: { order: "asc" } },
+        //{ fileSizeBytes: { order: "asc" } },
         // { "@timestamp" : "desc" },
         //{ "_uid": {"order" : "asc" , "missing" : "_last" , "unmapped_type" :"string"} }
       ],

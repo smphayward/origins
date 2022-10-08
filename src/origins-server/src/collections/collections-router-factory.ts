@@ -11,7 +11,7 @@ export const createCollectionsRouter = (
   collectionProvider: CollectionProvider,
   queryStringParser: QueryStringParser
 ) => {
-  return createDocumentRouter(collectionProvider, queryStringParser);
+  return createDocumentRouter(collectionProvider, queryStringParser, []);
 };
 
 // export const createCollectionsRouter = (
