@@ -16,7 +16,7 @@ export class ImageLightboxComponent implements OnInit {
     .pipe(startWith(blankIndexRecord));
 
   imageSource$ = this.item$.pipe(
-    map((item) => encodeURI(item?._links.webdav._href ?? ''))
+    map((item) => item?._links.webdav._href ?? '')
   );
 
   // Lightbox Visible?

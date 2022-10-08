@@ -22,7 +22,7 @@ export class SearchResultsGridItemComponent implements OnInit {
     this.click.emit();
   }
 
-  encodeURI = (uri: string) => {
-    return encodeURI(uri);
-  }
+  // encodeURI = (uri: string) => {
+  //   return encodeURI(uri);
+  // }
 }

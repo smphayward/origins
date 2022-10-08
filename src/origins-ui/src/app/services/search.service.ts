@@ -58,7 +58,7 @@ const generateMockRecord = (
   filename: string,
   fileExtension: string
 ): IndexRecord => {
-  const relativePath = relativeDirectory + filename + fileExtension;
+  const relativePath = relativeDirectory + encodeURI(filename) + fileExtension;
 
   return {
     id: Math.floor(Math.random() * 5000000).toString(),

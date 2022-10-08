@@ -18,8 +18,7 @@ import { ofType } from '@ngrx/effects';
   styleUrls: ['./app.component.scss'],
 })
 export class AppComponent {
-  //@ViewChild('search') searchElement!: ElementRef;
-  @ViewChild(NgxMasonryComponent) masonry!: NgxMasonryComponent;
+    @ViewChild(NgxMasonryComponent) masonry!: NgxMasonryComponent;
 
   private loadMoreOnScroll = false;
 
@@ -30,23 +29,6 @@ export class AppComponent {
       tap((b) => (this.loadMoreOnScroll = b))
     )
     .subscribe();
-
-  // lightboxSelectedResultIndex$ = this.store
-  //   .select(selectLightboxSelectedResultIndex)
-  //   .pipe(
-  //     startWith(undefined),
-  //     pairwise(),
-  //     filter((p) => (p[0] === undefined && p[1] !== undefined)),
-  //     map((p) => p[1]),
-  //     tap((index) => {
-  //       if(index){
-  //         this.showLightbox();
-  //       }
-  //     })
-  //     )
-  //   .subscribe();
-
-  isLighboxVisible = false;
 
   constructor(
     private store: Store,

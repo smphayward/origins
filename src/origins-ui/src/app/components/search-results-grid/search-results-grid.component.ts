@@ -41,9 +41,9 @@ export class SearchResultsGridComponent implements OnInit {
     this.store.dispatch(showLightboxItem({ index }));
   };
 
-  encodeURI = (uri: string) => {
-    return encodeURI(uri);
-  };
+  // encodeURI = (uri: string) => {
+  //   return encodeURI(uri);
+  // };
 
   // ----- Automatic Tile Sizing ----- //
   
