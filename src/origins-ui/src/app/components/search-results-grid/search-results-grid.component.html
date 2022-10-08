@@ -7,7 +7,7 @@
 </div> -->
 
 <div #theContainer>
-<mat-grid-list #matGridList cols="{{columnNum}}" rowHeight="1:1" style="margin-top: 5px; margin-bottom: 5px;">
+<mat-grid-list #matGridList cols="{{columnNum}}" rowHeight="1:1" class="search-results-list">
   <mat-grid-tile *ngFor="let result of searchResults$ | async; let i = index;" >
     <app-search-results-grid-item style="height: 100%; width: 100%;"
       [imageSource]="result._links.thumb._href"

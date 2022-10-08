@@ -1,66 +1,40 @@
+<!-- <mat-toolbar color="primary" style="border: solid 3px green;">
+</mat-toolbar> -->
+
+<!-- display: flex; flex-direction: column;  -->
 
 <app-image-lightbox></app-image-lightbox>
+
+<div class="main-container">
+
+  <app-toolbar></app-toolbar>
+
+  <div class="main-contents"  (scroll)="onScroll($event)">
+    <app-search-results-grid>
+    </app-search-results-grid>
+  </div>
+
+   <!-- <div class="header-bar-container">
+    <h1>Foo</h1>
+  </div> -->
+
+  <!--
+  <div style="flex: 1; overflow:auto;background-color: gray; border: solid 3px green;" (scroll)="onScroll($event)">
+    <app-search-results-grid>
+    </app-search-results-grid>
+  </div> -->
+
+</div>
+
+<!-- <app-image-lightbox></app-image-lightbox>
 
 <div style="height: 100%; text-align: center; display: flex; flex-direction: column;">
 
   <app-toolbar></app-toolbar>
 
   <div style="flex: 1; overflow:auto;" (scroll)="onScroll($event)">
-    <!-- <app-search-results-masonry >
-    </app-search-results-masonry> -->
     <app-search-results-grid>
     </app-search-results-grid>
   </div>
 
-  <!-- <div style="flex: 1;overflow: auto;" (scroll)="onScroll($event)">
-    <ngx-masonry>
-      <div ngxMasonryItem class="masonry-item" *ngFor="let result of searchResults; let i = index;">
-        <img [ngClass]="{'img-small': useLargeImages === false, 'img-large': useLargeImages }"
-          src="{{result._links.thumb._href}}" (click)="openDialog(i)">
-      </div>
-    </ngx-masonry>
-  </div> -->
-
-
-  <!-- <footer style="background: red;">
-    <div>
-      <p>I am Sticky!</p>
-    </div>
-  </footer> -->
-
-</div>
-
-
-
-
-
-
-  <!-- I want this menu-bar stuck to the top of the screen -->
-  <!-- The search results can scroll but this toolbar should always be in view -->
-  <!-- <mat-toolbar color="primary"> -->
-
-    <!-- Hamburger Menu Not Used Yet -->
-    <!-- <button mat-icon-button class="example-icon" aria-label="Example icon-button with menu icon">
-      <mat-icon>menu</mat-icon>
-    </button>
-    <span>Origins</span>
-
-    <span class="example-spacer"></span> -->
-
-    <!-- I think the search box and its two icons should shrink to fit a small phone nicely  -->
-    <!-- But on a full-screen brower on a PC, I think it should maybe not take the WHOLE width available -->
-    <!-- You know what I mean. It has to feel right on the two platforms. -->
-    <!-- <div class="example-spacer">
-      <button mat-icon-button (click)="onGetAll()">
-        <mat-icon>all_inclusive</mat-icon>
-      </button>
-      <input #search matInput placeholder="" value="justyn joshua cadets" style="width: 500px" [(ngModel)]="searchText"
-        (keyup.enter)="onSearch()">
-      <button mat-icon-button (click)="onSearch()">
-        <mat-icon>search</mat-icon>
-      </button>
-    </div>
-
-    <mat-slide-toggle [(ngModel)]="useLargeImages" (change)="onLargeImagesChanged()">Large Images</mat-slide-toggle>
-
-  </mat-toolbar> -->
+</div> -->

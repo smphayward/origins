@@ -49,7 +49,7 @@ export class SearchResultsGridComponent implements OnInit {
   
 
   columnNum = 3; //initial count
-  tileSize = 330; //one tile should have this width
+  tileSize = 200; //one tile should have this width
 
   // @HostListener('window:resize', ['$event'])
   // onResize(event: any) {

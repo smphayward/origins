@@ -1,40 +1,35 @@
-<mat-toolbar color="primary" >
+<mat-toolbar class="toolbar" color="primary">
 
-<div style="display: flex; flex-direction: row; width: 100%">
-
-  <div>
-
+  <!-- <div>
     <app-menu></app-menu>
+    <span class="logo">Origins</span>
+  </div> -->
+
+
+
+  <div class="toolbar-main-container" >
+    <div>
+      <app-menu></app-menu>
+      <span class="logo">Origins</span>
+    </div>
+    <div class="toolbar-search-box-container" >
+      <app-search-box></app-search-box>
+    </div>
+      
     
-<!-- 
-  <button mat-icon-button class="example-icon" aria-label="Example icon-button with menu icon">
-    <mat-icon>menu</mat-icon>
-  </button>
-  <span>My App</span>
-  <span class="example-spacer"></span>
-  <button mat-icon-button class="example-icon favorite-icon" aria-label="Example icon-button with heart icon">
-    <mat-icon>favorite</mat-icon>
-  </button>
-  <button mat-icon-button class="example-icon" aria-label="Example icon-button with share icon">
-    <mat-icon>share</mat-icon>
-  </button> -->
-</div>
-<div style="flex: 1; text-align: center;">
+  </div>
 
-  <app-search-box></app-search-box>
+  <!-- <h1 style="margin: 0 auto;">Hello</h1> -->
 
-  <!-- <button mat-icon-button (click)="onGetAll()">
-    <mat-icon>all_inclusive</mat-icon>
-  </button>
-  <input #search matInput placeholder="" value="justyn joshua cadets" style="width: 80%;min-width: 350px;max-width: 600px;" [(ngModel)]="searchText"
-    (keyup.enter)="onSearch()">
-  <button mat-icon-button (click)="onSearch()">
-    <mat-icon>search</mat-icon>
-  </button> -->
-</div>
-
-
-</div>
+  <!-- <div style="display: flex; flex-direction: row; width: 100%; border: solid 2px blue;">
+    <div>
+      <app-menu></app-menu>
+      <span class="logo">Origins</span>
+    </div>
+    <div style="flex: 1; align-content: center;border: solid 1px red;">
+      <app-search-box></app-search-box>
+    </div>
+  </div> -->
 
 </mat-toolbar>
 

@@ -1,19 +1,25 @@
+@import "./shared/shared.scss";
+
 body {
-  background-color: black;
+  background-color: pink;
 }
+
+
+
+
 
 /* Header */
 
 
-.example-spacer {
-  flex: 1 1 auto;
-}
+// .example-spacer {
+//   flex: 1 1 auto;
+// }
 
-@media (max-width: 768px) {
-  .hide-if-narrow {
-    display: none;
-  }
-}
+// @media (max-width: 768px) {
+//   .hide-if-narrow {
+//     display: none;
+//   }
+// }
 
 
 /* Contents */
@@ -33,6 +39,28 @@ body {
 }
 
 
+
+// // Phone
+// @media only screen and (min-device-width: 480px){
+//   .logo {
+//     display: none;
+//   }
+// }
+
+// // Tablet
+// @media only screen and (min-device-width: 768px) {
+//   .logo {
+//     display: none;
+//   }
+// }
+
+// // PC
+// @media only screen and (min-device-width: 1024px){
+//   .logo {
+//     display: unset;
+//   }
+// }
+
 /* Footer */
 
 /* #footer {
@@ -49,14 +77,14 @@ body {
   width: 100%;
 } */
 
-#footer {
-  position:fixed;
-  left:0px;
-  bottom:0px;
-  height:30px;
-  width:100%;
-  background:#999;
-}
+// #footer {
+//   position:fixed;
+//   left:0px;
+//   bottom:0px;
+//   height:30px;
+//   width:100%;
+//   background:#999;
+// }
 
 /* Boneyard */
 
