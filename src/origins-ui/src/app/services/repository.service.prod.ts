@@ -8,7 +8,7 @@ import { MultipleIndexRecordsResult } from '../store/models';
 @Injectable({
   providedIn: 'root',
 })
-export class SearchService {
+export class RepositoryService {
   constructor(private http: HttpClient) {}
 
   

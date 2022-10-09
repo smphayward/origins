@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { EMPTY, iif } from 'rxjs';
 import { map, mergeMap, catchError, tap } from 'rxjs/operators';
-import { SearchService } from '../services/search.service';
+import { RepositoryService } from '../services/repository.service';
 import { getAll, resultLoaded, searchByText, fetchMoreResults } from './actions';
 
 
@@ -16,7 +16,7 @@ export class SearchEffects {
     this.actions$.pipe(
       ofType(getAll),
       mergeMap(() =>
-        this.searchService.getAll().pipe(
+        this.repositoryService.getAll().pipe(
           tap((result) => {
             this.lastSearchByTextQuery = undefined;
             this.lastContinuationToken = result.continuationToken;
@@ -38,7 +38,7 @@ export class SearchEffects {
     this.actions$.pipe(
       ofType(searchByText),
       mergeMap((action) =>
-        this.searchService.search(action.query).pipe(
+        this.repositoryService.search(action.query).pipe(
           tap((result) => {
             this.lastSearchByTextQuery = action.query;
             this.lastContinuationToken = result.continuationToken;
@@ -62,8 +62,8 @@ export class SearchEffects {
     
     mergeMap((action) => 
     iif(() => this.lastSearchByTextQuery === undefined,
-      this.searchService.getAll(this.lastContinuationToken),
-      this.searchService.search(this.lastSearchByTextQuery ?? '', this.lastContinuationToken))
+      this.repositoryService.getAll(this.lastContinuationToken),
+      this.repositoryService.search(this.lastSearchByTextQuery ?? '', this.lastContinuationToken))
       .pipe(
         tap((result) => {
           this.lastContinuationToken = result.continuationToken;
@@ -88,6 +88,6 @@ export class SearchEffects {
 
   constructor(
     private actions$: Actions,
-    private searchService: SearchService
+    private repositoryService: RepositoryService
   ) {}
 }

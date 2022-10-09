@@ -30,19 +30,26 @@ import { StoreModule } from '@ngrx/store';
 import { EffectsModule } from '@ngrx/effects';
 
 // Angular Material
-import { MatMenuModule } from '@angular/material/menu';
-import { MatIconModule } from '@angular/material/icon';
-import { MatSliderModule } from '@angular/material/slider';
 import { MatButtonModule } from '@angular/material/button';
-import { MatInputModule } from '@angular/material/input';
-import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatDialogModule } from '@angular/material/dialog';
-import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { MatListModule } from '@angular/material/list';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatSliderModule } from '@angular/material/slider';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatToolbarModule } from '@angular/material/toolbar';
+
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { MatChipsModule } from '@angular/material/chips';
 import { ImageLightboxComponent } from './components/image-lightbox/image-lightbox.component';
+import { ItemsPanelComponent } from './panels/items-panel/items-panel.component';
+import { CollectionsPanelComponent } from './panels/collections-panel/collections-panel.component';
+import { NotFoundPanelComponent } from './panels/not-found-panel/not-found-panel.component';
+import { CollectionListComponent } from './components/collection-list/collection-list.component';
+import { CollectionListItemComponent } from './components/collection-list-item/collection-list-item.component';
 
 @NgModule({
   declarations: [
@@ -56,6 +63,11 @@ import { ImageLightboxComponent } from './components/image-lightbox/image-lightb
     ToolbarComponent,
     SearchBoxComponent,
     ImageLightboxComponent,
+    ItemsPanelComponent,
+    CollectionsPanelComponent,
+    NotFoundPanelComponent,
+    CollectionListComponent,
+    CollectionListItemComponent,
   ],
   imports: [
     AppRoutingModule,
@@ -71,6 +83,7 @@ import { ImageLightboxComponent } from './components/image-lightbox/image-lightb
 
     // Angular Material
     MatIconModule,
+    MatListModule,
     MatSliderModule,
     MatButtonModule,
     MatInputModule,

@@ -42,11 +42,39 @@
   // border: solid 3px green;
 }
 
-
-
 input {
   font-size: 16px;
 }
+
+.route-heading {
+  color: white;
+}
+
+
+// Action Buttons
+
+.action-button {
+  background-color: indigo;
+  color: white;
+  font-weight: bold;
+}
+
+.new-action-button {
+  @extend .action-button;
+  background-color: #228B22;
+}
+
+.edit-action-button {
+  @extend .action-button;
+  background-color: #1AA7EC;
+}
+
+.delete-action-button {
+  @extend .action-button;
+  background-color: #C41E3A;
+  margin-top: 10px;
+}
+
 
 // ██████  ██   ██  ██████  ███    ██ ███████ 
 // ██   ██ ██   ██ ██    ██ ████   ██ ██      

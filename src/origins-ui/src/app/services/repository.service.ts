@@ -11,7 +11,7 @@ import { of } from 'rxjs';
 @Injectable({
   providedIn: 'root',
 })
-export class SearchService {
+export class RepositoryService {
   constructor(private http: HttpClient) {}
 
   // TODO: Configure how we specify how many records to give

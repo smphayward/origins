@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, ElementRef, ViewChild } from '@angular/core';
-import { SearchService } from './services/search.service';
+import { RepositoryService } from './services/repository.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { LightboxComponent } from './components/lightbox/lightbox.component';
@@ -20,32 +20,32 @@ import { ofType } from '@ngrx/effects';
 export class AppComponent {
     @ViewChild(NgxMasonryComponent) masonry!: NgxMasonryComponent;
 
-  private loadMoreOnScroll = false;
+  // private loadMoreOnScroll = false;
 
-  moreResultsAvailable$ = this.store
-    .select(selectMoreResultsAvailable)
-    .pipe(
-      startWith(false),
-      tap((b) => (this.loadMoreOnScroll = b))
-    )
-    .subscribe();
+  // moreResultsAvailable$ = this.store
+  //   .select(selectMoreResultsAvailable)
+  //   .pipe(
+  //     startWith(false),
+  //     tap((b) => (this.loadMoreOnScroll = b))
+  //   )
+  //   .subscribe();
 
   constructor(
     private store: Store,
-    private searchService: SearchService,
+    private repositoryService: RepositoryService,
     private snackBar: MatSnackBar,
     public dialog: MatDialog
   ) {}
 
-  useLargeImages = false;
-  searchText = '';
+  //useLargeImages = false;
+  //searchText = '';
 
-  title = 'origins-ui';
-  x = { y: 'z' };
+  //title = 'origins-ui';
+  //x = { y: 'z' };
 
-  searchResults: IndexRecord[] = [];
-  continuationToken: string | undefined = undefined;
-  lastSearchText: string | undefined = undefined;
+  // searchResults: IndexRecord[] = [];
+  // continuationToken: string | undefined = undefined;
+  // lastSearchText: string | undefined = undefined;
   // Last query? to know what to call for loadMore
 
   // ███████ ██    ██ ███████ ███    ██ ████████     ██   ██  █████  ███    ██ ██████  ██      ███████ ██████
@@ -54,16 +54,16 @@ export class AppComponent {
   // ██       ██  ██  ██      ██  ██ ██    ██        ██   ██ ██   ██ ██  ██ ██ ██   ██ ██      ██      ██   ██
   // ███████   ████   ███████ ██   ████    ██        ██   ██ ██   ██ ██   ████ ██████  ███████ ███████ ██   ██
 
-  onScroll = (event: any) => {
-    const scrollPercent =
-      ((event.target.offsetHeight + event.target.scrollTop) /
-        event.target.scrollHeight) *
-      100;
+  // onScroll = (event: any) => {
+  //   const scrollPercent =
+  //     ((event.target.offsetHeight + event.target.scrollTop) /
+  //       event.target.scrollHeight) *
+  //     100;
 
-    if (this.loadMoreOnScroll && scrollPercent >= 80) {
-      this.store.dispatch(fetchMoreResults());
-    }
-  };
+  //   if (this.loadMoreOnScroll && scrollPercent >= 80) {
+  //     this.store.dispatch(fetchMoreResults());
+  //   }
+  // };
 
   // onGetAll = () => {
   //   this.getAllOrSearch();

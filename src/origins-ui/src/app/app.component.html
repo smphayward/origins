@@ -9,9 +9,10 @@
 
   <app-toolbar></app-toolbar>
 
-  <div class="main-contents"  (scroll)="onScroll($event)">
-    <app-search-results-grid>
-    </app-search-results-grid>
+  <div class="main-contents"  >
+    <router-outlet></router-outlet>
+    <!-- <app-search-results-grid>
+    </app-search-results-grid> -->
   </div>
 
    <!-- <div class="header-bar-container">

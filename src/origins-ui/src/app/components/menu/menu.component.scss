@@ -1,0 +1,13 @@
+.active-menu-item {
+  font-weight: bold;
+  background-color: rgb(0,0,0);
+  background-color: rgba(0,0,0, 0.2);
+}
+
+.logo-invisible {
+  display: none;
+}
+
+.logo-visible {
+  display: unset;
+}
