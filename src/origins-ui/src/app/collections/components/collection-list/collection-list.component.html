@@ -1,0 +1,28 @@
+<div style="padding: 10px;">
+  <h1 class="route-heading" >Collections</h1>
+
+  <button mat-stroked-button class="new-action-button">
+    <mat-icon>add</mat-icon>
+    Add Collection
+  </button>
+  <!-- <span *ngFor="let collection of collections$ | async; let i = index;">
+    {{collection.id}}
+  </span> -->
+  <div style="display: flex; flex-direction: column; ">
+    <app-collection-list-item 
+    style="flex: 1"
+    *ngFor="let collection of collections$ | async; let i = index;"
+    [collection]="collection"></app-collection-list-item>
+
+  </div>
+</div>
+<!-- 
+<mat-list style="width: 100%">
+  <mat-list-item>
+    <app-collection-list-item></app-collection-list-item>
+  </mat-list-item>
+  <mat-list-item>
+    <app-collection-list-item></app-collection-list-item>
+  </mat-list-item>
+  
+</mat-list> -->

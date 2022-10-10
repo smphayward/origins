@@ -2,18 +2,20 @@ import { AppRoutingModule } from './app-routing.module';
 
 // Origins Components
 import { AppComponent } from './app.component';
-import { LightboxComponent } from './components/lightbox/lightbox.component';
-import { MenuComponent } from './components/menu/menu.component';
-import { SearchBoxComponent } from './components/search-box/search-box.component';
-import { SearchResultsGridComponent } from './components/search-results-grid/search-results-grid.component';
-import { SearchResultsMasonryComponent } from './components/search-results-masonry/search-results-masonry.component';
-import { SearchResultsMasonryItemComponent } from './components/search-results-masonry-item/search-results-masonry-item.component';
-import { SearchResultsGridItemComponent } from './components/search-results-grid-item/search-results-grid-item.component';
-import { ToolbarComponent } from './components/toolbar/toolbar.component';
+import { MenuComponent } from './shared/components/menu/menu.component';
+import { SearchBoxComponent } from './shared/components/search-box/search-box.component';
+import { SearchResultsGridComponent } from './items/components/search-results-grid/search-results-grid.component';
+import { SearchResultsGridItemComponent } from './items/components/search-results-grid-item/search-results-grid-item.component';
+import { ToolbarComponent } from './shared/components/toolbar/toolbar.component';
 
 // Origins ngrx
-import { SearchEffects } from './store/effects';
-import { originsReducer } from './store/reducer';
+import { itemsReducer } from './items/store/items.reducers';
+import { collectionsReducer } from './collections/store/collections.reducers';
+import { ItemsEffects } from './items/store/items.effects';
+import { CollectionsEffects } from './collections/store/collections.effects';
+// import { SearchEffects } from './store/effects';
+// import { originsReducer } from './store/reducer';
+
 
 // Other Components
 import { NgxMasonryModule } from 'ngx-masonry';
@@ -44,20 +46,18 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { MatChipsModule } from '@angular/material/chips';
-import { ImageLightboxComponent } from './components/image-lightbox/image-lightbox.component';
-import { ItemsPanelComponent } from './panels/items-panel/items-panel.component';
-import { CollectionsPanelComponent } from './panels/collections-panel/collections-panel.component';
+import { ImageLightboxComponent } from './items/components/image-lightbox/image-lightbox.component';
+import { ItemsPanelComponent } from './items/components/items-panel/items-panel.component';
+import { CollectionsPanelComponent } from './collections/components/collections-panel/collections-panel.component';
 import { NotFoundPanelComponent } from './panels/not-found-panel/not-found-panel.component';
-import { CollectionListComponent } from './components/collection-list/collection-list.component';
-import { CollectionListItemComponent } from './components/collection-list-item/collection-list-item.component';
+import { CollectionListComponent } from './collections/components/collection-list/collection-list.component';
+import { CollectionListItemComponent } from './collections/components/collection-list-item/collection-list-item.component';
+
 
 @NgModule({
   declarations: [
     AppComponent,
-    LightboxComponent,
     SearchResultsGridComponent,
-    SearchResultsMasonryComponent,
-    SearchResultsMasonryItemComponent,
     SearchResultsGridItemComponent,
     MenuComponent,
     ToolbarComponent,
@@ -97,8 +97,8 @@ import { CollectionListItemComponent } from './components/collection-list-item/c
     MatMenuModule,
 
     // Origins ngrx
-    StoreModule.forRoot({ originsReducer }, {}),
-    EffectsModule.forRoot([SearchEffects]),
+    StoreModule.forRoot({ items: itemsReducer, collections: collectionsReducer }, {}),
+    EffectsModule.forRoot([ ItemsEffects, CollectionsEffects]),
   ],
   providers: [],
   bootstrap: [AppComponent],

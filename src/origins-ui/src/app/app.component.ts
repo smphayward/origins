@@ -1,14 +1,13 @@
 import { ChangeDetectionStrategy, Component, ElementRef, ViewChild } from '@angular/core';
-import { RepositoryService } from './services/repository.service';
+//import { RepositoryService } from './services/repository.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
-import { LightboxComponent } from './components/lightbox/lightbox.component';
 import { NgxMasonryComponent } from 'ngx-masonry';
-import { IndexRecord, MultipleIndexRecordsResult } from './store/models';
+//import { IndexRecord, MultipleIndexRecordsResult } from './store/models';
 import { filter, map, Observable, pairwise, startWith, tap } from 'rxjs';
 import { Store } from '@ngrx/store';
-import { fetchMoreResults,  } from './store/actions';
-import { selectMoreResultsAvailable } from './store/selectors';
+// import { fetchMoreResults,  } from './store/actions';
+// import { selectMoreResultsAvailable } from './store/selectors';
 import { ofType } from '@ngrx/effects';
 //import * as _ from 'lodash';
 
@@ -32,7 +31,7 @@ export class AppComponent {
 
   constructor(
     private store: Store,
-    private repositoryService: RepositoryService,
+    //private repositoryService: RepositoryService,
     private snackBar: MatSnackBar,
     public dialog: MatDialog
   ) {}
