@@ -5,3 +5,8 @@ export interface GetManyResult<T> {
   continuationToken?: string;
 }
 
+export interface DeleteResult {
+  success: boolean;
+  statusCode: number;
+  message: string;
+}

@@ -1,8 +1,9 @@
 import { ArrayDataSource } from '@angular/cdk/collections';
 import { map, Observable, of } from 'rxjs';
-import { GetManyResult } from '../models/repository-results';
+import { OriginsRecord } from '../models/record';
+import { DeleteResult, GetManyResult } from '../models/repository-results';
 
-export interface RecordRepositoryService<TRecord extends object> {
+export interface RecordRepositoryService<TRecord extends OriginsRecord> {
   
   getAll: (continuationToken?: string) => Observable<GetManyResult<TRecord>>;
 
@@ -14,5 +15,6 @@ export interface RecordRepositoryService<TRecord extends object> {
   // Search
   // Add
   // Update
-  // Delete
+  
+  deleteById: (id: string) => Observable<DeleteResult>;
 }

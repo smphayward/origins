@@ -1,4 +1,6 @@
-export interface RecordState<TRecord> {
+import { OriginsRecord } from "../models/record";
+
+export interface RecordState<TRecord extends OriginsRecord> {
   records: TRecord[];
   moreRecordsAvailable: boolean;
 

@@ -1,6 +1,9 @@
+import { OriginsRecord } from '../models/record';
 import { RecordState } from './models';
 
-export const recordsLoaded = <TRecord, TState extends RecordState<TRecord>>(
+
+// ----- READ RECORDS ----- //
+export const recordsLoaded = <TRecord extends OriginsRecord, TState extends RecordState<TRecord>>(
   state: TState,
   {
     records,
@@ -29,9 +32,27 @@ export const recordsLoaded = <TRecord, TState extends RecordState<TRecord>>(
   return newState;
 };
 
+// ----- WRITE RECORDS ----- //
+export const recordSuccessfullyDeleted = <TRecord extends OriginsRecord, TState extends RecordState<TRecord>>(
+  state: TState,
+  { id }: { id: string }
+): TState => {
+    const index = state.records.findIndex((record) => record.id === id);
+    if (index !== -1) {
+      return {
+        ...state,
+        records: [
+          ...state.records.slice(0, index),
+          ...state.records.slice(index + 1),
+        ],
+      };}
+    return state;
+};
+
+
 // ----- SELECTED RECORD ----- //
 export const clearSelectedRecord = <
-  TRecord,
+  TRecord extends OriginsRecord,
   TState extends RecordState<TRecord>
 >(
   state: TState
@@ -39,7 +60,7 @@ export const clearSelectedRecord = <
   return getStateWithSelectedIndexChange(state, undefined);
 };
 
-export const moveToRecord = <TRecord, TState extends RecordState<TRecord>>(
+export const moveToRecord = <TRecord extends OriginsRecord, TState extends RecordState<TRecord>>(
   state: TState,
   { index }: { index: number }
 ): TState => {
@@ -47,7 +68,7 @@ export const moveToRecord = <TRecord, TState extends RecordState<TRecord>>(
 };
 
 export const moveToPreviousRecord = <
-  TRecord,
+  TRecord extends OriginsRecord,
   TState extends RecordState<TRecord>
 >(
   state: TState
@@ -59,7 +80,7 @@ export const moveToPreviousRecord = <
   return getStateWithSelectedIndexChange(state, undefined);
 };
 
-export const moveToNextRecord = <TRecord, TState extends RecordState<TRecord>>(
+export const moveToNextRecord = <TRecord extends OriginsRecord, TState extends RecordState<TRecord>>(
   state: TState
 ): TState => {
   const currentIndex = state.selectedRecordIndex;
@@ -70,7 +91,7 @@ export const moveToNextRecord = <TRecord, TState extends RecordState<TRecord>>(
 };
 
 const getStateWithSelectedIndexChange = <
-  TRecord,
+  TRecord extends OriginsRecord,
   TState extends RecordState<TRecord>
 >(
   state: TState,

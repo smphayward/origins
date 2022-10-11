@@ -1,8 +1,9 @@
 import { createFeatureSelector, createSelector } from '@ngrx/store';
+import { OriginsRecord } from '../models/record';
 import { RecordState } from './models';
 
 
-export class RecordSelectors<TDocument, TState extends RecordState<TDocument>>{
+export class RecordSelectors<TRecord extends OriginsRecord, TState extends RecordState<TRecord>>{
 
   constructor(private readonly feature: string) {  }
 

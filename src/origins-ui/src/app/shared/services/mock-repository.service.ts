@@ -1,10 +1,11 @@
 import { ArrayDataSource } from '@angular/cdk/collections';
 import { TRANSLATIONS } from '@angular/core';
 import { map, Observable, of } from 'rxjs';
-import { GetManyResult } from '../models/repository-results';
+import { OriginsRecord } from '../models/record';
+import { DeleteResult, GetManyResult } from '../models/repository-results';
 import { RecordRepositoryService } from './record-repository.service';
 
-export abstract class MockRepositoryService<TRecord extends object>
+export abstract class MockRepositoryService<TRecord extends OriginsRecord>
   implements RecordRepositoryService<TRecord>
 {
   
@@ -70,4 +71,27 @@ export abstract class MockRepositoryService<TRecord extends object>
   // Add
   // Update
   // Delete
+
+  deleteById(id: string): Observable<DeleteResult>{
+    const index = this._records.findIndex((record) => record.id === id);
+    if(index === -1) {
+      return of({
+        success: false,
+        statusCode: 404,
+        message: "Record not found."
+      });
+    }
+    this._records.splice(index, 1);
+    return of({
+      success: true,
+      statusCode: 200,
+      message: "Record successfully deleted."
+    });
+
+
+    // TODO: Remove the item from the in-memory mock array of data
+    // Split and spreading?
+
+  }
+
 }

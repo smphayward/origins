@@ -3,7 +3,7 @@ import { createAction, props } from '@ngrx/store';
 export class RecordActions<TRecord> {
   constructor(private feature: string) {}
 
-  // ----- CRUD Operations ------ //
+  // ----- READ OPERATIONS ------ //
   readonly getAll = createAction(`[${this.feature}] Get All`);
 
   readonly searchByText = createAction(
@@ -23,6 +23,22 @@ export class RecordActions<TRecord> {
       moreRecordsAvailable: boolean;
     }>()
   );
+
+  // ----- WRITE OPERATIONS ----- //
+  readonly requestDeleteRecordById = createAction(
+    `[${this.feature}] Request Delete by Id`,
+    props<{ id: string }>()
+  );
+
+  readonly deleteRecordSucceeded = createAction(
+    `[${this.feature}] Deleted by Id Succeeded`,
+    props<{ id: string }>()
+  );
+
+  readonly deleteRecordFailed = createAction(
+    `[${this.feature}] Deleted by Id Failed`,
+    props<{ id: string, reason: string }>()
+  )
 
   // ------ SELECTED RECORD ----- //
   readonly moveToRecord = createAction(

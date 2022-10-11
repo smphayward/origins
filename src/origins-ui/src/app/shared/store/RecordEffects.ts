@@ -3,10 +3,11 @@ import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { EMPTY, iif } from 'rxjs';
 import { map, mergeMap, catchError, tap } from 'rxjs/operators';
 import { GetManyResult } from 'src/app/shared/models/repository-results';
+import { OriginsRecord } from '../models/record';
 import { RecordRepositoryService } from '../services/record-repository.service';
-import { RecordActions } from './action-factories';
+import { RecordActions } from './RecordActions';
 
-export abstract class RecordEffects<TRecord extends object> {
+export abstract class RecordEffects<TRecord extends OriginsRecord> {
   private lastSearchByTextQuery: string | undefined = undefined;
   private lastContinuationToken: string | undefined = undefined;
 
@@ -17,7 +18,7 @@ export abstract class RecordEffects<TRecord extends object> {
 
   ) {}
 
-  // ----- EFFECTS ----- //
+  // ----- READ OPERATIONS ----- //
 
   getAll$ = createEffect(() =>
     this.actions$.pipe(
@@ -73,6 +74,28 @@ export abstract class RecordEffects<TRecord extends object> {
     )
   );
   
+  // ----- WRITE OPERATIONS ----- //
+  deleteById$ = createEffect(() =>
+  this.actions$.pipe(
+    ofType(this.recordActions.requestDeleteRecordById),
+    mergeMap((action) =>
+      this.repository.deleteById(action.id).pipe(
+        map((result) => {
+          console.log("Result", result);
+          if(result.success)
+            return this.recordActions.deleteRecordSucceeded({id: action.id});
+          else{
+            return this.recordActions.deleteRecordFailed({id: action.id, reason: result.message});
+          }
+      }
+        ),
+        catchError(() => EMPTY)
+      )
+    )
+  )
+);
+
+
   // ----- HELPER FUNCTIONS ----- //
 
   private mapGetManyResultToAction = (

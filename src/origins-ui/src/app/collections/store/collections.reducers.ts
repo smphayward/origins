@@ -17,8 +17,11 @@ export const initialState: CollectionsState = {
 export const collectionsReducer = createReducer(
   initialState,
 
-  // ----- LOAD RECORDS ----- //
+  // ----- READ RECORDS ----- //
   on(CollectionActions.collectionRecordsLoaded, ReducerFunctions.recordsLoaded),
+
+  // ----- WRITE RECORDS ----- //
+  on(CollectionActions.deleteCollectionSucceeded, ReducerFunctions.recordSuccessfullyDeleted),
 
   // ----- SELECTED ----- //
   on(CollectionActions.clearSelectedCollection, ReducerFunctions.clearSelectedRecord),

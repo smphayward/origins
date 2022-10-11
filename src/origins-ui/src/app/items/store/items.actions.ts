@@ -1,4 +1,4 @@
-import { RecordActions } from "src/app/shared/store/action-factories";
+import { RecordActions } from "src/app/shared/store/RecordActions";
 import { Item, ItemInfo } from "../items.models";
 
 export const itemActions = new RecordActions<ItemInfo>('Items');

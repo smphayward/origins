@@ -1,38 +1,37 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { Store } from '@ngrx/store';
 import { ConfirmDialogComponent } from 'src/app/shared/components/confirm-dialog/confirm-dialog.component';
 import { Collection } from '../../collections.models';
+import { collectionActions } from '../../store/collections.actions';
 
 @Component({
   selector: 'app-collection-list-item',
   templateUrl: './collection-list-item.component.html',
-  styleUrls: ['./collection-list-item.component.scss']
+  styleUrls: ['./collection-list-item.component.scss'],
 })
 export class CollectionListItemComponent implements OnInit {
+  @Input() collection: Collection = { id: '', rootDirectory: '' };
 
-  @Input() collection: Collection = { id: '', rootDirectory: ''};
+  constructor(public store: Store, public dialog: MatDialog) {}
 
-  constructor(public dialog: MatDialog) { }
-
-  ngOnInit(): void {
-  }
+  ngOnInit(): void {}
 
   onDelete = () => {
-    
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       data: {
         title: 'Delete collection?',
         message: `Would you like to delete collection '${this.collection.id}'?`,
-        cancelButtonText: "No",
-        okButtonText: "Delete"
+        cancelButtonText: 'No',
+        okButtonText: 'Delete',
       },
     });
-    dialogRef.afterClosed().subscribe(result => {
-      if(result){
-        // TODO: Send the delete action here
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        this.store.dispatch(
+          collectionActions.requestDeleteRecordById({ id: this.collection.id })
+        );
       }
-      
     });
-  }
-
+  };
 }
