@@ -52,6 +52,7 @@ import { CollectionsPanelComponent } from './collections/components/collections-
 import { NotFoundPanelComponent } from './panels/not-found-panel/not-found-panel.component';
 import { CollectionListComponent } from './collections/components/collection-list/collection-list.component';
 import { CollectionListItemComponent } from './collections/components/collection-list-item/collection-list-item.component';
+import { ConfirmDialogComponent } from './shared/components/confirm-dialog/confirm-dialog.component';
 
 
 @NgModule({
@@ -68,6 +69,7 @@ import { CollectionListItemComponent } from './collections/components/collection
     NotFoundPanelComponent,
     CollectionListComponent,
     CollectionListItemComponent,
+    ConfirmDialogComponent,
   ],
   imports: [
     AppRoutingModule,

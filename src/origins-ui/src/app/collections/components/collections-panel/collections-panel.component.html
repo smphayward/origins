@@ -1,6 +1,16 @@
-<div class="main-contents"  (scroll)="onScroll($event)">
+<div class="main-contents" (scroll)="onScroll($event)">
   <!-- <app-search-results-grid>
   </app-search-results-grid> -->
-  
-  <app-collection-list></app-collection-list>
+
+  <div style="padding: 10px;">
+    <h1 class="route-heading">Collections</h1>
+
+    <button mat-stroked-button class="new-action-button">
+      <mat-icon>add</mat-icon>
+      Add Collection
+    </button>
+
+
+    <app-collection-list></app-collection-list>
+  </div>
 </div>
