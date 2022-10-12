@@ -1,10 +1,13 @@
-import { ArrayDataSource } from '@angular/cdk/collections';
-import { TRANSLATIONS } from '@angular/core';
 import { map, Observable, of } from 'rxjs';
 import { OriginsRecord } from '../models/record';
-import { AddResult, DeleteResult, GetManyResult, UpdateResult } from '../models/repository-results';
+import {
+  AddResult,
+  DeleteResult,
+  GetManyResult,
+  UpdateResult,
+} from '../models/repository-results';
 import { RecordRepositoryService } from './record-repository.service';
-import {v4 as uuidv4} from 'uuid';
+import { v4 as uuidv4 } from 'uuid';
 
 export abstract class MockRepositoryService<
   TRecordForRead extends OriginsRecord,
@@ -42,6 +45,9 @@ export abstract class MockRepositoryService<
 
     // Return the result
     return of({
+      success: true,
+      statusCode: 200,
+      message: 'Records successfully retrieved',
       continuationToken: nextContinuationToken,
       records,
     });
@@ -54,7 +60,8 @@ export abstract class MockRepositoryService<
     console.log('Mock repository search');
     return this.getAll(continuationToken).pipe(
       map((result) => ({
-        records: result.records.filter((record) => {
+        ...result,
+        records: result.records?.filter((record) => {
           const r = record as any;
           Object.keys(record)
             .map((key) => r[key])
@@ -66,7 +73,6 @@ export abstract class MockRepositoryService<
               return false;
             });
         }),
-        continuationToken: result.continuationToken,
       }))
     );
   }
@@ -78,22 +84,21 @@ export abstract class MockRepositoryService<
     return of({
       success: true,
       statusCode: 200,
-      message: "Record added successfully",
-      record: recordForRead
+      message: 'Record added successfully',
+      record: recordForRead,
     });
   }
 
   update(record: TRecordForWrite): Observable<UpdateResult<TRecordForRead>> {
-
     const id = record.id;
-    const existingIndex = this._records.findIndex(r => r.id === id);
-    if(existingIndex === -1){
+    const existingIndex = this._records.findIndex((r) => r.id === id);
+    if (existingIndex === -1) {
       return of({
         success: false,
         statusCode: 404,
         message: `Record with id ${id} not found`,
-        record: undefined
-      });      
+        record: undefined,
+      });
     }
 
     const recordForRead = this.getRecordForRead(record);
@@ -102,9 +107,8 @@ export abstract class MockRepositoryService<
       success: true,
       statusCode: 200,
       message: `Record ${id} updated successfully`,
-      record: recordForRead
+      record: recordForRead,
     });
-
   }
 
   deleteById(id: string): Observable<DeleteResult> {
@@ -129,5 +133,4 @@ export abstract class MockRepositoryService<
 
   // ----- PROTECTED ABSTRACT ----- //
   protected abstract getRecordForRead(record: TRecordForWrite): TRecordForRead;
-
 }

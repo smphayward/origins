@@ -17,7 +17,7 @@ export const itemsReducer = createReducer(
   initialState,
 
   // ----- LOAD RECORDS ----- //
-  on(ItemActions.itemRecordsLoaded, ReducerFunctions.recordsLoaded),
+  on(ItemActions.fetchItemsSucceeded, ReducerFunctions.recordsLoaded),
 
   // ----- SELECTED ----- //
   on(ItemActions.clearSelectedItem, ReducerFunctions.clearSelectedRecord),

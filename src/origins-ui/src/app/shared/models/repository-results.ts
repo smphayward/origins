@@ -4,9 +4,8 @@ export interface GeneralResult {
   message: string;
 }
 
-// TODO: Should extend GeneralResult
-export interface GetManyResult<T> {
-  records: Array<T>;
+export interface GetManyResult<T> extends GeneralResult {
+  records?: Array<T>;
   continuationToken?: string;
 }
 

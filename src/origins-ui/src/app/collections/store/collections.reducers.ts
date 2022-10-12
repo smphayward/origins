@@ -18,7 +18,7 @@ export const collectionsReducer = createReducer(
   initialState,
 
   // ----- READ RECORDS ----- //
-  on(CollectionActions.collectionRecordsLoaded, ReducerFunctions.recordsLoaded),
+  on(CollectionActions.fetchCollectionsSucceeded, ReducerFunctions.recordsLoaded),
 
   // ----- WRITE RECORDS ----- //
   on(CollectionActions.addCollectionSucceeded, ReducerFunctions.recordSuccessfullyAdded),

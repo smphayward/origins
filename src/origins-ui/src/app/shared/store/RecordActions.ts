@@ -16,12 +16,19 @@ export class RecordActions<TRecordForRead extends OriginsRecord, TRecordForWrite
     `[${this.feature}] Fetch More Records`
   );
 
-  readonly recordsLoaded = createAction(
-    `[${this.feature}] Result Loaded`,
+  readonly fetchRecordsSucceeded = createAction(
+    `[${this.feature}] Fetch Records Succeeded`,
     props<{
       records: Array<TRecordForRead>;
       isContinuation: boolean;
       moreRecordsAvailable: boolean;
+    }>()
+  );
+
+  readonly fetchRecordsFailed = createAction(
+    `[${this.feature}] Fetch Records Failed`,
+    props<{
+      reason: string
     }>()
   );
 

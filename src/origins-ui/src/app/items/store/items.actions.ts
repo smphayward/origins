@@ -7,7 +7,8 @@ export const itemActions = new RecordActions<ItemInfo, Item>('Items');
 export const getAllItems = itemActions.getAll;
 export const searchItemsByText = itemActions.searchByText;
 export const fetchMoreItemRecords = itemActions.fetchMoreRecords;
-export const itemRecordsLoaded = itemActions.recordsLoaded;
+export const fetchItemsSucceeded = itemActions.fetchRecordsSucceeded;
+export const fetchItemsFailed = itemActions.fetchRecordsFailed;
 
 // Selected Record
 export const clearSelectedItem = itemActions.clearSelectedRecord;

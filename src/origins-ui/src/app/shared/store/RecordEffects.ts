@@ -156,10 +156,15 @@ export abstract class RecordEffects<
     result: GetManyResult<TRecordForRead>,
     isContinuation: boolean
   ) => {
-    return this.recordActions.recordsLoaded({
-      records: result.records,
-      isContinuation,
-      moreRecordsAvailable: result.continuationToken !== undefined,
-    });
+    if(result.success && result.records){
+      return this.recordActions.fetchRecordsSucceeded({
+        records: result.records,
+        isContinuation,
+        moreRecordsAvailable: result.continuationToken !== undefined,
+      });
+    }
+    return this.recordActions.fetchRecordsFailed({
+      reason: result.message
+    })
   };
 }

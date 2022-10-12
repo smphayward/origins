@@ -7,7 +7,8 @@ export const collectionActions = new RecordActions<CollectionInfo, Collection>('
 export const getAllCollections = collectionActions.getAll;
 export const searchCollectionsByText = collectionActions.searchByText;
 export const fetchMoreCollections = collectionActions.fetchMoreRecords;
-export const collectionRecordsLoaded = collectionActions.recordsLoaded;
+export const fetchCollectionsSucceeded = collectionActions.fetchRecordsSucceeded;
+export const fetchCollectionsFailed = collectionActions.fetchRecordsFailed;
 
 // WRITE
 export const requestAddCollection = collectionActions.requestAddRecord;
