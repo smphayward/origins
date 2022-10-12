@@ -1,6 +1,7 @@
 // Only includes info that actually goes into the repository
 export interface Collection {
   id: string;
+  name: string;
   rootDirectory: string;
 }
 
@@ -8,4 +9,10 @@ export interface Collection {
 // This is NOT information required for create/update operations
 export interface CollectionInfo extends Collection {
   exists?: boolean;
+}
+
+export const emptyCollection: Collection = {
+  id:'',
+  name: '',
+  rootDirectory: ''
 }

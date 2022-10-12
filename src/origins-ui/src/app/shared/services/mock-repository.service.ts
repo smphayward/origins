@@ -2,19 +2,23 @@ import { ArrayDataSource } from '@angular/cdk/collections';
 import { TRANSLATIONS } from '@angular/core';
 import { map, Observable, of } from 'rxjs';
 import { OriginsRecord } from '../models/record';
-import { DeleteResult, GetManyResult } from '../models/repository-results';
+import { AddResult, DeleteResult, GetManyResult, UpdateResult } from '../models/repository-results';
 import { RecordRepositoryService } from './record-repository.service';
+import {v4 as uuidv4} from 'uuid';
 
-export abstract class MockRepositoryService<TRecord extends OriginsRecord>
-  implements RecordRepositoryService<TRecord>
+export abstract class MockRepositoryService<
+  TRecordForRead extends OriginsRecord,
+  TRecordForWrite extends OriginsRecord
+> implements RecordRepositoryService<TRecordForRead, TRecordForWrite>
 {
-  
   private _maxResults = 60;
 
-  constructor(private _records: Array<TRecord>) {}
+  constructor(private _records: Array<TRecordForRead>) {}
 
-  getAll(continuationToken?: string): Observable<GetManyResult<TRecord>> {
-    console.log("Mock repository get all");
+  getAll(
+    continuationToken?: string
+  ): Observable<GetManyResult<TRecordForRead>> {
+    console.log('Mock repository get all');
 
     // Figure out continuation
     let startAt = 0;
@@ -46,8 +50,8 @@ export abstract class MockRepositoryService<TRecord extends OriginsRecord>
   search(
     query: string,
     continuationToken?: string
-  ): Observable<GetManyResult<TRecord>> {
-    console.log("Mock repository search");
+  ): Observable<GetManyResult<TRecordForRead>> {
+    console.log('Mock repository search');
     return this.getAll(continuationToken).pipe(
       map((result) => ({
         records: result.records.filter((record) => {
@@ -67,31 +71,63 @@ export abstract class MockRepositoryService<TRecord extends OriginsRecord>
     );
   }
 
-  // Search
-  // Add
-  // Update
-  // Delete
+  add(record: TRecordForWrite): Observable<AddResult<TRecordForRead>> {
+    const recordForRead = this.getRecordForRead(record);
+    recordForRead.id = uuidv4();
+    this._records.push(recordForRead);
+    return of({
+      success: true,
+      statusCode: 200,
+      message: "Record added successfully",
+      record: recordForRead
+    });
+  }
 
-  deleteById(id: string): Observable<DeleteResult>{
-    const index = this._records.findIndex((record) => record.id === id);
-    if(index === -1) {
+  update(record: TRecordForWrite): Observable<UpdateResult<TRecordForRead>> {
+
+    const id = record.id;
+    const existingIndex = this._records.findIndex(r => r.id === id);
+    if(existingIndex === -1){
       return of({
         success: false,
         statusCode: 404,
-        message: "Record not found."
+        message: `Record with id ${id} not found`,
+        record: undefined
+      });      
+    }
+
+    const recordForRead = this.getRecordForRead(record);
+    this._records[existingIndex] = recordForRead;
+    return of({
+      success: true,
+      statusCode: 200,
+      message: `Record ${id} updated successfully`,
+      record: recordForRead
+    });
+
+  }
+
+  deleteById(id: string): Observable<DeleteResult> {
+    const index = this._records.findIndex((record) => record.id === id);
+    if (index === -1) {
+      return of({
+        success: false,
+        statusCode: 404,
+        message: 'Record not found.',
       });
     }
     this._records.splice(index, 1);
     return of({
       success: true,
       statusCode: 200,
-      message: "Record successfully deleted."
+      message: 'Record successfully deleted.',
     });
-
 
     // TODO: Remove the item from the in-memory mock array of data
     // Split and spreading?
-
   }
+
+  // ----- PROTECTED ABSTRACT ----- //
+  protected abstract getRecordForRead(record: TRecordForWrite): TRecordForRead;
 
 }

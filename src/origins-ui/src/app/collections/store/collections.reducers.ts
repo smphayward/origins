@@ -21,7 +21,9 @@ export const collectionsReducer = createReducer(
   on(CollectionActions.collectionRecordsLoaded, ReducerFunctions.recordsLoaded),
 
   // ----- WRITE RECORDS ----- //
+  on(CollectionActions.addCollectionSucceeded, ReducerFunctions.recordSuccessfullyAdded),
   on(CollectionActions.deleteCollectionSucceeded, ReducerFunctions.recordSuccessfullyDeleted),
+  
 
   // ----- SELECTED ----- //
   on(CollectionActions.clearSelectedCollection, ReducerFunctions.clearSelectedRecord),

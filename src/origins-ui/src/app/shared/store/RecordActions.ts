@@ -1,6 +1,7 @@
 import { createAction, props } from '@ngrx/store';
+import { OriginsRecord } from '../models/record';
 
-export class RecordActions<TRecord> {
+export class RecordActions<TRecordForRead extends OriginsRecord, TRecordForWrite extends OriginsRecord> {
   constructor(private feature: string) {}
 
   // ----- READ OPERATIONS ------ //
@@ -18,13 +19,28 @@ export class RecordActions<TRecord> {
   readonly recordsLoaded = createAction(
     `[${this.feature}] Result Loaded`,
     props<{
-      records: Array<TRecord>;
+      records: Array<TRecordForRead>;
       isContinuation: boolean;
       moreRecordsAvailable: boolean;
     }>()
   );
 
   // ----- WRITE OPERATIONS ----- //
+  readonly requestAddRecord = createAction(
+    `[${this.feature}] Request Add`,
+    props<{ record: TRecordForWrite }>()
+  );
+
+  readonly addRecordSucceeded = createAction(
+    `[${this.feature}] Add Succeeded`,
+    props<{ record: TRecordForRead }>()
+  );
+
+  readonly addRecordFailed = createAction(
+    `[${this.feature}] Add Failed`,
+    props<{ reason: string }>()
+  );
+
   readonly requestDeleteRecordById = createAction(
     `[${this.feature}] Request Delete by Id`,
     props<{ id: string }>()
@@ -59,53 +75,53 @@ export class RecordActions<TRecord> {
   );
 }
 
-export class RecordActionFactory<TRecord> {
-  constructor(private feature: string) {}
+// export class RecordActionFactory<TRecord> {
+//   constructor(private feature: string) {}
 
-  // ----- CRUD Operations ------ //
-  createGetAllAction = () => {
-    return createAction(`[${this.feature}] Get All`);
-  };
+//   // ----- CRUD Operations ------ //
+//   createGetAllAction = () => {
+//     return createAction(`[${this.feature}] Get All`);
+//   };
 
-  createSearchByTextAction = () => {
-    return createAction(
-      `[${this.feature}] Search by Text`,
-      props<{ query: string }>()
-    );
-  };
+//   createSearchByTextAction = () => {
+//     return createAction(
+//       `[${this.feature}] Search by Text`,
+//       props<{ query: string }>()
+//     );
+//   };
 
-  createFeatchMoreRecordsAction = () => {
-    return createAction(`[${this.feature}] Fetch More Records`);
-  };
+//   createFeatchMoreRecordsAction = () => {
+//     return createAction(`[${this.feature}] Fetch More Records`);
+//   };
 
-  createRecordsLoadedAction = () => {
-    return createAction(
-      `[${this.feature}] Result Loaded`,
-      props<{
-        records: Array<TRecord>;
-        isContinuation: boolean;
-        moreRecordsAvailable: boolean;
-      }>()
-    );
-  };
+//   createRecordsLoadedAction = () => {
+//     return createAction(
+//       `[${this.feature}] Result Loaded`,
+//       props<{
+//         records: Array<TRecord>;
+//         isContinuation: boolean;
+//         moreRecordsAvailable: boolean;
+//       }>()
+//     );
+//   };
 
-  // ------ SELECTED RECORD ----- //
-  createMoveToRecordAction = () => {
-    return createAction(
-      `[${this.feature}] Move To Record`,
-      props<{ index: number }>()
-    );
-  };
+//   // ------ SELECTED RECORD ----- //
+//   createMoveToRecordAction = () => {
+//     return createAction(
+//       `[${this.feature}] Move To Record`,
+//       props<{ index: number }>()
+//     );
+//   };
 
-  createClearSelectedRecordAction = () => {
-    return createAction(`[${this.feature}] Clear Selected Record`);
-  };
+//   createClearSelectedRecordAction = () => {
+//     return createAction(`[${this.feature}] Clear Selected Record`);
+//   };
 
-  createMoveToPreviousRecordAction = () => {
-    return createAction(`[${this.feature}] Move To Previous Record`);
-  };
+//   createMoveToPreviousRecordAction = () => {
+//     return createAction(`[${this.feature}] Move To Previous Record`);
+//   };
 
-  createMoveToNextRecordAction = () => {
-    return createAction(`[${this.feature}] Move To Next Record`);
-  };
-}
+//   createMoveToNextRecordAction = () => {
+//     return createAction(`[${this.feature}] Move To Next Record`);
+//   };
+// }

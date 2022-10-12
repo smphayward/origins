@@ -24,7 +24,7 @@ import { NgxMasonryModule } from 'ngx-masonry';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 
 // ngrx
@@ -53,6 +53,7 @@ import { NotFoundPanelComponent } from './panels/not-found-panel/not-found-panel
 import { CollectionListComponent } from './collections/components/collection-list/collection-list.component';
 import { CollectionListItemComponent } from './collections/components/collection-list-item/collection-list-item.component';
 import { ConfirmDialogComponent } from './shared/components/confirm-dialog/confirm-dialog.component';
+import { AddEditCollectionComponent } from './collections/components/add-edit-collection/add-edit-collection.component';
 
 
 @NgModule({
@@ -70,6 +71,7 @@ import { ConfirmDialogComponent } from './shared/components/confirm-dialog/confi
     CollectionListComponent,
     CollectionListItemComponent,
     ConfirmDialogComponent,
+    AddEditCollectionComponent,
   ],
   imports: [
     AppRoutingModule,
@@ -82,6 +84,7 @@ import { ConfirmDialogComponent } from './shared/components/confirm-dialog/confi
     BrowserModule,
     FormsModule,
     HttpClientModule,
+    ReactiveFormsModule,
 
     // Angular Material
     MatIconModule,

@@ -28,11 +28,19 @@ export const recordsLoaded = <TRecord extends OriginsRecord, TState extends Reco
     newState = { ...state, records, moreRecordsAvailable };
   }
   // TODO: Do stuff with selectedRecord and selectedRecordIndex?
-  console.log("moreRecordsAvailable", moreRecordsAvailable);
   return newState;
 };
 
 // ----- WRITE RECORDS ----- //
+export const recordSuccessfullyAdded = <TRecord extends OriginsRecord, TState extends RecordState<TRecord>>(
+  state: TState,
+  { record }: { record: TRecord}): TState => {
+    return {
+      ...state,
+      records: [...state.records, record]
+    };
+  }
+
 export const recordSuccessfullyDeleted = <TRecord extends OriginsRecord, TState extends RecordState<TRecord>>(
   state: TState,
   { id }: { id: string }

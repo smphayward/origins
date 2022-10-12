@@ -2,7 +2,7 @@ import { Component, Input, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
 import { ConfirmDialogComponent } from 'src/app/shared/components/confirm-dialog/confirm-dialog.component';
-import { Collection } from '../../collections.models';
+import { Collection, emptyCollection } from '../../collections.models';
 import { collectionActions } from '../../store/collections.actions';
 
 @Component({
@@ -11,7 +11,7 @@ import { collectionActions } from '../../store/collections.actions';
   styleUrls: ['./collection-list-item.component.scss'],
 })
 export class CollectionListItemComponent implements OnInit {
-  @Input() collection: Collection = { id: '', rootDirectory: '' };
+  @Input() collection: Collection = emptyCollection;
 
   constructor(public store: Store, public dialog: MatDialog) {}
 

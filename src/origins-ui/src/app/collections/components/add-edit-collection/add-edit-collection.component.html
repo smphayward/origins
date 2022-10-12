@@ -1,0 +1,24 @@
+<h1 mat-dialog-title>{{data.dialogTitle}}</h1>
+
+<mat-dialog-content [formGroup]="form">
+
+  <mat-form-field appearance="fill">
+    <mat-label>Id</mat-label>
+    <input matInput readonly="true" [value]="data.id">
+  </mat-form-field>
+  <br>
+  <mat-form-field appearance="fill">
+    <mat-label>Collection Name</mat-label>
+    <input matInput [value]="data.name" formControlName="name">
+  </mat-form-field>
+  <br>
+  <mat-form-field appearance="fill">
+    <mat-label>Root Directory</mat-label>
+    <input matInput [value]="data.rootDirectory" formControlName="rootDirectory">
+  </mat-form-field>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onCancel()">Cancel</button>
+  <button mat-button (click)="onSave()" style="background-color: #228B22;">{{data.okButtonText}}</button>
+</mat-dialog-actions>

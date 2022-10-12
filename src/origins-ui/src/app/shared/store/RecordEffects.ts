@@ -7,15 +7,17 @@ import { OriginsRecord } from '../models/record';
 import { RecordRepositoryService } from '../services/record-repository.service';
 import { RecordActions } from './RecordActions';
 
-export abstract class RecordEffects<TRecord extends OriginsRecord> {
+export abstract class RecordEffects<
+  TRecordForRead extends OriginsRecord,
+  TRecordForWrite extends OriginsRecord
+> {
   private lastSearchByTextQuery: string | undefined = undefined;
   private lastContinuationToken: string | undefined = undefined;
 
   constructor(
     private actions$: Actions,
-    private repository: RecordRepositoryService<TRecord>,
-    private recordActions: RecordActions<TRecord>
-
+    private repository: RecordRepositoryService<TRecordForRead, TRecordForWrite>,
+    private recordActions: RecordActions<TRecordForRead, TRecordForWrite>
   ) {}
 
   // ----- READ OPERATIONS ----- //
@@ -73,33 +75,59 @@ export abstract class RecordEffects<TRecord extends OriginsRecord> {
       )
     )
   );
-  
+
   // ----- WRITE OPERATIONS ----- //
-  deleteById$ = createEffect(() =>
+  add$ = createEffect(() =>
   this.actions$.pipe(
-    ofType(this.recordActions.requestDeleteRecordById),
+    ofType(this.recordActions.requestAddRecord),
     mergeMap((action) =>
-      this.repository.deleteById(action.id).pipe(
+      this.repository.add(action.record).pipe(
         map((result) => {
-          console.log("Result", result);
-          if(result.success)
-            return this.recordActions.deleteRecordSucceeded({id: action.id});
-          else{
-            return this.recordActions.deleteRecordFailed({id: action.id, reason: result.message});
+          console.log('Result', result);
+          if (result.success && result.record)
+            return this.recordActions.addRecordSucceeded({
+              record: result.record
+            });
+          else {
+            return this.recordActions.addRecordFailed({
+              reason: result.message,
+            });
           }
-      }
-        ),
+        }),
         catchError(() => EMPTY)
       )
     )
   )
 );
 
+  deleteById$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(this.recordActions.requestDeleteRecordById),
+      mergeMap((action) =>
+        this.repository.deleteById(action.id).pipe(
+          map((result) => {
+            console.log('Result', result);
+            if (result.success)
+              return this.recordActions.deleteRecordSucceeded({
+                id: action.id,
+              });
+            else {
+              return this.recordActions.deleteRecordFailed({
+                id: action.id,
+                reason: result.message,
+              });
+            }
+          }),
+          catchError(() => EMPTY)
+        )
+      )
+    )
+  );
 
   // ----- HELPER FUNCTIONS ----- //
 
   private mapGetManyResultToAction = (
-    result: GetManyResult<TRecord>,
+    result: GetManyResult<TRecordForRead>,
     isContinuation: boolean
   ) => {
     return this.recordActions.recordsLoaded({
@@ -107,7 +135,5 @@ export abstract class RecordEffects<TRecord extends OriginsRecord> {
       isContinuation,
       moreRecordsAvailable: result.continuationToken !== undefined,
     });
-
   };
-
 }

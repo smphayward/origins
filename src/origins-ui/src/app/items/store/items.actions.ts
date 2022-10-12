@@ -1,7 +1,7 @@
 import { RecordActions } from "src/app/shared/store/RecordActions";
 import { Item, ItemInfo } from "../items.models";
 
-export const itemActions = new RecordActions<ItemInfo>('Items');
+export const itemActions = new RecordActions<ItemInfo, Item>('Items');
 
 // CRUD
 export const getAllItems = itemActions.getAll;

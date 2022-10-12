@@ -4,12 +4,12 @@ import { EMPTY, iif } from 'rxjs';
 import { map, mergeMap, catchError, tap } from 'rxjs/operators';
 import { GetManyResult } from 'src/app/shared/models/repository-results';
 import { RecordEffects } from 'src/app/shared/store/RecordEffects';
-import { CollectionInfo } from '../collections.models';
+import { Collection, CollectionInfo } from '../collections.models';
 import { CollectionRepositoryService } from '../services/collection-repository.service';
 import { collectionActions } from './collections.actions';
 
 @Injectable()
-export class CollectionsEffects extends RecordEffects<CollectionInfo> {
+export class CollectionsEffects extends RecordEffects<CollectionInfo, Collection> {
 
   constructor(
     actions$: Actions,
