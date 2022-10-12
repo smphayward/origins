@@ -53,8 +53,12 @@
                   "with": "src/environments/environment.prod.ts"
                 },
                 {
-                  "replace": "src/app/services/search.service.ts",
-                  "with": "src/app/services/search.service.prod.ts"
+                  "replace": "src/app/components/services/collection-repository.service.ts",
+                  "with":    "src/app/components/services/collection-repository.service.prod.ts"
+                },
+                {
+                  "replace": "src/app/items/services/item-repository.service.ts",
+                  "with":    "src/app/items/services/item-repository.service.prod.ts"
                 }
               ],
               "outputHashing": "all"

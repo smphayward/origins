@@ -1,14 +1,14 @@
 import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { HttpRepositoryService } from "src/app/shared/services/http-repository.service";
-import { Collection, CollectionInfo } from "../collections.models";
+import { Item, ItemInfo } from "../items.models";
 
 @Injectable({
   providedIn: 'root',
 })
-export class CollectionRepositoryService extends HttpRepositoryService<CollectionInfo, Collection> {
+export class CollectionRepositoryService extends HttpRepositoryService<ItemInfo, Item> {
   constructor(http: HttpClient) {
-    super(http, '/api/collections');
+    super(http, '/api/items');
   }
 
 }

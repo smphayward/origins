@@ -5,7 +5,7 @@ import { map, mergeMap, catchError, tap } from 'rxjs/operators';
 import { GetManyResult } from 'src/app/shared/models/repository-results';
 import { RecordEffects } from 'src/app/shared/store/RecordEffects';
 import { Item, ItemInfo } from '../items.models';
-import { ItemRepositoryService } from '../services/items-repository.service';
+import { ItemRepositoryService } from '../services/item-repository.service';
 import {  itemActions,
 } from './items.actions';
 
