@@ -25,6 +25,13 @@ export class RecordSelectors<TRecord extends OriginsRecord, TState extends Recor
     (state) => state.moreRecordsAvailable
   );
   
+  // ----- Specific Records ----- //
+  readonly selectRecordById = (props: { id: string}) =>   
+    createSelector(    
+      this.selectState,
+      (state) => state.records.find(r => r.id === props.id)
+    );
+
   // ----- Selected Record ----- //
   readonly selectSelectedRecord = createSelector(
     this.selectState,

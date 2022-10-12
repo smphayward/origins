@@ -54,13 +54,12 @@ export const recordSuccessfullyUpdated = <TRecord extends OriginsRecord, TState 
       };      
     }
 
+    const records = [... state.records];
+    records[index] = {...record};
+
     return {
       ...state,
-      records: [
-        ...state.records.slice(0, index),
-        record,
-        ...state.records.slice(index + 1),
-      ],
+      records
     };
   }  
 

@@ -1,9 +1,11 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
+import { map, startWith, tap } from 'rxjs';
 import { ConfirmDialogComponent } from 'src/app/shared/components/confirm-dialog/confirm-dialog.component';
-import { Collection, emptyCollection } from '../../collections.models';
+import { Collection, emptyCollection, emptyCollectionInfo } from '../../collections.models';
 import { collectionActions } from '../../store/collections.actions';
+import { selectCollectionById } from '../../store/collections.selectors';
 import { AddEditCollectionComponent } from '../add-edit-collection/add-edit-collection.component';
 import { AddEditDialogData } from '../add-edit-collection/AddEditDialogData';
 
@@ -13,7 +15,21 @@ import { AddEditDialogData } from '../add-edit-collection/AddEditDialogData';
   styleUrls: ['./collection-list-item.component.scss'],
 })
 export class CollectionListItemComponent implements OnInit {
-  @Input() collection: Collection = emptyCollection;
+  //@Input() collection: Collection = emptyCollection;
+  //collection: Collection = emptyCollection;
+  
+  @Input() collectionId: string = '';
+  @Input() collectionName: string = '';
+  @Input() collectionRootDirectory: string = '';
+  @Input() collectionRootDirectoryExists: boolean | undefined = false;
+
+  // foo$ = this.store
+  //   .select(selectCollectionById({ id: this.collectionId }))
+  //   .pipe(
+  //     startWith(emptyCollectionInfo),
+  //     map((collection) => collection ?? emptyCollectionInfo),
+  //     tap((collection) => this.collection = collection)
+  //   ).subscribe();
 
   constructor(public store: Store, public dialog: MatDialog) {}
 
@@ -23,9 +39,9 @@ export class CollectionListItemComponent implements OnInit {
     const data: AddEditDialogData = {
       dialogTitle: 'Edit Collection',
       okButtonText: 'Edit',
-      id: this.collection.id,
-      name: this.collection.name,
-      rootDirectory: this.collection.rootDirectory,
+      id: this.collectionId,
+      name: this.collectionName,
+      rootDirectory: this.collectionRootDirectory,
     };
 
     const dialogRef = this.dialog.open(AddEditCollectionComponent, {
@@ -36,7 +52,7 @@ export class CollectionListItemComponent implements OnInit {
         this.store.dispatch(
           collectionActions.requestUpdateRecord({
             record: {
-              id: this.collection.id,
+              id: this.collectionId,
               name: result.name as string,
               rootDirectory: result.rootDirectory as string,
             },
@@ -50,7 +66,7 @@ export class CollectionListItemComponent implements OnInit {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       data: {
         title: 'Delete collection?',
-        message: `Would you like to delete collection '${this.collection.id}'?`,
+        message: `Would you like to delete collection '${this.collectionName}'?`,
         cancelButtonText: 'No',
         okButtonText: 'Delete',
       },
@@ -58,7 +74,7 @@ export class CollectionListItemComponent implements OnInit {
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
         this.store.dispatch(
-          collectionActions.requestDeleteRecordById({ id: this.collection.id })
+          collectionActions.requestDeleteRecordById({ id: this.collectionId })
         );
       }
     });

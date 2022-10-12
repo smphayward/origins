@@ -16,3 +16,10 @@ export const emptyCollection: Collection = {
   name: '',
   rootDirectory: ''
 }
+
+export const emptyCollectionInfo: CollectionInfo = {
+  id:'',
+  name: '',
+  rootDirectory: '',
+  exists: false
+}

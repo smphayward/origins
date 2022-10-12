@@ -3,7 +3,13 @@
     <app-collection-list-item 
     style="flex: 1"
     *ngFor="let collection of collections$ | async; let i = index;"
-    [collection]="collection"></app-collection-list-item>
+     [collectionId]="collection.id"
+     [collectionName]="collection.name"
+     [collectionRootDirectory]="collection.rootDirectory"
+     [collectionRootDirectoryExists]="collection.exists"
+     ></app-collection-list-item>
+
+     <!-- [collection]="collection" -->
 
   </div>
 

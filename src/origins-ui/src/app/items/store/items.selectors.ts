@@ -1,5 +1,5 @@
 
-import { RecordSelectors } from 'src/app/shared/store/selector-factories';
+import { RecordSelectors } from 'src/app/shared/store/RecordSelectors';
 import { ItemInfo } from '../items.models';
 import { ItemsState } from './items.reducers';
 
