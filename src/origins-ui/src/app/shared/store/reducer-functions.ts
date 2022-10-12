@@ -41,6 +41,29 @@ export const recordSuccessfullyAdded = <TRecord extends OriginsRecord, TState ex
     };
   }
 
+export const recordSuccessfullyUpdated = <TRecord extends OriginsRecord, TState extends RecordState<TRecord>>(
+  state: TState,
+  { record }: { record: TRecord}): TState => {
+    const index = state.records.findIndex(r => r.id == record.id);
+    if(index === -1){
+      // Treat as an Add
+      // This probably shouldn't happen but you never know
+      return {
+        ...state,
+        records: [...state.records, record]
+      };      
+    }
+
+    return {
+      ...state,
+      records: [
+        ...state.records.slice(0, index),
+        record,
+        ...state.records.slice(index + 1),
+      ],
+    };
+  }  
+
 export const recordSuccessfullyDeleted = <TRecord extends OriginsRecord, TState extends RecordState<TRecord>>(
   state: TState,
   { id }: { id: string }
@@ -53,7 +76,8 @@ export const recordSuccessfullyDeleted = <TRecord extends OriginsRecord, TState 
           ...state.records.slice(0, index),
           ...state.records.slice(index + 1),
         ],
-      };}
+      };
+    }
     return state;
 };
 

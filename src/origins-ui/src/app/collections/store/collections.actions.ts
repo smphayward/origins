@@ -14,6 +14,10 @@ export const requestAddCollection = collectionActions.requestAddRecord;
 export const addCollectionSucceeded = collectionActions.addRecordSucceeded;
 export const addCollectionFailed = collectionActions.addRecordFailed;
 
+export const requestUpdateCollection = collectionActions.requestUpdateRecord;
+export const updateCollectionSucceeded = collectionActions.updateRecordSucceeded;
+export const updateCollectionFailed = collectionActions.updateRecordFailed;
+
 export const requestDeleteCollectionById = collectionActions.requestDeleteRecordById;
 export const deleteCollectionSucceeded = collectionActions.deleteRecordSucceeded;
 export const deleteCollectionFailed = collectionActions.deleteRecordFailed;

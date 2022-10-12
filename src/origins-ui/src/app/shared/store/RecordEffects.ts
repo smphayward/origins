@@ -16,7 +16,10 @@ export abstract class RecordEffects<
 
   constructor(
     private actions$: Actions,
-    private repository: RecordRepositoryService<TRecordForRead, TRecordForWrite>,
+    private repository: RecordRepositoryService<
+      TRecordForRead,
+      TRecordForWrite
+    >,
     private recordActions: RecordActions<TRecordForRead, TRecordForWrite>
   ) {}
 
@@ -78,27 +81,50 @@ export abstract class RecordEffects<
 
   // ----- WRITE OPERATIONS ----- //
   add$ = createEffect(() =>
-  this.actions$.pipe(
-    ofType(this.recordActions.requestAddRecord),
-    mergeMap((action) =>
-      this.repository.add(action.record).pipe(
-        map((result) => {
-          console.log('Result', result);
-          if (result.success && result.record)
-            return this.recordActions.addRecordSucceeded({
-              record: result.record
-            });
-          else {
-            return this.recordActions.addRecordFailed({
-              reason: result.message,
-            });
-          }
-        }),
-        catchError(() => EMPTY)
+    this.actions$.pipe(
+      ofType(this.recordActions.requestAddRecord),
+      mergeMap((action) =>
+        this.repository.add(action.record).pipe(
+          map((result) => {
+            console.log('Result', result);
+            if (result.success && result.record)
+              return this.recordActions.addRecordSucceeded({
+                record: result.record,
+              });
+            else {
+              return this.recordActions.addRecordFailed({
+                reason: result.message,
+              });
+            }
+          }),
+          catchError(() => EMPTY)
+        )
       )
     )
-  )
-);
+  );
+
+  update$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(this.recordActions.requestUpdateRecord),
+      mergeMap((action) =>
+        this.repository.update(action.record).pipe(
+          map((result) => {
+            console.log('Result', result);
+            if (result.success && result.record)
+              return this.recordActions.updateRecordSucceeded({
+                record: result.record,
+              });
+            else {
+              return this.recordActions.updateRecordFailed({
+                reason: result.message,
+              });
+            }
+          }),
+          catchError(() => EMPTY)
+        )
+      )
+    )
+  );
 
   deleteById$ = createEffect(() =>
     this.actions$.pipe(

@@ -1,9 +1,14 @@
 <div class="collection-list-item">
-  <h2>{{collection.id}}</h2>
+  <h2>{{collection.name}}</h2>
   <div style="display: flex;">
     <div class="info-div" style="flex: 1;">
       <table >
-        <tr class="tr-border">
+        <tr>
+          <td>Id:</td>
+          <td>{{collection.id}}</td>
+        </tr>
+        
+        <tr>
           <td>Path:</td>
           <td>{{collection.rootDirectory}}</td>
         </tr>
@@ -14,7 +19,7 @@
       </table>
     </div>
     <div class="actions-div">
-      <button mat-stroked-button class="edit-action-button" style="width: 100%;">
+      <button mat-stroked-button class="edit-action-button" (click)="onUpdate()" style="width: 100%;">
         <mat-icon>edit</mat-icon>
         Edit
       </button>

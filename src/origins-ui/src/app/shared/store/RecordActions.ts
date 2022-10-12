@@ -41,6 +41,21 @@ export class RecordActions<TRecordForRead extends OriginsRecord, TRecordForWrite
     props<{ reason: string }>()
   );
 
+  readonly requestUpdateRecord = createAction(
+    `[${this.feature}] Request Update`,
+    props<{ record: TRecordForWrite }>()
+  );
+
+  readonly updateRecordSucceeded = createAction(
+    `[${this.feature}] Update Succeeded`,
+    props<{ record: TRecordForRead }>()
+  );
+
+  readonly updateRecordFailed = createAction(
+    `[${this.feature}] Update Failed`,
+    props<{ reason: string }>()
+  );
+
   readonly requestDeleteRecordById = createAction(
     `[${this.feature}] Request Delete by Id`,
     props<{ id: string }>()

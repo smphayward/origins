@@ -2,17 +2,17 @@
 
 <mat-dialog-content [formGroup]="form">
 
-  <mat-form-field appearance="fill">
+  <mat-form-field >
     <mat-label>Id</mat-label>
     <input matInput readonly="true" [value]="data.id">
   </mat-form-field>
   <br>
-  <mat-form-field appearance="fill">
+  <mat-form-field >
     <mat-label>Collection Name</mat-label>
     <input matInput [value]="data.name" formControlName="name">
   </mat-form-field>
   <br>
-  <mat-form-field appearance="fill">
+  <mat-form-field >
     <mat-label>Root Directory</mat-label>
     <input matInput [value]="data.rootDirectory" formControlName="rootDirectory">
   </mat-form-field>
