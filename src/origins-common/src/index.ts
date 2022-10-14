@@ -57,7 +57,7 @@ export interface ObservableDocumentProvider<
     sort?: DocumentSortCondition[],
   ) => Observable<GetDocumentsResponse<TDocumentForRead>>;
   get: (id: string) => Observable<GetDocumentResponse<TDocumentForRead>>;
-  put: (document: TDocumentForWrite) => Observable<UpsertDocumentResponse<TDocumentForWrite>>;
+  put: (document: TDocumentForWrite) => Observable<UpsertDocumentResponse<TDocumentForRead>>;
   delete: (id: string) => Observable<DeleteDocumentResponse>;
   search: (
     lucene: string,
@@ -164,25 +164,36 @@ TDocumentForRead extends OriginsDocument,
     );
   }
 
-  put(document: TDocumentForWrite): Observable<UpsertDocumentResponse<TDocumentForWrite>> {
-    const id = document.id;
+  put(document: TDocumentForWrite): Observable<UpsertDocumentResponse<TDocumentForRead>> {
+    let id = document.id;
+    if(id.trim().length === 0){
+      id = uuidv4();
+    }
+
+    // Add new
     const existingIndex = this._documents.findIndex((r) => r.id === id);
     if (existingIndex === -1) {
+      const temp = this.getRecordForRead({
+        ...document,
+        id: uuidv4(),
+      });
+      this._documents.push(temp);
       return of({
-        success: false,
-        statusCode: 404,
-        message: `Document with id ${id} not found`,
-        record: undefined,
+        success: true,
+        statusCode: 201,
+        message: `Document ${id} created successfully.`,
+        document: temp,
       });
     }
 
-    const recordForRead = this.getRecordForRead(document);
-    this._documents[existingIndex] = recordForRead;
+    // Update existing
+    const documentForRead = this.getRecordForRead(document);
+    this._documents[existingIndex] = documentForRead;
     return of({
       success: true,
       statusCode: 200,
       message: `Document ${id} updated successfully`,
-      record: recordForRead,
+      document: documentForRead,
     });
   }
 
