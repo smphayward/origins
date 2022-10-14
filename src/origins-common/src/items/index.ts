@@ -1,4 +1,4 @@
-import { DocumentProvider, Link, ObservableDocumentProvider, OriginsDocument } from "..";
+import { DocumentProvider, Link, MockObservableDocumentProvider, ObservableDocumentProvider, OriginsDocument } from "..";
 
 // ███    ███  ██████  ██████  ███████ ██      ███████ 
 // ████  ████ ██    ██ ██   ██ ██      ██      ██      
@@ -95,5 +95,31 @@ export interface ObservableItemProvider extends ObservableDocumentProvider<Item>
 }
 
 export interface ObservableItemInfoProvider extends ObservableDocumentProvider<ItemInfo, Item> {
+
+}
+
+// ███    ███  ██████   ██████ ██   ██ 
+// ████  ████ ██    ██ ██      ██  ██  
+// ██ ████ ██ ██    ██ ██      █████   
+// ██  ██  ██ ██    ██ ██      ██  ██  
+// ██      ██  ██████   ██████ ██   ██ 
+
+export class MockObservableItemInfoProvider 
+  extends MockObservableDocumentProvider<ItemInfo, Item>
+  implements ObservableItemInfoProvider {
+
+  protected getRecordForRead(document: Item): ItemInfo {
+    return {
+      ...document,
+      _links:{
+        thumb: {
+          _href: ''
+        },
+        webdav: {
+          _href: ''
+        }
+      }
+    };
+  }
 
 }

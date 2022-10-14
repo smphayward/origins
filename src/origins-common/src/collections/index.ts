@@ -1,4 +1,4 @@
-import { DocumentProvider, Link, ObservableDocumentProvider, OriginsDocument } from "..";
+import { DocumentProvider, Link, MockObservableDocumentProvider, ObservableDocumentProvider, OriginsDocument } from "..";
 
 // ███    ███  ██████  ██████  ███████ ██      ███████ 
 // ████  ████ ██    ██ ██   ██ ██      ██      ██      
@@ -41,5 +41,24 @@ export interface ObservableItemProvider extends ObservableDocumentProvider<Colle
 }
 
 export interface ObservableItemInfoProvider extends ObservableDocumentProvider<CollectionInfo, Collection> {
+
+}
+
+// ███    ███  ██████   ██████ ██   ██ 
+// ████  ████ ██    ██ ██      ██  ██  
+// ██ ████ ██ ██    ██ ██      █████   
+// ██  ██  ██ ██    ██ ██      ██  ██  
+// ██      ██  ██████   ██████ ██   ██ 
+
+export class MockObservableCollectionInfoProvider 
+  extends MockObservableDocumentProvider<CollectionInfo, Collection>
+  implements ObservableItemInfoProvider {
+
+  protected getRecordForRead(document: Collection): CollectionInfo {
+    return {
+      ...document,
+      rootDirectoryExists: true
+    };
+  }
 
 }

@@ -1,4 +1,5 @@
-import { Observable } from 'rxjs';
+import { Observable, of, map } from 'rxjs';
+import { v4 as uuidv4 } from 'uuid';
 
 // ███    ███  ██████  ██████  ███████ ██      ███████ 
 // ████  ████ ██    ██ ██   ██ ██      ██      ██      
@@ -56,15 +57,160 @@ export interface ObservableDocumentProvider<
     sort?: DocumentSortCondition[],
   ) => Observable<GetDocumentsResponse<TDocumentForRead>>;
   get: (id: string) => Observable<GetDocumentResponse<TDocumentForRead>>;
-  put: (collection: TDocumentForWrite) => Observable<UpsertDocumentResponse<TDocumentForWrite>>;
+  put: (document: TDocumentForWrite) => Observable<UpsertDocumentResponse<TDocumentForWrite>>;
   delete: (id: string) => Observable<DeleteDocumentResponse>;
   search: (
     lucene: string,
     maxResults?: number,
     continuationToken?: string | null,
     sort?: DocumentSortCondition[],
-  ) => Observable<GetDocumentsResponse<TDocumentForWrite>>;
+  ) => Observable<GetDocumentsResponse<TDocumentForRead>>;
 }
+
+// ███    ███  ██████   ██████ ██   ██ 
+// ████  ████ ██    ██ ██      ██  ██  
+// ██ ████ ██ ██    ██ ██      █████   
+// ██  ██  ██ ██    ██ ██      ██  ██  
+// ██      ██  ██████   ██████ ██   ██ 
+
+export abstract class MockObservableDocumentProvider<
+TDocumentForRead extends OriginsDocument,
+  TDocumentForWrite extends OriginsDocument = TDocumentForRead
+> implements ObservableDocumentProvider<TDocumentForRead, TDocumentForWrite>
+{
+  private _maxResults = 60;
+
+  constructor(private _documents: Array<TDocumentForRead>) {}
+
+  getAll(
+    maxResults?: number,
+    continuationToken?: string | null,
+    sort?: DocumentSortCondition[],
+  ): Observable<GetDocumentsResponse<TDocumentForRead>> {
+    console.log('Mock repository get all');
+
+    // Figure out continuation
+    let startAt = 0;
+    if (continuationToken) {
+      startAt = Number(continuationToken);
+    }
+    console.log(
+      `Getting up to ${this._maxResults} documents starting at index ${startAt} from total of ${this._documents.length} possible records`
+    );
+
+    // Get the records
+    const documents = this._documents.slice(startAt, startAt + this._maxResults);
+    console.log(`Got ${documents.length} documents.`);
+
+    // Build the Next Continuation Token
+    const nextStartIndex = startAt + this._maxResults;
+    let nextContinuationToken: string | undefined = nextStartIndex.toString();
+    if (nextStartIndex >= this._documents.length) {
+      nextContinuationToken = undefined;
+    }
+
+    // Return the result
+    return of({
+      success: true,
+      statusCode: 200,
+      message: 'Documents successfully retrieved',
+      continuationToken: nextContinuationToken,
+      documents,
+    });
+
+  }
+
+  get(id: string): Observable<GetDocumentResponse<TDocumentForRead>>  {
+    const existingIndex = this._documents.findIndex((r) => r.id === id);
+    if(existingIndex === -1){
+      return of({
+        success: false,
+        statusCode: 404,
+        message: `Document with id ${id} not found`,
+        document: undefined,
+      });
+    }
+    return of({
+      success: true,
+      statusCode: 200,
+      message: `Document with id ${id} found`,
+      document: this._documents[existingIndex],
+    });
+  }
+
+  search(
+    lucene: string,
+    maxResults?: number,
+    continuationToken?: string | null,
+    sort?: DocumentSortCondition[],
+  ): Observable<GetDocumentsResponse<TDocumentForRead>> {
+    console.log('Mock repository search');
+    return this.getAll(maxResults, continuationToken).pipe(
+      map((result) => ({
+        ...result,
+        records: result.documents?.filter((document) => {
+          const r = document as any;
+          Object.keys(document)
+            .map((key) => r[key])
+            .some((value) => {
+              const s = value as string;
+              if (s) {
+                return s.indexOf(lucene) >= 0;
+              }
+              return false;
+            });
+        }),
+      }))
+    );
+  }
+
+  put(document: TDocumentForWrite): Observable<UpsertDocumentResponse<TDocumentForWrite>> {
+    const id = document.id;
+    const existingIndex = this._documents.findIndex((r) => r.id === id);
+    if (existingIndex === -1) {
+      return of({
+        success: false,
+        statusCode: 404,
+        message: `Document with id ${id} not found`,
+        record: undefined,
+      });
+    }
+
+    const recordForRead = this.getRecordForRead(document);
+    this._documents[existingIndex] = recordForRead;
+    return of({
+      success: true,
+      statusCode: 200,
+      message: `Document ${id} updated successfully`,
+      record: recordForRead,
+    });
+  }
+
+  delete(id: string): Observable<DeleteDocumentResponse> {
+    const index = this._documents.findIndex((record) => record.id === id);
+    if (index === -1) {
+      return of({
+        success: false,
+        statusCode: 404,
+        message: 'Document not found.',
+      });
+    }
+    this._documents.splice(index, 1);
+    return of({
+      success: true,
+      statusCode: 200,
+      message: 'Document successfully deleted.',
+    });
+
+    // TODO: Remove the item from the in-memory mock array of data
+    // Split and spreading?
+  }
+
+  // ----- PROTECTED ABSTRACT ----- //
+  protected abstract getRecordForRead(document: TDocumentForWrite): TDocumentForRead;
+}
+
+
 
 
 
