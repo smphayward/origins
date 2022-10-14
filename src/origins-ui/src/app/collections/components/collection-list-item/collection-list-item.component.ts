@@ -3,7 +3,6 @@ import { MatDialog } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
 import { map, startWith, tap } from 'rxjs';
 import { ConfirmDialogComponent } from 'src/app/shared/components/confirm-dialog/confirm-dialog.component';
-import { Collection, emptyCollection, emptyCollectionInfo } from '../../collections.models';
 import { collectionActions } from '../../store/collections.actions';
 import { selectCollectionById } from '../../store/collections.selectors';
 import { AddEditCollectionComponent } from '../add-edit-collection/add-edit-collection.component';
@@ -50,8 +49,8 @@ export class CollectionListItemComponent implements OnInit {
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
         this.store.dispatch(
-          collectionActions.requestUpdateRecord({
-            record: {
+          collectionActions.requestUpdateDocument({
+            document: {
               id: this.collectionId,
               name: result.name as string,
               rootDirectory: result.rootDirectory as string,
@@ -74,7 +73,7 @@ export class CollectionListItemComponent implements OnInit {
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
         this.store.dispatch(
-          collectionActions.requestDeleteRecordById({ id: this.collectionId })
+          collectionActions.requestDeleteDocumentById({ id: this.collectionId })
         );
       }
     });

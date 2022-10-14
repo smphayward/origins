@@ -1,17 +1,17 @@
-import { RecordActions } from "src/app/shared/store/RecordActions";
-import { Item, ItemInfo } from "../items.models";
+import { DocumentActions } from "src/app/shared/store/document.actions";
+import { Item, ItemInfo } from 'origins-common/items';
 
-export const itemActions = new RecordActions<ItemInfo, Item>('Items');
+export const itemActions = new DocumentActions<ItemInfo, Item>('Items');
 
 // CRUD
 export const getAllItems = itemActions.getAll;
 export const searchItemsByText = itemActions.searchByText;
-export const fetchMoreItemRecords = itemActions.fetchMoreRecords;
-export const fetchItemsSucceeded = itemActions.fetchRecordsSucceeded;
-export const fetchItemsFailed = itemActions.fetchRecordsFailed;
+export const fetchMoreItems = itemActions.fetchMoreDocuments;
+export const fetchItemsSucceeded = itemActions.fetchDocumentsSucceeded;
+export const fetchItemsFailed = itemActions.fetchDocumentsFailed;
 
-// Selected Record
-export const clearSelectedItem = itemActions.clearSelectedRecord;
-export const moveToItem = itemActions.moveToRecord;
-export const moveToPreviousItem = itemActions.moveToPreviousRecord;
-export const moveToNextItem = itemActions.moveToNextRecord;
+// Selected Document
+export const clearSelectedItem = itemActions.clearSelectedDocument;
+export const moveToItem = itemActions.moveToDocument;
+export const moveToPreviousItem = itemActions.moveToPreviousDocument;
+export const moveToNextItem = itemActions.moveToNextDocument;

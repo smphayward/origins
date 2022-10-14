@@ -1,4 +1,4 @@
-import { Item, ItemInfo } from '../items.models';
+import { ItemInfo } from "origins-common/items";
 
 const generateMockItem = (
   id: string,
@@ -11,8 +11,10 @@ const generateMockItem = (
 
   return {
     id: Math.floor(Math.random() * 5000000).toString(),
+    name: "Some Name",
     collectionId: collectionId,
     fileRelativePath: relativePath,
+    fileAbsolutePath: relativePath,
     fileSizeBytes: 3406576,
     fileCreated: '2022-09-11T23:07:26.241Z',
     fileModified: '2021-12-30T16:20:50.000Z',

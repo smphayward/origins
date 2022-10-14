@@ -33,8 +33,8 @@ export class CollectionsPanelComponent implements OnInit {
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
         this.store.dispatch(
-          collectionActions.requestAddRecord({
-            record: {
+          collectionActions.requestAddDocument({
+            document: {
               id: '', // Id is not set yet
               name: result.name as string,
               rootDirectory: result.rootDirectory as string,

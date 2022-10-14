@@ -1,9 +1,9 @@
 
-import { RecordSelectors } from 'src/app/shared/store/RecordSelectors';
-import { ItemInfo } from '../items.models';
+import { ItemInfo } from 'origins-common/items';
+import { DocumentSelectors } from 'src/app/shared/store/document.selectors';
 import { ItemsState } from './items.reducers';
 
-const itemsSelectors = new RecordSelectors<ItemInfo, ItemsState>('items');
+const itemsSelectors = new DocumentSelectors<ItemInfo, ItemsState>('items');
 
 // ----- Feature/State ----- //
 export const itemsFeatureSelector = itemsSelectors.featureSelector;

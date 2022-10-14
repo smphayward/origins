@@ -1,34 +1,32 @@
 import { createReducer, on } from '@ngrx/store';
-import { RecordState } from 'src/app/shared/store/models';
-import * as ReducerFunctions from 'src/app/shared/store/reducer-functions';
-import { CollectionInfo } from '../collections.models';
-import { mockCollections } from '../services/collection-mock-data';
+import { CollectionInfo } from 'origins-common/collections';
+import { DocumentState } from 'src/app/shared/store/document.models';
+import * as ReducerFunctions from 'src/app/shared/store/document.reducer-functions';
 import * as CollectionActions from './collections.actions';
 
-export interface CollectionsState extends RecordState<CollectionInfo> {}
+export interface CollectionsState extends DocumentState<CollectionInfo> {}
 
 export const initialState: CollectionsState = {
-  records: [],
-  moreRecordsAvailable: false,
-  selectedRecordIndex: undefined,
-  selectedRecord: undefined
+  documents: [],
+  moreDocumentsAvailable: false,
+  selectedDocumentIndex: undefined,
+  selectedDocument: undefined
 };
 
 export const collectionsReducer = createReducer(
   initialState,
 
-  // ----- READ RECORDS ----- //
-  on(CollectionActions.fetchCollectionsSucceeded, ReducerFunctions.recordsLoaded),
+  // ----- READ DOCUMENTS ----- //
+  on(CollectionActions.fetchCollectionsSucceeded, ReducerFunctions.documentsLoaded),
 
-  // ----- WRITE RECORDS ----- //
-  on(CollectionActions.addCollectionSucceeded, ReducerFunctions.recordSuccessfullyAdded),
-  on(CollectionActions.deleteCollectionSucceeded, ReducerFunctions.recordSuccessfullyDeleted),
-  
+  // ----- WRITE DOCUMENTS ----- //
+  on(CollectionActions.addCollectionSucceeded, ReducerFunctions.documentSuccessfullyAdded),
+  on(CollectionActions.deleteCollectionSucceeded, ReducerFunctions.documentSuccessfullyDeleted),
 
   // ----- SELECTED ----- //
-  on(CollectionActions.clearSelectedCollection, ReducerFunctions.clearSelectedRecord),
-  on(CollectionActions.moveToCollection, ReducerFunctions.moveToRecord),
-  on(CollectionActions.moveToPreviousCollection, ReducerFunctions.moveToPreviousRecord),
-  on(CollectionActions.moveToNextCollection, ReducerFunctions.moveToNextRecord)
+  on(CollectionActions.clearSelectedCollection, ReducerFunctions.clearSelectedDocument),
+  on(CollectionActions.moveToCollection, ReducerFunctions.moveToDocument),
+  on(CollectionActions.moveToPreviousCollection, ReducerFunctions.moveToPreviousDocument),
+  on(CollectionActions.moveToNextCollection, ReducerFunctions.moveToNextDocument)
 
 );

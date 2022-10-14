@@ -1,9 +1,9 @@
 import { createFeatureSelector, createSelector } from '@ngrx/store';
-import { OriginsRecord } from '../models/record';
-import { RecordState } from './models';
+import { DocumentState } from './document.models';
+import { OriginsDocument } from 'origins-common';
 
 
-export class RecordSelectors<TRecord extends OriginsRecord, TState extends RecordState<TRecord>>{
+export class DocumentSelectors<TRecord extends OriginsDocument, TState extends DocumentState<TRecord>>{
 
   constructor(private readonly feature: string) {  }
 
@@ -17,30 +17,30 @@ export class RecordSelectors<TRecord extends OriginsRecord, TState extends Recor
   // ----- All Records ----- //
   readonly selectRecords = createSelector(
     this.selectState,
-    (state) => state.records
+    (state) => state.documents
   );
 
   readonly selectMoreRecordsAvailable = createSelector(
     this.selectState,
-    (state) => state.moreRecordsAvailable
+    (state) => state.moreDocumentsAvailable
   );
   
   // ----- Specific Records ----- //
   readonly selectRecordById = (props: { id: string}) =>   
     createSelector(    
       this.selectState,
-      (state) => state.records.find(r => r.id === props.id)
+      (state) => state.documents.find(r => r.id === props.id)
     );
 
   // ----- Selected Record ----- //
   readonly selectSelectedRecord = createSelector(
     this.selectState,
-    (state) => state.selectedRecord
+    (state) => state.selectedDocument
   );
   
   readonly selectHasSelectedRecord = createSelector(
     this.selectState,
-    (state) => state.selectedRecordIndex !== undefined
+    (state) => state.selectedDocumentIndex !== undefined
   )
 
 }

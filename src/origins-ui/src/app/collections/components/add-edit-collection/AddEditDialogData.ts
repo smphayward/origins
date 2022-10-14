@@ -1,5 +1,3 @@
-import { StringIterator } from "lodash";
-
 export interface AddEditDialogData {
   dialogTitle: string,
   okButtonText: string,

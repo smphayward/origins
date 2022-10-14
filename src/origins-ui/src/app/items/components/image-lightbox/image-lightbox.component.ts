@@ -1,7 +1,7 @@
 import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { Store } from '@ngrx/store';
+import { blankItemInfo } from 'origins-common/items';
 import { fromEvent, map, startWith, tap } from 'rxjs';
-import { blankItemInfo } from '../../items.models';
 import { itemActions } from '../../store/items.actions';
 import { selectHasSelectedItem, selectSelectedItem } from '../../store/items.selectors';
 
@@ -51,7 +51,7 @@ export class ImageLightboxComponent implements OnInit {
   constructor(private store: Store) {
     fromEvent(window, 'click').subscribe((event: any) => {
       if (event.target.id === 'image-lightbox-modal-backdrop') {
-        store.dispatch(itemActions.clearSelectedRecord());
+        store.dispatch(itemActions.clearSelectedDocument());
       }
     });
   }
@@ -59,15 +59,15 @@ export class ImageLightboxComponent implements OnInit {
   ngOnInit(): void {}
 
   showPrevious = () => {
-    this.store.dispatch(itemActions.moveToPreviousRecord());
+    this.store.dispatch(itemActions.moveToPreviousDocument());
   }
 
   showNext = () => {
-    this.store.dispatch(itemActions.moveToNextRecord());
+    this.store.dispatch(itemActions.moveToNextDocument());
   }
 
   close = () => {
-    this.store.dispatch(itemActions.clearSelectedRecord());
+    this.store.dispatch(itemActions.clearSelectedDocument());
   }
 
 }

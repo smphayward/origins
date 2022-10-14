@@ -1,33 +1,33 @@
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
+import { OriginsDocument, ObservableDocumentProvider, GetDocumentsResponse } from 'origins-common';
 import { EMPTY, iif } from 'rxjs';
 import { map, mergeMap, catchError, tap } from 'rxjs/operators';
-import { GetManyResult } from 'src/app/shared/models/repository-results';
-import { OriginsRecord } from '../models/record';
-import { RecordRepositoryService } from '../services/record-repository.service';
-import { RecordActions } from './RecordActions';
+import { DocumentActions } from './document.actions';
 
-export abstract class RecordEffects<
-  TRecordForRead extends OriginsRecord,
-  TRecordForWrite extends OriginsRecord
+export abstract class DocumentEffects<
+  TDocumentForRead extends OriginsDocument,
+  TDocumentForWrite extends OriginsDocument
 > {
   private lastSearchByTextQuery: string | undefined = undefined;
   private lastContinuationToken: string | undefined = undefined;
 
+  private readonly maxDocuments = 60;
+
   constructor(
     private actions$: Actions,
-    private repository: RecordRepositoryService<
-      TRecordForRead,
-      TRecordForWrite
+    private repository: ObservableDocumentProvider<
+      TDocumentForRead,
+      TDocumentForWrite
     >,
-    private recordActions: RecordActions<TRecordForRead, TRecordForWrite>
+    private documentActions: DocumentActions<TDocumentForRead, TDocumentForWrite>
   ) {}
 
   // ----- READ OPERATIONS ----- //
 
   getAll$ = createEffect(() =>
     this.actions$.pipe(
-      ofType(this.recordActions.getAll), // ofType(getAllCollections),
+      ofType(this.documentActions.getAll), // ofType(getAllCollections),
       mergeMap(() =>
         this.repository.getAll().pipe(
           tap((result) => {
@@ -43,7 +43,7 @@ export abstract class RecordEffects<
 
   searchByText$ = createEffect(() =>
     this.actions$.pipe(
-      ofType(this.recordActions.searchByText),
+      ofType(this.documentActions.searchByText),
       mergeMap((action) =>
         this.repository.search(action.query).pipe(
           tap((result) => {
@@ -59,13 +59,16 @@ export abstract class RecordEffects<
 
   fetchNextResult$ = createEffect(() =>
     this.actions$.pipe(
-      ofType(this.recordActions.fetchMoreRecords),
+      ofType(this.documentActions.fetchMoreDocuments),
       mergeMap((action) =>
         iif(
           () => this.lastSearchByTextQuery === undefined,
-          this.repository.getAll(this.lastContinuationToken),
+          this.repository.getAll(
+            this.maxDocuments, 
+            this.lastContinuationToken),
           this.repository.search(
             this.lastSearchByTextQuery ?? '',
+            this.maxDocuments,
             this.lastContinuationToken
           )
         ).pipe(
@@ -82,17 +85,17 @@ export abstract class RecordEffects<
   // ----- WRITE OPERATIONS ----- //
   add$ = createEffect(() =>
     this.actions$.pipe(
-      ofType(this.recordActions.requestAddRecord),
+      ofType(this.documentActions.requestAddDocument),
       mergeMap((action) =>
-        this.repository.add(action.record).pipe(
+        this.repository.put(action.document).pipe(
           map((result) => {
             console.log('Result', result);
-            if (result.success && result.record)
-              return this.recordActions.addRecordSucceeded({
-                record: result.record,
+            if (result.success && result.document)
+              return this.documentActions.addDocumentSucceeded({
+                document: result.document,
               });
             else {
-              return this.recordActions.addRecordFailed({
+              return this.documentActions.addDocumentFailed({
                 reason: result.message,
               });
             }
@@ -105,17 +108,17 @@ export abstract class RecordEffects<
 
   update$ = createEffect(() =>
     this.actions$.pipe(
-      ofType(this.recordActions.requestUpdateRecord),
+      ofType(this.documentActions.requestUpdateDocument),
       mergeMap((action) =>
-        this.repository.update(action.record).pipe(
+        this.repository.put(action.document).pipe(
           map((result) => {
             console.log('Result', result);
-            if (result.success && result.record)
-              return this.recordActions.updateRecordSucceeded({
-                record: result.record,
+            if (result.success && result.document)
+              return this.documentActions.updateDocumentSucceeded({
+                document: result.document,
               });
             else {
-              return this.recordActions.updateRecordFailed({
+              return this.documentActions.updateDocumentFailed({
                 reason: result.message,
               });
             }
@@ -128,17 +131,17 @@ export abstract class RecordEffects<
 
   deleteById$ = createEffect(() =>
     this.actions$.pipe(
-      ofType(this.recordActions.requestDeleteRecordById),
+      ofType(this.documentActions.requestDeleteDocumentById),
       mergeMap((action) =>
-        this.repository.deleteById(action.id).pipe(
+        this.repository.delete(action.id).pipe(
           map((result) => {
             console.log('Result', result);
             if (result.success)
-              return this.recordActions.deleteRecordSucceeded({
+              return this.documentActions.deleteDocumentSucceeded({
                 id: action.id,
               });
             else {
-              return this.recordActions.deleteRecordFailed({
+              return this.documentActions.deleteDocumentFailed({
                 id: action.id,
                 reason: result.message,
               });
@@ -153,18 +156,18 @@ export abstract class RecordEffects<
   // ----- HELPER FUNCTIONS ----- //
 
   private mapGetManyResultToAction = (
-    result: GetManyResult<TRecordForRead>,
+    result: GetDocumentsResponse<TDocumentForRead>,
     isContinuation: boolean
   ) => {
-    if(result.success && result.records){
-      return this.recordActions.fetchRecordsSucceeded({
-        records: result.records,
+    if (result.success && result.documents) {
+      return this.documentActions.fetchDocumentsSucceeded({
+        documents: result.documents,
         isContinuation,
-        moreRecordsAvailable: result.continuationToken !== undefined,
+        moreDocumentsAvailable: result.continuationToken !== undefined,
       });
     }
-    return this.recordActions.fetchRecordsFailed({
-      reason: result.message
-    })
+    return this.documentActions.fetchDocumentsFailed({
+      reason: result.message,
+    });
   };
 }

@@ -35,7 +35,7 @@ export class ItemsPanelComponent implements OnInit {
         event.target.scrollHeight) *
       100;
     if (this.loadMoreOnScroll && scrollPercent >= 80) {
-      this.store.dispatch(itemActions.fetchMoreRecords());
+      this.store.dispatch(itemActions.fetchMoreDocuments());
     }
   };
 }

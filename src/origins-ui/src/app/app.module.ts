@@ -49,7 +49,7 @@ import { MatChipsModule } from '@angular/material/chips';
 import { ImageLightboxComponent } from './items/components/image-lightbox/image-lightbox.component';
 import { ItemsPanelComponent } from './items/components/items-panel/items-panel.component';
 import { CollectionsPanelComponent } from './collections/components/collections-panel/collections-panel.component';
-import { NotFoundPanelComponent } from './panels/not-found-panel/not-found-panel.component';
+import { NotFoundPanelComponent } from './shared/components/not-found-panel/not-found-panel.component';
 import { CollectionListComponent } from './collections/components/collection-list/collection-list.component';
 import { CollectionListItemComponent } from './collections/components/collection-list-item/collection-list-item.component';
 import { ConfirmDialogComponent } from './shared/components/confirm-dialog/confirm-dialog.component';

@@ -44,7 +44,7 @@ export class SearchResultsGridComponent implements OnInit {
 
   onClick = (index: number) => {
     //this.store.dispatch(showLightboxItem({ index }));
-    this.store.dispatch(itemActions.moveToRecord({ index }));
+    this.store.dispatch(itemActions.moveToDocument({ index }));
   };
 
   // encodeURI = (uri: string) => {

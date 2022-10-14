@@ -1,9 +1,10 @@
 import { createFeatureSelector, createSelector } from '@ngrx/store';
-import { RecordSelectors } from 'src/app/shared/store/RecordSelectors';
-import { CollectionInfo } from '../collections.models';
+import { CollectionInfo } from 'origins-common/collections';
+import { DocumentSelectors } from 'src/app/shared/store/document.selectors';
+
 import { CollectionsState } from './collections.reducers';
 
-const collectionsSelectors = new RecordSelectors<CollectionInfo, CollectionsState>('collections');
+const collectionsSelectors = new DocumentSelectors<CollectionInfo, CollectionsState>('collections');
 
 // ----- Feature/State ----- //
 export const collectionsFeatureSelector = collectionsSelectors.featureSelector;

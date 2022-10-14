@@ -1,127 +1,178 @@
 import { catchError, map, Observable, of } from 'rxjs';
-import { OriginsRecord } from '../models/record';
-import { AddResult, DeleteResult, GetManyResult, UpdateResult } from '../models/repository-results';
-import { RecordRepositoryService } from './record-repository.service';
 import { v4 as uuidv4 } from 'uuid';
 import { HttpClient, HttpResponse } from '@angular/common/http';
+import {
+  AddDocumentResponse,
+  DeleteDocumentResponse,
+  DocumentSortCondition,
+  GetDocumentResponse,
+  GetDocumentsResponse,
+  ObservableDocumentProvider,
+  OriginsDocument,
+  UpsertDocumentResponse,
+} from 'origins-common';
 
-export abstract class HttpRepositoryService<
-  TRecordForRead extends OriginsRecord,
-  TRecordForWrite extends OriginsRecord
-> implements RecordRepositoryService<TRecordForRead, TRecordForWrite>
+export abstract class HttpDocumentProvider<
+  TDocumentForRead extends OriginsDocument,
+  TDocumentForWrite extends OriginsDocument
+> implements ObservableDocumentProvider<TDocumentForRead, TDocumentForWrite>
 {
-  private _maxResults = 60;
-
   constructor(
     private http: HttpClient,
     // Example: '/api/index' or '/api/collection'
-    private urlRoot: string) {}
+    private urlRoot: string
+  ) {}
 
-  getAll(continuationToken?: string): Observable<GetManyResult<TRecordForRead>> {
-    let url=`${this.urlRoot}?max=${this._maxResults}`;
-    if(continuationToken){
+  getAll(
+    maxResults?: number,
+    continuationToken?: string | null,
+    sort?: DocumentSortCondition[],
+  ): Observable<GetDocumentsResponse<TDocumentForRead>> {
+    let url = `${this.urlRoot}?max=${maxResults}`;
+    if (continuationToken) {
       url += `&continue=${continuationToken}`;
     }
-    return this.http
-      .get<GetManyResult<TRecordForRead>>(url);
+    return this.http.get<GetDocumentsResponse<TDocumentForRead>>(url);
   }
 
-  search(query: string, continuationToken?: string): Observable<GetManyResult<TRecordForRead>> {
+  get(id: string): Observable<GetDocumentResponse<TDocumentForRead>> {
+    let url = `${this.urlRoot}/${id}`;
+    return this.http.get<GetDocumentResponse<TDocumentForRead>>(url);
+  }
+
+  search(
+    lucene: string,
+    maxResults?: number,
+    continuationToken?: string | null,
+    sort?: DocumentSortCondition[],
+  ): Observable<GetDocumentsResponse<TDocumentForRead>> {
     // Give back nothing if no query given
-    if(!query || query.trim().length === 0) {
+    if (!lucene || lucene.trim().length === 0) {
       return of({
         success: false,
         statusCode: 400,
         message: 'query cannot be empty.',
       });
     }
-    let url = `${this.urlRoot}/search?q=${encodeURI(query)}&max=${this._maxResults}`;
-    if(continuationToken){
+    let url = `${this.urlRoot}/search?q=${encodeURI(lucene)}&max=${
+      maxResults
+    }`;
+    if (continuationToken) {
       url += `&continue=${continuationToken}`;
     }
-    return this.http
-      .get<GetManyResult<TRecordForRead>>(url);
+    return this.http.get<GetDocumentsResponse<TDocumentForRead>>(url);
   }
 
-  add (record: TRecordForWrite): Observable<AddResult<TRecordForRead>> {
+  put(
+    document: TDocumentForWrite
+  ): Observable<AddDocumentResponse<TDocumentForRead>> {
+    let id = document.id;
+    if (id.trim().length === 0) {
+      id = uuidv4();
+    }
 
-    const id = uuidv4();
     const newRecord = {
-      ...record,
-      id
+      ...document,
+      id,
     };
     return this.http
-      .put<TRecordForRead>(`${this.urlRoot}/${id}`, newRecord, { observe: 'response' })
-      .pipe(
-        map(this.responseToAddResult),
-      );
+      .put<TDocumentForRead>(`${this.urlRoot}/${id}`, newRecord, {
+        observe: 'response',
+      })
+      .pipe(map(this.httpResponseToUpsertResponse));
   }
 
-  update (record: TRecordForWrite): Observable<UpdateResult<TRecordForRead>>{
-    return this.http
-      .put<TRecordForRead>(`${this.urlRoot}/${record.id}`, record, { observe: 'response' })
-      .pipe(
-        map(this.responseToUpdateResult),
-      );
-  }
+  // add (record: TRecordForWrite): Observable<AddDocumentResponse<TRecordForRead>> {
 
-  deleteById (id: string):  Observable<DeleteResult>{
+  //   const id = uuidv4();
+  //   const newRecord = {
+  //     ...record,
+  //     id
+  //   };
+  //   return this.http
+  //     .put<TRecordForRead>(`${this.urlRoot}/${id}`, newRecord, { observe: 'response' })
+  //     .pipe(
+  //       map(this.responseToAddResult),
+  //     );
+  // }
+
+  // update (record: TRecordForWrite): Observable<UpdateResult<TRecordForRead>>{
+  //   return this.http
+  //     .put<TRecordForRead>(`${this.urlRoot}/${record.id}`, record, { observe: 'response' })
+  //     .pipe(
+  //       map(this.responseToUpdateResult),
+  //     );
+  // }
+
+  delete(id: string): Observable<DeleteDocumentResponse> {
     return this.http
       .delete(`${this.urlRoot}/${id}`, { observe: 'response' })
-      .pipe(
-        map(this.responseToDeleteResult),
-      );
+      .pipe(map(this.httpResponseToDeleteResponse));
   }
 
   // ----- HELPERS ----- //
-  private responseToAddResult(res: HttpResponse<TRecordForRead> | any): AddResult<TRecordForRead> {
-    if(res instanceof HttpResponse<TRecordForRead> ){
-      return {
-        success: res.status < 400,
-        statusCode: res.status,
-        message: res.statusText,
-        record: res.body ?? undefined
-      }
+  private httpResponseToUpsertResponse(
+    res: HttpResponse<TDocumentForRead> | any
+  ): UpsertDocumentResponse<TDocumentForRead> {
+    if (res instanceof HttpResponse<UpsertDocumentResponse<TDocumentForRead>>) {
+      return res.body;
     }
     return {
       success: false,
       statusCode: 500,
       message: `unknown response adding record. ${JSON.stringify(res)}`,
-      record: undefined
-    }
+      document: undefined,
+    };
   }
 
-  private responseToUpdateResult(res: HttpResponse<TRecordForRead>): UpdateResult<TRecordForRead> {
-    if(res instanceof HttpResponse<TRecordForRead> ){
-      return {
-        success: res.status < 400,
-        statusCode: res.status,
-        message: res.statusText,
-        record: res.body ?? undefined
-      }
-    }
-    return {
-      success: false,
-      statusCode: 500,
-      message: `unknown response updating record. ${JSON.stringify(res)}`,
-      record: undefined
-    }
-  }  
+  // private responseToAddResult(res: HttpResponse<TRecordForRead> | any): AddResult<TRecordForRead> {
+  //   if(res instanceof HttpResponse<TRecordForRead> ){
+  //     return {
+  //       success: res.status < 400,
+  //       statusCode: res.status,
+  //       message: res.statusText,
+  //       record: res.body ?? undefined
+  //     }
+  //   }
+  //   return {
+  //     success: false,
+  //     statusCode: 500,
+  //     message: `unknown response adding record. ${JSON.stringify(res)}`,
+  //     record: undefined
+  //   }
+  // }
 
-  private responseToDeleteResult(res: HttpResponse<Object>): DeleteResult {
-    if(res instanceof HttpResponse<TRecordForRead> ){
+  // private responseToUpdateResult(res: HttpResponse<TRecordForRead>): UpdateResult<TRecordForRead> {
+  //   if(res instanceof HttpResponse<TRecordForRead> ){
+  //     return {
+  //       success: res.status < 400,
+  //       statusCode: res.status,
+  //       message: res.statusText,
+  //       record: res.body ?? undefined
+  //     }
+  //   }
+  //   return {
+  //     success: false,
+  //     statusCode: 500,
+  //     message: `unknown response updating record. ${JSON.stringify(res)}`,
+  //     record: undefined
+  //   }
+  // }
+
+  private httpResponseToDeleteResponse(res: HttpResponse<Object>): DeleteDocumentResponse {
+    if (res instanceof HttpResponse<Object>) {
       return {
         success: res.status < 400,
         statusCode: res.status,
         message: res.statusText,
-      }
+      };
     }
     return {
       success: false,
       statusCode: 500,
-      message: `unknown response updating record. ${JSON.stringify(res)}`,
-    }
-  }    
+      message: `unknown response deleting document. ${JSON.stringify(res)}`,
+    };
+  }
 
   // getAll(
   //   continuationToken?: string
@@ -202,7 +253,7 @@ export abstract class HttpRepositoryService<
   //       statusCode: 404,
   //       message: `Record with id ${id} not found`,
   //       record: undefined
-  //     });      
+  //     });
   //   }
 
   //   const recordForRead = this.getRecordForRead(record);
@@ -238,5 +289,4 @@ export abstract class HttpRepositoryService<
 
   // // ----- PROTECTED ABSTRACT ----- //
   // protected abstract getRecordForRead(record: TRecordForWrite): TRecordForRead;
-
 }

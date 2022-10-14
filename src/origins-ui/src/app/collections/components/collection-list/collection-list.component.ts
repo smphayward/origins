@@ -1,7 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { startWith, tap } from 'rxjs';
-import { Collection } from '../../collections.models';
 import { selectCollections } from '../../store/collections.selectors';
 
 @Component({

@@ -1,23 +1,18 @@
 import { Injectable } from '@angular/core';
-import { Actions, createEffect, ofType } from '@ngrx/effects';
-import { EMPTY, iif } from 'rxjs';
-import { map, mergeMap, catchError, tap } from 'rxjs/operators';
-import { GetManyResult } from 'src/app/shared/models/repository-results';
-import { RecordEffects } from 'src/app/shared/store/RecordEffects';
-import { Collection, CollectionInfo } from '../collections.models';
-import { CollectionRepositoryService } from '../services/collection-repository.service';
+import { Actions } from '@ngrx/effects';
+import { DocumentEffects } from 'src/app/shared/store/document.effects';
+import { Collection, CollectionInfo } from 'origins-common/collections';
+import { CollectionInfoProvider } from '../services/collection-info-provider.service';
 import { collectionActions } from './collections.actions';
 
 @Injectable()
-export class CollectionsEffects extends RecordEffects<CollectionInfo, Collection> {
-
-  constructor(
-    actions$: Actions,
-    repository: CollectionRepositoryService
-  ) {
+export class CollectionsEffects extends DocumentEffects<
+  CollectionInfo,
+  Collection
+> {
+  constructor(actions$: Actions, repository: CollectionInfoProvider) {
     super(actions$, repository, collectionActions);
   }
-
 }
 
 // @Injectable()
