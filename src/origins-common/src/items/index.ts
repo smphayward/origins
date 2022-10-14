@@ -1,4 +1,4 @@
-import { DocumentProvider, Link, OriginsDocument } from "..";
+import { DocumentProvider, Link, ObservableDocumentProvider, OriginsDocument } from "..";
 
 // ███    ███  ██████  ██████  ███████ ██      ███████ 
 // ████  ████ ██    ██ ██   ██ ██      ██      ██      
@@ -51,6 +51,31 @@ export interface ItemInfo extends Item {
 
 }
 
+export const blankItemInfo: ItemInfo = {
+  id: '',
+  collectionId: '',
+  name: '',
+  fileRelativePath: '',
+  fileAbsolutePath: '',
+  fileSizeBytes: 0,
+  fileCreated: '',
+  fileModified: '',
+  filename: '',
+  fileExtension: '',
+  type: '',
+  mime: '',
+  height: 0,
+  width: 0,
+  _links: {
+    thumb: {
+      _href: ''
+    },
+    webdav: {
+      _href: ''
+    }
+  }
+}
+
 // ██████  ██████   ██████  ██    ██ ██ ██████  ███████ ██████  
 // ██   ██ ██   ██ ██    ██ ██    ██ ██ ██   ██ ██      ██   ██ 
 // ██████  ██████  ██    ██ ██    ██ ██ ██   ██ █████   ██████  
@@ -62,5 +87,13 @@ export interface ItemProvider extends DocumentProvider<Item> {
 }
 
 export interface ItemInfoProvider extends DocumentProvider<ItemInfo, Item> {
+
+}
+
+export interface ObservableItemProvider extends ObservableDocumentProvider<Item> {
+
+}
+
+export interface ObservableItemInfoProvider extends ObservableDocumentProvider<ItemInfo, Item> {
 
 }

@@ -1,3 +1,5 @@
+import { Observable } from 'rxjs';
+
 // ███    ███  ██████  ██████  ███████ ██      ███████ 
 // ████  ████ ██    ██ ██   ██ ██      ██      ██      
 // ██ ████ ██ ██    ██ ██   ██ █████   ██      ███████ 
@@ -42,6 +44,26 @@ export interface DocumentProvider<
     continuationToken?: string | null,
     sort?: DocumentSortCondition[],
   ) => Promise<GetDocumentsResponse<TDocumentForWrite>>;
+}
+
+export interface ObservableDocumentProvider<
+  TDocumentForRead extends OriginsDocument,
+  TDocumentForWrite extends OriginsDocument = TDocumentForRead,
+> {
+  getAll: (
+    maxResults?: number,
+    continuationToken?: string | null,
+    sort?: DocumentSortCondition[],
+  ) => Observable<GetDocumentsResponse<TDocumentForRead>>;
+  get: (id: string) => Observable<GetDocumentResponse<TDocumentForRead>>;
+  put: (collection: TDocumentForWrite) => Observable<UpsertDocumentResponse<TDocumentForWrite>>;
+  delete: (id: string) => Observable<DeleteDocumentResponse>;
+  search: (
+    lucene: string,
+    maxResults?: number,
+    continuationToken?: string | null,
+    sort?: DocumentSortCondition[],
+  ) => Observable<GetDocumentsResponse<TDocumentForWrite>>;
 }
 
 

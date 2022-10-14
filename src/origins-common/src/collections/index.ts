@@ -1,4 +1,4 @@
-import { DocumentProvider, Link, OriginsDocument } from "..";
+import { DocumentProvider, Link, ObservableDocumentProvider, OriginsDocument } from "..";
 
 // ███    ███  ██████  ██████  ███████ ██      ███████ 
 // ████  ████ ██    ██ ██   ██ ██      ██      ██      
@@ -33,5 +33,13 @@ export interface CollectionProvider extends DocumentProvider<Collection> {
 }
 
 export interface CollectionInfoProvider extends DocumentProvider<CollectionInfo, Collection> {
+
+}
+
+export interface ObservableItemProvider extends ObservableDocumentProvider<Collection> {
+
+}
+
+export interface ObservableItemInfoProvider extends ObservableDocumentProvider<CollectionInfo, Collection> {
 
 }
