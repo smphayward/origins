@@ -24,6 +24,7 @@
     "express": "^4.18.1",
     "express-winston": "^4.2.0",
     "jimp": "^0.16.2",
+    "origins-common": "file:../origins-common/lib",
     "probe-image-size": "^7.2.3",
     "url-join": "^5.0.0",
     "url-join-ts": "^1.0.5",

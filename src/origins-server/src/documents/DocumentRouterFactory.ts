@@ -1,6 +1,7 @@
 import express, { Router } from "express";
-import { Document } from "./models";
-import { DocumentProvider, DocumentSortCondition } from "./DocumentProvider";
+import { DocumentProvider, DocumentSortCondition, GeneralResponse, OriginsDocument, UpsertDocumentResponse } from "origins-common";
+//import { Document } from "../_boneyard/models";
+//import { DocumentProvider, DocumentSortCondition } from "./DocumentProvider";
 import { QueryStringParser } from "./QueryStringParser";
 
 export interface RequestContext {
@@ -8,9 +9,7 @@ export interface RequestContext {
   requestUrl: string;
 }
 
-
-
-export const createDocumentRouter = <TDocument extends Document>(
+export const createDocumentRouter = <TDocument extends OriginsDocument>(
   documentProvider: DocumentProvider<TDocument>,
   queryStringParser: QueryStringParser,
   defaultSort: DocumentSortCondition[]
@@ -34,19 +33,32 @@ export const createDocumentRouter = <TDocument extends Document>(
     }
   }
 
-  // Document Formatting
-  const formatDocuments = (documents: TDocument[], req: express.Request):object[] => {
-    let formattedDocuments: object[] | null = null;
-    const context: RequestContext = {
+  // Request COntext
+  const getRequestContext = (req: express.Request): RequestContext => {
+    return {
       requestUrlWithoutPath: req.headers[
         "_originsRequestUrlWithoutPath"
       ] as string,
       requestUrl: req.headers["_originsRequestUrl"] as string,
     };
-    formattedDocuments = documents.map((d) =>
+  }
+
+  // Document Formatting
+  const formatDocuments = (documents: TDocument[] | undefined, req: express.Request):object[] | undefined => {
+    if(documents === undefined){
+      return undefined;
+    }
+    const context = getRequestContext(req);
+    return documents.map((d) =>
       onFormatDocumentInstance(d, context)
     );
-    return formattedDocuments;
+  }
+  const formatDocument = (document: TDocument | undefined, req: express.Request): object | undefined => {
+    if(document === undefined){
+      return undefined;
+    }
+    const context = getRequestContext(req);
+    return onFormatDocumentInstance(document, context);
   }
 
   
@@ -63,18 +75,23 @@ export const createDocumentRouter = <TDocument extends Document>(
         defaultSort
       );
 
-      const final = {
-        continuationToken: result.continuationToken,
-        documents: formatDocuments(result.documents, req)
-      }
-      return res.send(final);
+      return res.status(result.statusCode).send({
+        ...result,
+        documents: formatDocuments(result.documents, req),
+      });
 
     })
     .get("/search", async (req, res) => {
+      
       const qs = queryStringParser.parseSearch(req);
       if(!qs.query){
-        return res.status(400).send("Parameter 'q' not specified.");
+        return res.status(400).send(<GeneralResponse>{
+          success: false,
+          statusCode: 400,
+          message: "Parameter 'q' not specified."
+        });
       }
+
       // Get the documents
       const result = await documentProvider.search(
         qs.query,
@@ -82,21 +99,20 @@ export const createDocumentRouter = <TDocument extends Document>(
         qs.continuationToken,
         defaultSort
       );
-      // Format documents
-      const final = {
-        continuationToken: result.continuationToken,
-        documents: formatDocuments(result.documents, req)
-      }
-      // All done
-      return res.status(200).send(final);
+
+      // Format and return
+      return res.status(result.statusCode).send({
+        ...result,
+        documents: formatDocuments(result.documents, req),
+      });
     })
     .get("/:id", async (req, res) => {
       const documentId = req.params.id as string;
       const result = await documentProvider.get(documentId);
-      if (!result) {
-        return res.status(404).send("Not found.");
-      }
-      return res.send(result);
+      return res.status(result.statusCode).send({
+        ...result,
+        document: formatDocument(result.document, req)
+      });
     })
     .put("/:id", async (req, res) => {
       const documentId = req.params.id;
@@ -104,26 +120,31 @@ export const createDocumentRouter = <TDocument extends Document>(
       if (!document) {
         return res
           .status(400)
-          .send("Body is blank or is not in the right format.");
+          .send(<UpsertDocumentResponse<TDocument>>{
+            success: false,
+            statusCode: 400,
+            message: "Body is blank or is not in the right format."
+          });
       }
       if (document.id != documentId) {
         return res
           .status(400)
-          .send(
-            `id property ${document.id} in body does not match id '${documentId}' in URL path.`
-          );
+          .send(<UpsertDocumentResponse<TDocument>>{
+            success: false,
+            statusCode: 400,
+            message: `id property ${document.id} in body does not match id '${documentId}' in URL path.`
+          });
       }
-      // TODO: Detect whether it was created or modified
       const result = await documentProvider.put(document);
-      return res.send(document);
+      return res.status(result.statusCode).send({
+        ...result,
+        document: formatDocument(result.document, req)
+      });
     })
     .delete("/:id", async (req, res) => {
       const documentId = req.params.id;
       const result = await documentProvider.delete(documentId);
-      if (!result) {
-        return res.status(404).send("Not found.");
-      }
-      return res.status(200).send("Success");
+      return res.status(result.statusCode).send(result);
     });
 
   return new createDocumentRouterReturn();

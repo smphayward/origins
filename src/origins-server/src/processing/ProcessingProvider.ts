@@ -1,19 +1,18 @@
 import * as crypto from "crypto";
 import * as path from "path";
 import { promises as fs } from "fs";
-import { Collection } from "../collections/models";
 import { FileSystemObjectType, getPathType } from "../file-system/PathTypeUtil";
 import { ThumbnailProvider } from "../thumbnails/ThumbnailProvider";
 import { ExtractionProvider } from "../extraction/ExtractionProvider";
-import { IndexProvider } from "../index/IndexProvider";
-import { IndexRecord } from "../index/models";
 import { Config } from "../config/ConfigFactory";
+import { ItemProvider } from "origins-common/items";
+import { Collection } from "origins-common/collections";
 
 export class ProcessingProvider {
   constructor(
     private readonly _config: Config,
     private readonly _extractionProvider: ExtractionProvider,
-    private readonly _indexProvider: IndexProvider,
+    private readonly _itemProvider: ItemProvider,
     private readonly _thumbnailProvider: ThumbnailProvider
   ) {}
 
@@ -85,7 +84,7 @@ export class ProcessingProvider {
     }
 
     // Push the index record
-    await this._indexProvider.put(indexRecord);
+    await this._itemProvider.put(indexRecord);
 
     // Generate thumbnail
     await this._thumbnailProvider.GenerateThumbnail(

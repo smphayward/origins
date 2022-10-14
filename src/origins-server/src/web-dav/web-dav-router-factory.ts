@@ -1,7 +1,7 @@
 import { v2 as webdav } from 'webdav-server'
 import express from "express";
 import { WebDAVServerFactory } from './web-dav-server-factory';
-import { CollectionProvider } from '../collections/CollectionProvider';
+import { CollectionProvider } from 'origins-common/collections';
 
 export const createWebDAVRouter = (
   collectionProvider: CollectionProvider
@@ -22,14 +22,14 @@ export const createWebDAVRouter = (
 
       // First, does the collection exist?
       const result = await collectionProvider.get(collectionId);
-      if (!result) {
+      if (!result.success || !result.document) {
         return res.status(404).send(`Collection '${collectionId}' not found.`);
       }
 
       // Second, does the webDAVServer object exist?
       webDAVServers[collectionId] =
         webDAVServers[collectionId] ??
-        WebDAVServerFactory(`/webdav/${collectionId}/`, result.rootDirectory);
+        WebDAVServerFactory(`/webdav/${collectionId}/`, result.document.rootDirectory);
 
       // // Third, strip the url
       // const urlPortionToStrip = "/" + collectionId;

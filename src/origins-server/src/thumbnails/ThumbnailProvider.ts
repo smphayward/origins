@@ -1,8 +1,7 @@
 import Jimp from "jimp";
 import * as path from "path";
 import * as fsSync from "fs";
-import { IndexProvider } from "../index/IndexProvider";
-import { IndexRecordFields } from "../index/models";
+import { ItemProvider } from "origins-common/items";
 
 export interface ThumbnailProviderConfig {
   rootThumbnailDirectory: string;
@@ -10,54 +9,59 @@ export interface ThumbnailProviderConfig {
 }
 
 export class ThumbnailProvider {
-  private readonly _config: ThumbnailProviderConfig;
-  private readonly _indexProvider: IndexProvider;
-  constructor(config: ThumbnailProviderConfig, indexProvider: IndexProvider) {
-    this._config = config;
-    this._indexProvider = indexProvider;
-  }
+  constructor(
+    private readonly config: ThumbnailProviderConfig,
+    private readonly itemProvider: ItemProvider
+  ) {}
+
+  // TODO: Don't throw errors... give responses
 
   public async GenerateThumbnail(
-    indexRecordId: string,
+    itemId: string,
     regenerateIfExists: boolean,
     sourceAbsolutePath?: string
   ) {
-    console.log(`Generating thumbnail: '${indexRecordId}'.`);
+    console.log(`Generating thumbnail: '${itemId}'.`);
 
     // Make sure we have the source path
     if (!sourceAbsolutePath) {
-      const indexResponse: any = await this._indexProvider.get(indexRecordId);
-      if (!indexResponse) {
+      const itemResponse = await this.itemProvider.get(itemId);
+      if (itemResponse.statusCode === 404) {
         throw new Error(
-          "sourceAbsolutePath not specified and could not find index record for item."
+          "sourceAbsolutePath not specified and could not find item."
         );
       }
-      sourceAbsolutePath = indexResponse[
-        IndexRecordFields.fileAbsolutePath
-      ] as string;
-      if (!sourceAbsolutePath) {
+      if (!itemResponse.success) {
         throw new Error(
-          "fileAbsolutePath property does not exist on index record"
+          `sourceAbsolutePath not specified and failed to get item. ${itemResponse.statusCode} -- ${itemResponse.message}`
         );
+      }
+      sourceAbsolutePath = itemResponse.document?.fileAbsolutePath;
+      if (!sourceAbsolutePath) {
+        throw new Error("fileAbsolutePath property does not exist on item");
       }
     }
 
     // Determine the destination path
     const destinationAbsolutePath = path.join(
-      this._config.rootThumbnailDirectory,
-      indexRecordId + ".jpg"
+      this.config.rootThumbnailDirectory,
+      itemId + ".jpg"
     );
 
     // Short-circuit if exists and we shouldn't regenerate
     if (!regenerateIfExists && fsSync.existsSync(destinationAbsolutePath)) {
-      console.log(`Thumbnail already exists. Not regenerating: '${destinationAbsolutePath}'`);
+      console.log(
+        `Thumbnail already exists. Not regenerating: '${destinationAbsolutePath}'`
+      );
       return destinationAbsolutePath;
     }
 
     // Make sure the absolute source path exists
-    if(!fsSync.existsSync(sourceAbsolutePath)){
-      console.error(`Cannot generate thumbnail. File does not exist: '${sourceAbsolutePath}'`);
-      return this._config.imageNotFoundPlaceholderFile;
+    if (!fsSync.existsSync(sourceAbsolutePath)) {
+      console.error(
+        `Cannot generate thumbnail. File does not exist: '${sourceAbsolutePath}'`
+      );
+      return this.config.imageNotFoundPlaceholderFile;
     }
 
     let error: any = null;
@@ -65,7 +69,6 @@ export class ThumbnailProvider {
     console.error(`Reading original: '${sourceAbsolutePath}'`);
     const promise = Jimp.read(sourceAbsolutePath)
       .then((image) => {
-
         console.error(`Finished reading original: '${sourceAbsolutePath}'`);
 
         let width = image.getWidth();
@@ -105,51 +108,3 @@ export class ThumbnailProvider {
     return destinationAbsolutePath;
   }
 }
-
-//   private readonly _fileSystemProvider: FileSystemProvider;
-//   private readonly _config: ThumbnailManagerConfig;
-
-//   constructor(
-//     databaseProvider: ElasticsearchDatabaseProvider,
-//     fileSystemProvider: FileSystemProvider,
-//     config: ThumbnailManagerConfig
-//   ) {
-//     this._databaseProvider = databaseProvider;
-//     this._fileSystemProvider = fileSystemProvider;
-//     this._config = config;
-//   }
-
-//   public async GenerateThumbnail(
-//     documentId: string,
-//     regenerateIfExists: boolean): Promise<string | null>  {
-
-//       const thumbPath = this.ResolveThumbnailPath(documentId);
-//       const thumbPathType = await this._fileSystemProvider.pathType(thumbPath);
-
-//       if(thumbPathType === FileSystemObjectType.Directory) {
-//         throw new Error(`Cannot generate thumbnail. Path '${thumbPath}' already exists as a directory.`);
-//       }
-
-//       // Generate the thumbnail if needed
-//       if(regenerateIfExists || thumbPathType === FileSystemObjectType.NotFound) {
-//         // Get the document from database
-//         // Get the absolute path
-//         // Generate a thumbnail
-//       }
-
-//       return thumbPath;
-
-//   }
-
-//   // Connection to Database
-//   // Folder where thumbnails go
-
-//   // ----- Private Helpers ----- //
-//   private ResolveThumbnailPath(documentId: string): string {
-//     if(documentId.trim().length === 0) {
-//       throw new Error("Cannot resolve thumbnail path. documentId is empty.");
-//     }
-//     return path.join(this._config.rootThumbnailDirectory, documentId + '.jpg');
-//   }
-
-// }

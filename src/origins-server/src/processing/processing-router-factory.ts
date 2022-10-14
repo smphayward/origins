@@ -1,6 +1,6 @@
 import express, { Router } from "express";
 import * as path from 'path';
-import { CollectionProvider } from "../collections/CollectionProvider";
+import { CollectionProvider } from "origins-common/collections";
 import { ProcessingProvider } from "./ProcessingProvider";
 
 
@@ -20,7 +20,7 @@ export const createProcessingRouter = (
 
       // First, does the collection exist?
       const result = await collectionProvider.get(collectionId);
-      if (!result) {
+      if (!result.success || !result.document) {
         return res.status(404).send(`Collection '${collectionId}' not found.`);
       }
 
@@ -31,7 +31,7 @@ export const createProcessingRouter = (
       // Third, make the processing request
       console.log(`Processing '${relativePath}' in collection '${collectionId}'.`);
       const decodedRelativePath = decodeURI(relativePath);
-      await processingProvider.processPath(result, decodedRelativePath, -1); // TODO: get depth from header
+      await processingProvider.processPath(result.document, decodedRelativePath, -1); // TODO: get depth from header
       console.log('Processing completed.');
 
       return res.status(200).send("Processing completed.");

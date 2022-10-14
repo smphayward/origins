@@ -1,6 +1,5 @@
 import express from "express";
 import path from "path";
-import { IndexProvider } from "../index/IndexProvider";
 import { ThumbnailProvider } from "./ThumbnailProvider";
 
 export const createThumbnailRouter = (

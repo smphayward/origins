@@ -1,6 +1,6 @@
 import commandLineArgs from "command-line-args";
 import chalk from "chalk";
-import { CollectionDictionary } from "../collections/models";
+import { Collection, CollectionDictionary } from "origins-common/collections";
 
 interface ServerConfig {
   port: number;
@@ -116,11 +116,12 @@ const getConfigFromEnvironmentVariables = () => {
     )
     .reduce((prev, cur) => {
       const id = cur.substring(collectionPrefix.length);
-      const rootDirectory = process.env[cur];
-      if (!rootDirectory) {
+      const jsonValue = process.env[cur];
+      if (!jsonValue) {
         return prev;
       }
-      prev[id] = { id, rootDirectory };
+      const obj = JSON.parse(jsonValue) as Collection;
+      prev[id] = obj;
       return prev;
     }, <CollectionDictionary>{});
 

@@ -1,35 +1,31 @@
 import express from "express";
-import cors from 'cors'
+import cors from "cors";
 
-import winston from 'winston';
-import expressWinston from 'express-winston';
+import winston from "winston";
+import expressWinston from "express-winston";
 
 import bodyParser from "body-parser";
 import { ClientOptions } from "@elastic/elasticsearch";
 import { createCollectionsRouter } from "./collections/collections-router-factory";
 
-import { createIndexRouter } from "./index/index-router-factory";
 import { ElasticsearchCollectionProvider } from "./collections/ElasticsearchCollectionProvider";
 import { createWebDAVRouter } from "./web-dav/web-dav-router-factory";
 
-import { ElasticsearchIndexProvider } from "./index/ElasticsearchIndexProvider";
-import { createProcessingRouter } from "./processing/processing-router-factory";
-import { ProcessingProvider } from "./processing/ProcessingProvider";
 import { ThumbnailProvider } from "./thumbnails/ThumbnailProvider";
 import { AggregateExtractionProvider } from "./extraction/AggregateExtractionProvider";
 import { FileInfoExtractionProvider } from "./extraction/FileInfoExtractionProvider";
 import { ProbeImageSizeExtractionProvider } from "./extraction/ProbeImageSizeExtractionProvider";
 import { KeywordExtractionProvider } from "./extraction/KeywordExtractionProvider";
 import { createThumbnailRouter } from "./thumbnails/thumbnail-router-factory";
-import chalk from 'chalk';
+import chalk from "chalk";
 import { getConfig } from "./config/ConfigFactory";
 import { createHealthRouter } from "./health/health-router-factory";
 import { QueryStringParser } from "./documents/QueryStringParser";
+import { createItemsRouter } from "./items/items-router-factory";
+import { ElasticsearchItemProvider } from "./items/ElasticsearchItemProvider";
 
-
-
-
-console.log(chalk.blue(`
+console.log(
+  chalk.blue(`
 
  ██████  ██████  ██  ██████  ██ ███    ██ ███████ 
 ██    ██ ██   ██ ██ ██       ██ ████   ██ ██      
@@ -37,44 +33,57 @@ console.log(chalk.blue(`
 ██    ██ ██   ██ ██ ██    ██ ██ ██  ██ ██      ██ 
  ██████  ██   ██ ██  ██████  ██ ██   ████ ███████ 
 
-`));
+`)
+);
 
-//  ██████  ██████  ███    ██ ███████ ██  ██████  
-// ██      ██    ██ ████   ██ ██      ██ ██       
-// ██      ██    ██ ██ ██  ██ █████   ██ ██   ███ 
-// ██      ██    ██ ██  ██ ██ ██      ██ ██    ██ 
-//  ██████  ██████  ██   ████ ██      ██  ██████  
+//  ██████  ██████  ███    ██ ███████ ██  ██████
+// ██      ██    ██ ████   ██ ██      ██ ██
+// ██      ██    ██ ██ ██  ██ █████   ██ ██   ███
+// ██      ██    ██ ██  ██ ██ ██      ██ ██    ██
+//  ██████  ██████  ██   ████ ██      ██  ██████
 
 const config = getConfig();
-
 
 // Not using loop for this because we might include passwords at some point
 // Only specific things should be output.
 
 console.log();
-console.log('--- Configuration ---');
+console.log("--- Configuration ---");
 console.log();
-console.log(chalk.white('Server port:   ') + chalk.cyanBright(config.server.port));
-console.log(chalk.white('UI Dir:        ') + chalk.cyanBright(config.uiDirectory));
-console.log(chalk.white('Thumbnail Dir: ') + chalk.cyanBright(config.thumbnailsDirectory));
-console.log(chalk.white('Placeholder:   ') + chalk.cyanBright(config.fileNotFoundPlaceholder));
-console.log(chalk.white('ES Host:       ') + chalk.cyanBright(config.elasticsearch.host));
-console.log(chalk.white('Collections:   ') + chalk.cyanBright(JSON.stringify( config.collections)));
- 
+console.log(
+  chalk.white("Server port:   ") + chalk.cyanBright(config.server.port)
+);
+console.log(
+  chalk.white("UI Dir:        ") + chalk.cyanBright(config.uiDirectory)
+);
+console.log(
+  chalk.white("Thumbnail Dir: ") + chalk.cyanBright(config.thumbnailsDirectory)
+);
+console.log(
+  chalk.white("Placeholder:   ") +
+    chalk.cyanBright(config.fileNotFoundPlaceholder)
+);
+console.log(
+  chalk.white("ES Host:       ") + chalk.cyanBright(config.elasticsearch.host)
+);
+console.log(
+  chalk.white("Collections:   ") +
+    chalk.cyanBright(JSON.stringify(config.collections))
+);
+
 console.log();
 
-
-// ██████  ███████ ██████  ███████ ███    ██ ██████  ███████ ███    ██  ██████ ██ ███████ ███████ 
-// ██   ██ ██      ██   ██ ██      ████   ██ ██   ██ ██      ████   ██ ██      ██ ██      ██      
-// ██   ██ █████   ██████  █████   ██ ██  ██ ██   ██ █████   ██ ██  ██ ██      ██ █████   ███████ 
-// ██   ██ ██      ██      ██      ██  ██ ██ ██   ██ ██      ██  ██ ██ ██      ██ ██           ██ 
-// ██████  ███████ ██      ███████ ██   ████ ██████  ███████ ██   ████  ██████ ██ ███████ ███████ 
+// ██████  ███████ ██████  ███████ ███    ██ ██████  ███████ ███    ██  ██████ ██ ███████ ███████
+// ██   ██ ██      ██   ██ ██      ████   ██ ██   ██ ██      ████   ██ ██      ██ ██      ██
+// ██   ██ █████   ██████  █████   ██ ██  ██ ██   ██ █████   ██ ██  ██ ██      ██ █████   ███████
+// ██   ██ ██      ██      ██      ██  ██ ██ ██   ██ ██      ██  ██ ██ ██      ██ ██           ██
+// ██████  ███████ ██      ███████ ██   ████ ██████  ███████ ██   ████  ██████ ██ ███████ ███████
 
 console.log();
-console.log('--- Dependencies ---');
+console.log("--- Dependencies ---");
 console.log();
 
-console.log('Setting up dependencies...');
+console.log("Setting up dependencies...");
 
 const elasticsearchClientOptions: ClientOptions = {
   node: config.elasticsearch.host,
@@ -85,8 +94,13 @@ const collectionProvider = new ElasticsearchCollectionProvider({
   elasticsearchClientOptions,
 });
 
-const indexProvider = new ElasticsearchIndexProvider({
-  indexName: "origins_index",
+// const indexProvider = new ElasticsearchIndexProvider({
+//   indexName: "origins_index",
+//   elasticsearchClientOptions,
+// });
+
+const itemProvider = new ElasticsearchItemProvider({
+  indexName: "origins_items",
   elasticsearchClientOptions,
 });
 
@@ -133,39 +147,38 @@ const extractionProvider = new AggregateExtractionProvider(
 const thumbnailProvider = new ThumbnailProvider(
   {
     rootThumbnailDirectory: config.thumbnailsDirectory,
-    imageNotFoundPlaceholderFile: config.fileNotFoundPlaceholder
+    imageNotFoundPlaceholderFile: config.fileNotFoundPlaceholder,
   },
-  indexProvider
+  itemProvider
 );
 
-const processingProvider = new ProcessingProvider(
-  config,
-  extractionProvider,
-  indexProvider,
-  thumbnailProvider
-);
+// const processingProvider = new ProcessingProvider(
+//   config,
+//   extractionProvider,
+//   indexProvider,
+//   thumbnailProvider
+// );
 
 const queryStringParser = new QueryStringParser();
 
 // Setup Database
-console.log('Setting up database...');
+console.log("Setting up database...");
 const setupDatabasePromise = (async () => {
-  
   try {
     console.log("Ensuring collection provider index exist...");
     await collectionProvider.ensureIndexExists();
-    console.log("Collection provider index exists.")
+    console.log("Collection provider index exists.");
   } catch (error) {
-    console.log(chalk.red('Error!'));
+    console.log(chalk.red("Error!"));
     console.log(error);
   }
 
   try {
-    console.log("Ensuring index provider index exist...");
-    await indexProvider.ensureIndexExists();
-    console.log("Index provider index exists.")
+    console.log("Ensuring item provider index exist...");
+    await itemProvider.ensureIndexExists();
+    console.log("Item provider index exists.");
   } catch (error) {
-    console.log(chalk.red('Error!'));
+    console.log(chalk.red("Error!"));
     console.log(error);
   }
 
@@ -184,16 +197,15 @@ const setupDatabasePromise = (async () => {
       }
     });
   }
-
 })();
 
-// ██   ██ ████████ ████████ ██████  
-// ██   ██    ██       ██    ██   ██ 
-// ███████    ██       ██    ██████  
-// ██   ██    ██       ██    ██      
-// ██   ██    ██       ██    ██      
+// ██   ██ ████████ ████████ ██████
+// ██   ██    ██       ██    ██   ██
+// ███████    ██       ██    ██████
+// ██   ██    ██       ██    ██
+// ██   ██    ██       ██    ██
 
-console.log('Setting up HTTP...');
+console.log("Setting up HTTP...");
 
 // Express
 const app = express();
@@ -203,20 +215,22 @@ app.use(cors());
 
 // Logging
 //more options here - https://github.com/bithavoc/express-winston#request-logging
-app.use(expressWinston.logger({
-  transports: [
-    new winston.transports.Console()
-  ],
-  format: winston.format.combine(
-    winston.format.colorize(),
-    winston.format.simple()
-  ),
-  meta: false,
-  msg: "HTTP  ",
-  expressFormat: true,
-  colorize: false,
-  ignoreRoute: function (req, res) { return false; }
-}));
+app.use(
+  expressWinston.logger({
+    transports: [new winston.transports.Console()],
+    format: winston.format.combine(
+      winston.format.colorize(),
+      winston.format.simple()
+    ),
+    meta: false,
+    msg: "HTTP  ",
+    expressFormat: true,
+    colorize: false,
+    ignoreRoute: function (req, res) {
+      return false;
+    },
+  })
+);
 
 // Parsing
 app.use(bodyParser.json());
@@ -224,9 +238,7 @@ app.use(bodyParser.json());
 // Middleware
 app.use(function (req, res, next) {
   const originsRequestUrlWithoutPath = `${req.protocol}://${req.hostname}:${config.server.port}`;
-  req.headers[
-    "_originsRequestUrlWithoutPath"
-  ] = originsRequestUrlWithoutPath;
+  req.headers["_originsRequestUrlWithoutPath"] = originsRequestUrlWithoutPath;
   req.headers[
     "_originsRequestUrl"
   ] = `${originsRequestUrlWithoutPath}${req.originalUrl}`;
@@ -234,15 +246,23 @@ app.use(function (req, res, next) {
 });
 
 // Health
-app.use('/health', createHealthRouter());
+app.use("/health", createHealthRouter());
 
 // API
-app.use("/api/collections", createCollectionsRouter(collectionProvider, queryStringParser).router());
-app.use("/api/index", createIndexRouter(indexProvider, queryStringParser).router());
 app.use(
-  "/api/processing",
-  createProcessingRouter(collectionProvider, processingProvider)
+  "/api/collections",
+  createCollectionsRouter(collectionProvider, queryStringParser).router()
 );
+app.use(
+  "/api/items",
+  createItemsRouter(itemProvider, queryStringParser).router()
+);
+
+//app.use("/api/index", createIndexRouter(indexProvider, queryStringParser).router());
+// app.use(
+//   "/api/processing",
+//   createProcessingRouter(collectionProvider, processingProvider)
+// );
 app.use("/api/webdav", createWebDAVRouter(collectionProvider));
 app.use("/api/thumbnails", createThumbnailRouter(thumbnailProvider));
 // app.use("/index", createIndexRouter(databaseProvider));
@@ -250,10 +270,12 @@ app.use("/api/thumbnails", createThumbnailRouter(thumbnailProvider));
 
 // UI
 app.use(express.static(config.uiDirectory));
-app.use('/assets',express.static('./assets/'));
+app.use("/assets", express.static("./assets/"));
 
 // Start listening
 console.log("Starting Origins server...");
 app.listen(config.server.port, () => {
-  console.log(`Origins server started at http://localhost:${config.server.port}`);
+  console.log(
+    `Origins server started at http://localhost:${config.server.port}`
+  );
 });

@@ -1,34 +1,43 @@
 import { Client, ClientOptions, errors, estypes } from "@elastic/elasticsearch";
-import { Document, MultipleDocumentsResult } from "./models";
-import { DocumentProvider, DocumentSortCondition } from "./DocumentProvider";
-import base64Url from 'base64url';
+import { DocumentProvider, DocumentSortCondition } from "origins-common";
+import base64Url from "base64url";
 import { SortResults } from "@elastic/elasticsearch/lib/api/types";
+import {
+  OriginsDocument,
+  DeleteDocumentResponse,
+  GetDocumentsResponse,
+  UpsertDocumentResponse,
+  ResponseFactory,
+  GetDocumentResponse,
+  DocumentResponse
+} from "origins-common";
 
 export interface ElasticsearchDocumentProviderConfig {
   indexName: string;
   elasticsearchClientOptions: ClientOptions;
 }
 
-
-
-export class ElasticsearchDocumentProvider<TDocument extends Document>
-  implements DocumentProvider<TDocument>
+export class ElasticsearchDocumentProvider<TDocument extends OriginsDocument>
+  implements DocumentProvider<TDocument, TDocument>
 {
   private readonly _idPrefix = ""; // Left over from some ideas I previously had
-  private readonly _config: ElasticsearchDocumentProviderConfig;
-  private readonly _client: Client;
 
-  constructor(config: ElasticsearchDocumentProviderConfig) {
-    this._config = config;
-    this._client = new Client(config.elasticsearchClientOptions);
+  private readonly _client: Client;
+  private readonly _responseFactory: ResponseFactory<TDocument>;
+
+  constructor(private readonly _config: ElasticsearchDocumentProviderConfig) {
+    this._client = new Client(_config.elasticsearchClientOptions);
+    this._responseFactory = new ResponseFactory<TDocument>();
   }
 
   public async getAll(
     maxResults: number = 25,
     continuationToken: string | null = null,
     sort: DocumentSortCondition[] = []
-  ): Promise<MultipleDocumentsResult< TDocument>> {
-    console.log(`Getting up to '${maxResults}' results with continuation token '${continuationToken}'.`);
+  ): Promise<GetDocumentsResponse<TDocument>> {
+    console.log(
+      `Getting up to '${maxResults}' results with continuation token '${continuationToken}'.`
+    );
     return await this.searchInternal(
       {
         prefix: {
@@ -43,54 +52,46 @@ export class ElasticsearchDocumentProvider<TDocument extends Document>
     );
   }
 
-  public async get(id: string): Promise<TDocument | null> {
+  public async get(id: string): Promise<GetDocumentResponse<TDocument>> {
     try {
       const response = await this._client.get<TDocument>({
         index: this._config.indexName,
         id: this.getElasticsearchId(id),
       });
-      return response._source ?? null;
-    } catch (error) {
-      if (error instanceof errors.ResponseError && error.statusCode === 404) {
-        return null;
+      if (!response.found || !response._source) {
+        return this._responseFactory.getDocument.notFound();
       }
-      throw error;
+      return this._responseFactory.getDocument.ok(response._source);
+    } catch (error) {
+      return this.getErrorDocumentResponse(error);
     }
   }
 
-  public async put(collection: TDocument): Promise<TDocument> {
+  public async put(
+    document: TDocument
+  ): Promise<UpsertDocumentResponse<TDocument>> {
     try {
-      this._client.update<TDocument>({
+      const response = this._client.update<TDocument>({
         index: this._config.indexName,
-        id: this.getElasticsearchId(collection.id),
-        doc: collection,
+        id: this.getElasticsearchId(document.id),
+        doc: document,
         doc_as_upsert: true,
       });
-      return collection;
-      // const response = await this._client.index<Collection>({
-      //   index: this._config.indexName,
-      //   id: this.getElasticsearchId(collection.id),
-      //   document: collection,
-
-      // });
+      return this._responseFactory.upsertDocument.ok(document);
     } catch (error) {
-      console.log(error);
-      throw error;
+      return this.getErrorDocumentResponse(error);
     }
   }
 
-  public async delete(id: string): Promise<boolean> {
+  public async delete(id: string): Promise<DeleteDocumentResponse> {
     try {
       const response = await this._client.delete({
         index: this._config.indexName,
         id: this.getElasticsearchId(id),
       });
-      return true;
+      return this._responseFactory.deleteDocument.ok();
     } catch (error) {
-      if (error instanceof errors.ResponseError && error.statusCode === 404) {
-        return false;
-      }
-      throw error;
+      return this.getErrorDocumentResponse(error);
     }
   }
 
@@ -99,16 +100,20 @@ export class ElasticsearchDocumentProvider<TDocument extends Document>
     maxResults: number = 25,
     continuationToken: string | null = null,
     sort: DocumentSortCondition[] = []
-  ): Promise<MultipleDocumentsResult< TDocument>> {
-    console.log(`Searching up to '${maxResults}' results with continuation token '${continuationToken}'.`);
-    return await this.searchInternal({
-      query_string: {
-        query: lucene,
+  ): Promise<GetDocumentsResponse<TDocument>> {
+    console.log(
+      `Searching up to '${maxResults}' results with continuation token '${continuationToken}'.`
+    );
+    return await this.searchInternal(
+      {
+        query_string: {
+          query: lucene,
+        },
       },
-    },
-    sort,
-    maxResults,
-    continuationToken);
+      sort,
+      maxResults,
+      continuationToken
+    );
   }
 
   // ----- Non-interface members ----- //
@@ -143,12 +148,31 @@ export class ElasticsearchDocumentProvider<TDocument extends Document>
     return this._idPrefix + id;
   }
 
+  private getErrorDocumentResponse(error: any): DocumentResponse<TDocument> {
+
+    if (error instanceof errors.ResponseError) {
+      if (error.statusCode === 404) {
+        return this._responseFactory.document.notFound();
+      }
+      return this._responseFactory.document.custom(
+        false,
+        error.statusCode ?? 500,
+        error.message
+      );
+    }
+    return this._responseFactory.document.internalServerError(
+      JSON.stringify(error)
+    );
+
+  }
+
+
   private async searchInternal(
     query: estypes.QueryDslQueryContainer,
     sort: DocumentSortCondition[] = [],
     maxResults: number = 25,
     continuationToken: string | null = null
-  ): Promise<MultipleDocumentsResult< TDocument>> {
+  ): Promise<GetDocumentsResponse<TDocument>> {
     // Where starts with _idPrefix
     const response = await this._client.search<TDocument>({
       index: this._config.indexName,
@@ -158,14 +182,14 @@ export class ElasticsearchDocumentProvider<TDocument extends Document>
         // {_uid: "asc" },
         //{ _uid: {"order" : "asc" , "missing" : "_last" , "unmapped_type" :"string"} }
         { _score: { order: "desc" } },
-        ...sort.map(sort => ({ [sort.field]: { order: sort.order }}))
+        ...sort.map((sort) => ({ [sort.field]: { order: sort.order } })),
 
         // Replace this with a date/time stamp stored as an integer
         //{ fileSizeBytes: { order: "asc" } },
         // { "@timestamp" : "desc" },
         //{ "_uid": {"order" : "asc" , "missing" : "_last" , "unmapped_type" :"string"} }
       ],
-      size: maxResults, 
+      size: maxResults,
       search_after: this.parseContinuationToken(continuationToken),
     });
 
@@ -179,10 +203,8 @@ export class ElasticsearchDocumentProvider<TDocument extends Document>
       .filter((c) => c)
       .map((c) => c) as TDocument[];
 
-      return {
-        documents,
-        continuationToken: newContinuationToken
-      }
+    return this._responseFactory.getDocuments.ok(documents, newContinuationToken);
+
   }
 
   private createContinuationToken(
