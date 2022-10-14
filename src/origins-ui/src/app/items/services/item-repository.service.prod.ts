@@ -6,7 +6,7 @@ import { Item, ItemInfo } from "../items.models";
 @Injectable({
   providedIn: 'root',
 })
-export class CollectionRepositoryService extends HttpRepositoryService<ItemInfo, Item> {
+export class ItemRepositoryService extends HttpRepositoryService<ItemInfo, Item> {
   constructor(http: HttpClient) {
     super(http, '/api/items');
   }
