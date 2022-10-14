@@ -173,7 +173,7 @@ TDocumentForRead extends OriginsDocument,
     // Add new
     const existingIndex = this._documents.findIndex((r) => r.id === id);
     if (existingIndex === -1) {
-      const temp = this.getRecordForRead({
+      const temp = this.getDocumentForRead({
         ...document,
         id: uuidv4(),
       });
@@ -187,7 +187,7 @@ TDocumentForRead extends OriginsDocument,
     }
 
     // Update existing
-    const documentForRead = this.getRecordForRead(document);
+    const documentForRead = this.getDocumentForRead(document);
     this._documents[existingIndex] = documentForRead;
     return of({
       success: true,
@@ -218,7 +218,7 @@ TDocumentForRead extends OriginsDocument,
   }
 
   // ----- PROTECTED ABSTRACT ----- //
-  protected abstract getRecordForRead(document: TDocumentForWrite): TDocumentForRead;
+  protected abstract getDocumentForRead(document: TDocumentForWrite): TDocumentForRead;
 }
 
 

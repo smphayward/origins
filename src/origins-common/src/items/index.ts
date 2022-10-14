@@ -108,7 +108,7 @@ export class MockObservableItemInfoProvider
   extends MockObservableDocumentProvider<ItemInfo, Item>
   implements ObservableItemInfoProvider {
 
-  protected getRecordForRead(document: Item): ItemInfo {
+  protected getDocumentForRead(document: Item): ItemInfo {
     return {
       ...document,
       _links:{

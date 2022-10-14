@@ -54,7 +54,7 @@ export class MockObservableCollectionInfoProvider
   extends MockObservableDocumentProvider<CollectionInfo, Collection>
   implements ObservableItemInfoProvider {
 
-  protected getRecordForRead(document: Collection): CollectionInfo {
+  protected getDocumentForRead(document: Collection): CollectionInfo {
     return {
       ...document,
       rootDirectoryExists: true
