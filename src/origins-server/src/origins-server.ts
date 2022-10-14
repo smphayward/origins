@@ -23,6 +23,8 @@ import { createHealthRouter } from "./health/health-router-factory";
 import { QueryStringParser } from "./documents/QueryStringParser";
 import { createItemsRouter } from "./items/items-router-factory";
 import { ElasticsearchItemProvider } from "./items/ElasticsearchItemProvider";
+import { createProcessingRouter } from "./processing/processing-router-factory";
+import { ProcessingProvider } from "./processing/ProcessingProvider";
 
 console.log(
   chalk.blue(`
@@ -152,12 +154,12 @@ const thumbnailProvider = new ThumbnailProvider(
   itemProvider
 );
 
-// const processingProvider = new ProcessingProvider(
-//   config,
-//   extractionProvider,
-//   indexProvider,
-//   thumbnailProvider
-// );
+const processingProvider = new ProcessingProvider(
+  config,
+  extractionProvider,
+  itemProvider,
+  thumbnailProvider
+);
 
 const queryStringParser = new QueryStringParser();
 
@@ -259,10 +261,10 @@ app.use(
 );
 
 //app.use("/api/index", createIndexRouter(indexProvider, queryStringParser).router());
-// app.use(
-//   "/api/processing",
-//   createProcessingRouter(collectionProvider, processingProvider)
-// );
+app.use(
+  "/api/processing",
+  createProcessingRouter(collectionProvider, processingProvider)
+);
 app.use("/api/webdav", createWebDAVRouter(collectionProvider));
 app.use("/api/thumbnails", createThumbnailRouter(thumbnailProvider));
 // app.use("/index", createIndexRouter(databaseProvider));
