@@ -15,3 +15,8 @@ export const clearSelectedItem = itemActions.clearSelectedDocument;
 export const moveToItem = itemActions.moveToDocument;
 export const moveToPreviousItem = itemActions.moveToPreviousDocument;
 export const moveToNextItem = itemActions.moveToNextDocument;
+
+// Purge
+export const requestPurgeItems = itemActions.requestPurgeDocuments;
+export const purgeItemsSucceeded = itemActions.purgeDocumentsSucceeded;
+export const purgeItemsFailed = itemActions.purgeDocumentsFailed;

@@ -23,6 +23,9 @@ export const itemsReducer = createReducer(
   on(ItemActions.clearSelectedItem, ReducerFunctions.clearSelectedDocument),
   on(ItemActions.moveToItem, ReducerFunctions.moveToDocument),
   on(ItemActions.moveToPreviousItem, ReducerFunctions.moveToPreviousDocument),
-  on(ItemActions.moveToNextItem, ReducerFunctions.moveToNextDocument)
+  on(ItemActions.moveToNextItem, ReducerFunctions.moveToNextDocument),
+
+  // ----- PURGE ----- //
+  on(ItemActions.purgeItemsSucceeded, ReducerFunctions.successfullyPurgedDocuments),
 
 );

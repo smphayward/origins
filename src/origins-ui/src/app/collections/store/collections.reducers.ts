@@ -23,6 +23,9 @@ export const collectionsReducer = createReducer(
   on(CollectionActions.addCollectionSucceeded, ReducerFunctions.documentSuccessfullyAdded),
   on(CollectionActions.deleteCollectionSucceeded, ReducerFunctions.documentSuccessfullyDeleted),
 
+  // ----- PURGE ----- //
+  on(CollectionActions.purgeCollectionsSucceeded, ReducerFunctions.successfullyPurgedDocuments),
+
   // ----- SELECTED ----- //
   on(CollectionActions.clearSelectedCollection, ReducerFunctions.clearSelectedDocument),
   on(CollectionActions.moveToCollection, ReducerFunctions.moveToDocument),

@@ -3,6 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { map } from 'rxjs';
+import { ConfirmDialogComponent } from 'src/app/shared/components/confirm-dialog/confirm-dialog.component';
 import { collectionActions } from '../../store/collections.actions';
 import { AddEditCollectionComponent } from '../add-edit-collection/add-edit-collection.component';
 import { AddEditDialogData } from '../add-edit-collection/AddEditDialogData';
@@ -44,4 +45,24 @@ export class CollectionsPanelComponent implements OnInit {
       }
     });
   };
+
+  onPurge = () => {
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      data: {
+        title: 'Delete ALL collections?',
+        message: `Would you like to delete all collection documents?`,
+        cancelButtonText: 'No',
+        okButtonText: 'Delete All',
+      },
+    });
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        this.store.dispatch(
+          collectionActions.requestPurgeDocuments()
+        );
+      }
+    });
+  }
+
+
 }

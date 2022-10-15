@@ -23,6 +23,11 @@ export const requestDeleteCollectionById = collectionActions.requestDeleteDocume
 export const deleteCollectionSucceeded = collectionActions.deleteDocumentSucceeded;
 export const deleteCollectionFailed = collectionActions.deleteDocumentFailed;
 
+// Purge
+export const requestPurgeCollections = collectionActions.requestPurgeDocuments;
+export const purgeCollectionsSucceeded = collectionActions.purgeDocumentsSucceeded;
+export const purgeCollectionsFailed = collectionActions.purgeDocumentsFailed;
+
 // Selected Document
 export const clearSelectedCollection = collectionActions.clearSelectedDocument;
 export const moveToCollection = collectionActions.moveToDocument;

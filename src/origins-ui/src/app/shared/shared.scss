@@ -74,6 +74,18 @@ input {
   background-color: #1AA7EC;
 }
 
+.purge-action-button {
+  @extend .action-button;
+  background-color: #FF7518;
+}
+
+.process-action-button {
+  @extend .action-button;
+  background-color: indigo;
+  margin-top: 10px;
+}
+
+
 .delete-action-button {
   @extend .action-button;
   background-color: #C41E3A;

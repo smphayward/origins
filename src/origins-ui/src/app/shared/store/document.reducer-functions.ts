@@ -1,7 +1,12 @@
 import { OriginsDocument } from 'origins-common';
 import { DocumentState } from './document.models';
 
-// ----- READ DOCUMENTS ----- //
+// ██████  ███████  █████  ██████  
+// ██   ██ ██      ██   ██ ██   ██ 
+// ██████  █████   ███████ ██   ██ 
+// ██   ██ ██      ██   ██ ██   ██ 
+// ██   ██ ███████ ██   ██ ██████ 
+
 export const documentsLoaded = <
   TDocument extends OriginsDocument,
   TState extends DocumentState<TDocument>
@@ -33,7 +38,13 @@ export const documentsLoaded = <
   return newState;
 };
 
-// ----- WRITE DOCUMENTS ----- //
+
+// ██     ██ ██████  ██ ████████ ███████ 
+// ██     ██ ██   ██ ██    ██    ██      
+// ██  █  ██ ██████  ██    ██    █████   
+// ██ ███ ██ ██   ██ ██    ██    ██      
+//  ███ ███  ██   ██ ██    ██    ███████ 
+
 export const documentSuccessfullyAdded = <
   TDocument extends OriginsDocument,
   TState extends DocumentState<TDocument>
@@ -93,7 +104,12 @@ export const documentSuccessfullyDeleted = <
   return state;
 };
 
-// ----- SELECTED RECORD ----- //
+// ███████ ███████ ██      ███████  ██████ ████████ ███████ ██████  
+// ██      ██      ██      ██      ██         ██    ██      ██   ██ 
+// ███████ █████   ██      █████   ██         ██    █████   ██   ██ 
+//      ██ ██      ██      ██      ██         ██    ██      ██   ██ 
+// ███████ ███████ ███████ ███████  ██████    ██    ███████ ██████  
+
 export const clearSelectedDocument = <
   TDocument extends OriginsDocument,
   TState extends DocumentState<TDocument>
@@ -167,6 +183,31 @@ const getStateWithSelectedIndexChange = <
     selectedDocumentIndex,
   };
 };
+
+
+// ██████  ██    ██ ██████   ██████  ███████ 
+// ██   ██ ██    ██ ██   ██ ██       ██      
+// ██████  ██    ██ ██████  ██   ███ █████   
+// ██      ██    ██ ██   ██ ██    ██ ██      
+// ██       ██████  ██   ██  ██████  ███████ 
+
+export const successfullyPurgedDocuments = <
+  TDocument extends OriginsDocument,
+  TState extends DocumentState<TDocument>
+>(
+  state: TState
+): TState => {
+  return {
+    ...state,
+    documents: []
+  };
+};
+
+// ██████   ██████  ███    ██ ███████ ██    ██  █████  ██████  ██████  
+// ██   ██ ██    ██ ████   ██ ██       ██  ██  ██   ██ ██   ██ ██   ██ 
+// ██████  ██    ██ ██ ██  ██ █████     ████   ███████ ██████  ██   ██ 
+// ██   ██ ██    ██ ██  ██ ██ ██         ██    ██   ██ ██   ██ ██   ██ 
+// ██████   ██████  ██   ████ ███████    ██    ██   ██ ██   ██ ██████  
 
 // on(clearSelectedCollection, (state) => {
 

@@ -9,7 +9,10 @@
       <mat-icon>add</mat-icon>
       Add Collection
     </button>
-
+    <button mat-stroked-button class="purge-action-button" (click)="onPurge()" style="margin-left:10px">
+      <mat-icon>remove_circle_outline</mat-icon>
+      Purge
+    </button>    
 
     <app-collection-list></app-collection-list>
   </div>

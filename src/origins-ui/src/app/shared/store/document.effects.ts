@@ -20,10 +20,17 @@ export abstract class DocumentEffects<
       TDocumentForRead,
       TDocumentForWrite
     >,
-    private documentActions: DocumentActions<TDocumentForRead, TDocumentForWrite>
+    private documentActions: DocumentActions<
+      TDocumentForRead,
+      TDocumentForWrite
+    >
   ) {}
 
-  // ----- READ OPERATIONS ----- //
+  // ██████  ███████  █████  ██████
+  // ██   ██ ██      ██   ██ ██   ██
+  // ██████  █████   ███████ ██   ██
+  // ██   ██ ██      ██   ██ ██   ██
+  // ██   ██ ███████ ██   ██ ██████
 
   getAll$ = createEffect(() =>
     this.actions$.pipe(
@@ -63,9 +70,7 @@ export abstract class DocumentEffects<
       mergeMap((action) =>
         iif(
           () => this.lastSearchByTextQuery === undefined,
-          this.repository.getAll(
-            this.maxDocuments, 
-            this.lastContinuationToken),
+          this.repository.getAll(this.maxDocuments, this.lastContinuationToken),
           this.repository.search(
             this.lastSearchByTextQuery ?? '',
             this.maxDocuments,
@@ -82,7 +87,12 @@ export abstract class DocumentEffects<
     )
   );
 
-  // ----- WRITE OPERATIONS ----- //
+  // ██     ██ ██████  ██ ████████ ███████
+  // ██     ██ ██   ██ ██    ██    ██
+  // ██  █  ██ ██████  ██    ██    █████
+  // ██ ███ ██ ██   ██ ██    ██    ██
+  //  ███ ███  ██   ██ ██    ██    ███████
+
   add$ = createEffect(() =>
     this.actions$.pipe(
       ofType(this.documentActions.requestAddDocument),
@@ -153,7 +163,61 @@ export abstract class DocumentEffects<
     )
   );
 
-  // ----- HELPER FUNCTIONS ----- //
+  // ██████  ██    ██ ██████   ██████  ███████
+  // ██   ██ ██    ██ ██   ██ ██       ██
+  // ██████  ██    ██ ██████  ██   ███ █████
+  // ██      ██    ██ ██   ██ ██    ██ ██
+  // ██       ██████  ██   ██  ██████  ███████
+
+  purge$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(this.documentActions.requestPurgeDocuments),
+      mergeMap((action) =>
+        this.repository.purge().pipe(
+          map((result) => {
+            console.log('Result', result);
+            if (result.success) return this.documentActions.purgeDocumentsSucceeded();
+            else {
+              return this.documentActions.purgeDocumentsFailed();
+            }
+          }),
+          catchError(() => EMPTY)
+        )
+      )
+    )
+  );
+
+  // ██████  ██████   ██████   ██████ ███████ ███████ ███████
+  // ██   ██ ██   ██ ██    ██ ██      ██      ██      ██
+  // ██████  ██████  ██    ██ ██      █████   ███████ ███████
+  // ██      ██   ██ ██    ██ ██      ██           ██      ██
+  // ██      ██   ██  ██████   ██████ ███████ ███████ ███████
+
+  // process$ = createEffect(() =>
+  //   this.actions$.pipe(
+  //     ofType(this.documentActions.requestProcess),
+  //     mergeMap((action) =>
+  //       this.repository.process().pipe(
+  //         map((result) => {
+  //           console.log('Result', result);
+  //           if (result.success) return this.documentActions.processSucceeded();
+  //           else {
+  //             return this.documentActions.processFailed();
+  //           }
+  //         }),
+  //         catchError(() => EMPTY)
+  //       )
+  //     )
+  //   )
+  // );
+
+
+
+  // ██   ██ ███████ ██      ██████  ███████ ██████
+  // ██   ██ ██      ██      ██   ██ ██      ██   ██
+  // ███████ █████   ██      ██████  █████   ██████
+  // ██   ██ ██      ██      ██      ██      ██   ██
+  // ██   ██ ███████ ███████ ██      ███████ ██   ██
 
   private mapGetManyResultToAction = (
     result: GetDocumentsResponse<TDocumentForRead>,

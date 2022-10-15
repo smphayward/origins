@@ -78,4 +78,9 @@ export class CollectionListItemComponent implements OnInit {
       }
     });
   };
+
+  onProcess = () => {
+
+  }
+
 }

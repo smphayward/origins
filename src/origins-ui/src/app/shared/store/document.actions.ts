@@ -95,4 +95,33 @@ export class DocumentActions<TDocumentForRead extends OriginsDocument, TDocument
   readonly moveToNextDocument = createAction(
     `[${this.feature}] Move To Next Document`
   );
+
+  // ------ Purge and Process ----- //
+  readonly requestPurgeDocuments = createAction(
+    `[${this.feature}] Request Purge Documents`
+  );
+
+  readonly purgeDocumentsSucceeded = createAction(
+    `[${this.feature}] Purge Documents Succeeded`    
+  );
+
+  readonly purgeDocumentsFailed = createAction(
+    `[${this.feature}] Purge Documents Failed`
+  )
+
+  readonly requestProcessDocument = createAction(
+    `[${this.feature}] Request Process Document`,
+    props<{ id: string }>()
+  );
+
+  readonly processDocumentSucceeded = createAction(
+    `[${this.feature}] Process Document Succeeded`,
+    props<{ id: string }>()    
+  );
+
+  readonly processDocumentFailed = createAction(
+    `[${this.feature}] Process Document Failed`,
+    props<{ id: string }>()
+  )
+
 }
