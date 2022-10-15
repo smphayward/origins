@@ -145,7 +145,13 @@ export const createDocumentRouter = <TDocument extends OriginsDocument>(
       const documentId = req.params.id;
       const result = await documentProvider.delete(documentId);
       return res.status(result.statusCode).send(result);
-    });
+    })
+    .post("/purge", async (req, res) => {
+      const result = await documentProvider.purge();
+      return res.status(result.statusCode).send(result);
+    })
+    
+    ;
 
   return new createDocumentRouterReturn();
 

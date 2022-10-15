@@ -1,5 +1,5 @@
 import { Client, ClientOptions, errors, estypes } from "@elastic/elasticsearch";
-import { DocumentProvider, DocumentSortCondition } from "origins-common";
+import { DocumentProvider, DocumentSortCondition, PurgeResponse } from "origins-common";
 import base64Url from "base64url";
 import { SortResults } from "@elastic/elasticsearch/lib/api/types";
 import {
@@ -11,6 +11,7 @@ import {
   GetDocumentResponse,
   DocumentResponse
 } from "origins-common";
+import { Collection } from "origins-common/collections";
 
 export interface ElasticsearchDocumentProviderConfig {
   indexName: string;
@@ -114,6 +115,21 @@ export class ElasticsearchDocumentProvider<TDocument extends OriginsDocument>
       maxResults,
       continuationToken
     );
+  }
+
+  public async purge(): Promise<PurgeResponse> {
+    console.log("Purging");
+    try {
+      const response = await this._client.deleteByQuery({
+        index: this._config.indexName,
+        query: {
+          match_all: {}
+        }
+      });
+      return this._responseFactory.deleteDocument.ok();
+    } catch (error) {
+      return this.getErrorDocumentResponse(error);
+    }
   }
 
   // ----- Non-interface members ----- //
