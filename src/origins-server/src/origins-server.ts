@@ -253,11 +253,15 @@ app.use("/health", createHealthRouter());
 // API
 app.use(
   "/api/collections",
-  createCollectionsRouter(collectionProvider, queryStringParser).router()
+  createCollectionsRouter(
+    collectionProvider,
+    queryStringParser,
+    processingProvider
+  )
 );
 app.use(
   "/api/items",
-  createItemsRouter(itemProvider, queryStringParser).router()
+  createItemsRouter(itemProvider, queryStringParser)
 );
 
 //app.use("/api/index", createIndexRouter(indexProvider, queryStringParser).router());

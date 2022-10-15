@@ -27,5 +27,5 @@ export const createItemsRouter = (
       }
     };
     return formattedDocument;
-  });
+  }).router();
 };
