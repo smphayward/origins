@@ -53,12 +53,12 @@
                   "with": "src/environments/environment.prod.ts"
                 },
                 {
-                  "replace": "src/app/collections/services/collection-repository.service.ts",
-                  "with":    "src/app/collections/services/collection-repository.service.prod.ts"
+                  "replace": "src/app/collections/services/collection-info-provider.service.ts",
+                  "with":    "src/app/collections/services/collection-info-provider.service.prod.ts"
                 },
                 {
-                  "replace": "src/app/items/services/item-repository.service.ts",
-                  "with":    "src/app/items/services/item-repository.service.prod.ts"
+                  "replace": "src/app/items/services/item-info-provider.service.ts",
+                  "with":    "src/app/items/services/item-info-provider.service.prod.ts"
                 }
               ],
               "outputHashing": "all"
