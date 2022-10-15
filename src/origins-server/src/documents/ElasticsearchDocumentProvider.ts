@@ -1,5 +1,5 @@
 import { Client, ClientOptions, errors, estypes } from "@elastic/elasticsearch";
-import { DocumentProvider, DocumentSortCondition, PurgeResponse } from "origins-common";
+import { DocumentProvider, DocumentSortCondition, GeneralResponse, PurgeDocumentsResponse } from "origins-common";
 import base64Url from "base64url";
 import { SortResults } from "@elastic/elasticsearch/lib/api/types";
 import {
@@ -64,7 +64,7 @@ export class ElasticsearchDocumentProvider<TDocument extends OriginsDocument>
       }
       return this._responseFactory.getDocument.ok(response._source);
     } catch (error) {
-      return this.getErrorDocumentResponse(error);
+      return this.errorToGeneralResponse(error);
     }
   }
 
@@ -80,7 +80,7 @@ export class ElasticsearchDocumentProvider<TDocument extends OriginsDocument>
       });
       return this._responseFactory.upsertDocument.ok(document);
     } catch (error) {
-      return this.getErrorDocumentResponse(error);
+      return this.errorToGeneralResponse(error);
     }
   }
 
@@ -92,7 +92,7 @@ export class ElasticsearchDocumentProvider<TDocument extends OriginsDocument>
       });
       return this._responseFactory.deleteDocument.ok();
     } catch (error) {
-      return this.getErrorDocumentResponse(error);
+      return this.errorToGeneralResponse(error);
     }
   }
 
@@ -117,22 +117,32 @@ export class ElasticsearchDocumentProvider<TDocument extends OriginsDocument>
     );
   }
 
-  public async purge(): Promise<PurgeResponse> {
-    console.log("Purging");
+  // ██████  ██    ██ ██████   ██████  ███████
+  // ██   ██ ██    ██ ██   ██ ██       ██
+  // ██████  ██    ██ ██████  ██   ███ █████
+  // ██      ██    ██ ██   ██ ██    ██ ██
+  // ██       ██████  ██   ██  ██████  ███████
+
+  public async purge(lucene?: string): Promise<PurgeDocumentsResponse> {
+    console.log(`Purging ${lucene ?? 'all'}`);
     try {
       const response = await this._client.deleteByQuery({
         index: this._config.indexName,
-        query: {
-          match_all: {}
-        }
+        query: this.luceneToQuery(lucene),
       });
-      return this._responseFactory.deleteDocument.ok();
+      return this._responseFactory.purgeDocuments.ok(response.deleted);
     } catch (error) {
-      return this.getErrorDocumentResponse(error);
+      console.log(`Error purging: ${error}`)
+      return this.errorToGeneralResponse(error);
     }
   }
 
-  // ----- Non-interface members ----- //
+  // ███████ ██   ██ ████████ ██████   █████  ███████
+  // ██       ██ ██     ██    ██   ██ ██   ██ ██
+  // █████     ███      ██    ██████  ███████ ███████
+  // ██       ██ ██     ██    ██   ██ ██   ██      ██
+  // ███████ ██   ██    ██    ██   ██ ██   ██ ███████
+
   public async ensureIndexExists(): Promise<void> {
     try {
       const exists = await this._client.indices.exists({
@@ -159,13 +169,17 @@ export class ElasticsearchDocumentProvider<TDocument extends OriginsDocument>
     }
   }
 
-  // ----- HELPERS ----- //
+  // ██   ██ ███████ ██      ██████  ███████ ██████  ███████
+  // ██   ██ ██      ██      ██   ██ ██      ██   ██ ██
+  // ███████ █████   ██      ██████  █████   ██████  ███████
+  // ██   ██ ██      ██      ██      ██      ██   ██      ██
+  // ██   ██ ███████ ███████ ██      ███████ ██   ██ ███████
+
   private getElasticsearchId(id: string) {
     return this._idPrefix + id;
   }
 
-  private getErrorDocumentResponse(error: any): DocumentResponse<TDocument> {
-
+  private errorToGeneralResponse(error: any): GeneralResponse {
     if (error instanceof errors.ResponseError) {
       if (error.statusCode === 404) {
         return this._responseFactory.document.notFound();
@@ -179,9 +193,21 @@ export class ElasticsearchDocumentProvider<TDocument extends OriginsDocument>
     return this._responseFactory.document.internalServerError(
       JSON.stringify(error)
     );
-
   }
 
+
+  private luceneToQuery(lucene?: string): estypes.QueryDslQueryContainer {
+    if (!lucene || lucene.trim().length === 0) {
+      return {
+        match_all: {},
+      };
+    }
+    return {
+      query_string: {
+        query: lucene,
+      },
+    };
+  }
 
   private async searchInternal(
     query: estypes.QueryDslQueryContainer,
@@ -189,37 +215,36 @@ export class ElasticsearchDocumentProvider<TDocument extends OriginsDocument>
     maxResults: number = 25,
     continuationToken: string | null = null
   ): Promise<GetDocumentsResponse<TDocument>> {
-    // Where starts with _idPrefix
-    const response = await this._client.search<TDocument>({
-      index: this._config.indexName,
-
-      query,
-      sort: [
-        // {_uid: "asc" },
-        //{ _uid: {"order" : "asc" , "missing" : "_last" , "unmapped_type" :"string"} }
-        { _score: { order: "desc" } },
-        ...sort.map((sort) => ({ [sort.field]: { order: sort.order } })),
-
-        // Replace this with a date/time stamp stored as an integer
-        //{ fileSizeBytes: { order: "asc" } },
-        // { "@timestamp" : "desc" },
-        //{ "_uid": {"order" : "asc" , "missing" : "_last" , "unmapped_type" :"string"} }
-      ],
-      size: maxResults,
-      search_after: this.parseContinuationToken(continuationToken),
-    });
-
-    // TODO: Make TDocument include _links and add the link to "get more" here, if possible
-    // Though maybe not in this class but rather in DocumentRouterFactory
-    const newContinuationToken = this.createContinuationToken(response);
-    console.log(`continuation token: ${newContinuationToken}`);
-
-    const documents = response.hits.hits
-      .map((h) => h._source)
-      .filter((c) => c)
-      .map((c) => c) as TDocument[];
-
-    return this._responseFactory.getDocuments.ok(documents, newContinuationToken);
+    
+    try {
+      const response = await this._client.search<TDocument>({
+        index: this._config.indexName,
+        query,
+        sort: [
+          { _score: { order: "desc" } },
+          ...sort.map((sort) => ({ [sort.field]: { order: sort.order } })),
+        ],
+        size: maxResults,
+        search_after: this.parseContinuationToken(continuationToken),
+      });
+  
+      // TODO: Make TDocument include _links and add the link to "get more" here, if possible
+      // Though maybe not in this class but rather in DocumentRouterFactory
+      const newContinuationToken = this.createContinuationToken(response);
+      console.log(`continuation token: ${newContinuationToken}`);
+  
+      const documents = response.hits.hits
+        .map((h) => h._source)
+        .filter((c) => c)
+        .map((c) => c) as TDocument[];
+  
+      return this._responseFactory.getDocuments.ok(
+        documents,
+        newContinuationToken
+      );
+    } catch (error) {
+      return this.errorToGeneralResponse(error);
+    }
 
   }
 

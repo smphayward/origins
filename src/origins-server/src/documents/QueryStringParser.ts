@@ -19,6 +19,12 @@ export class QueryStringParser {
     };
   }
 
+  public parsePurge(req: express.Request) {
+    return {
+      query: (req.query.q as string) ?? null,
+    };
+  }  
+
   // HELPERS
 
   // Probably should do a bad reqest if it's specified but invalid
