@@ -221,11 +221,13 @@ TDocumentForRead extends OriginsDocument,
 
   purge(lucene?: string): Observable<PurgeDocumentsResponse> {
     // TODO: Do some cheap version of lucene... although... it's just a mock
+    const count = this._documents.length;
     this._documents = [];
     return of({
       success: true,
       statusCode: 200,
       message: 'Successfully purged.',
+      documentsDeleted: count
     });
   }
 
