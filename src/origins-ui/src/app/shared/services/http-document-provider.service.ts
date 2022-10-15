@@ -9,6 +9,7 @@ import {
   GetDocumentsResponse,
   ObservableDocumentProvider,
   OriginsDocument,
+  ProcessDocumentsResponse,
   PurgeDocumentsResponse,
   UpsertDocumentResponse,
 } from 'origins-common';
@@ -132,7 +133,21 @@ export abstract class HttpDocumentProvider<
   // ██      ██   ██ ██    ██ ██      ██           ██      ██
   // ██      ██   ██  ██████   ██████ ███████ ███████ ███████
 
-
+  process(id: string): Observable<ProcessDocumentsResponse> {
+    return (
+      this.http
+        .post(`${this.urlRoot}/${encodeURI(id)}/process`, { observe: 'response' })
+        // This mapping is wrong.
+        // For some reason, post doesn't give HttpResponse
+        .pipe(
+          map((x) => ({
+            statusCode: 200,
+            message: 'Done',
+            success: true,
+          }))
+        )
+    );
+  }
 
 
   // ██   ██ ███████ ██      ██████  ███████ ██████  ███████

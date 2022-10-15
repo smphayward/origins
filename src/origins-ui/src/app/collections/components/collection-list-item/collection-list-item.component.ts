@@ -100,8 +100,10 @@ export class CollectionListItemComponent implements OnInit {
     });
   }
 
-  onProcess = () => {
-
+  onProcess = (collectionId: string) => {
+    this.store.dispatch(
+      collectionActions.requestProcessDocument({ id: collectionId })
+    );
   }
 
 }

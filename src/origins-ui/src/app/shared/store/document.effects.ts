@@ -260,23 +260,36 @@ export abstract class DocumentEffects<
   // ██      ██   ██ ██    ██ ██      ██           ██      ██
   // ██      ██   ██  ██████   ██████ ███████ ███████ ███████
 
-  // process$ = createEffect(() =>
-  //   this.actions$.pipe(
-  //     ofType(this.documentActions.requestProcess),
-  //     mergeMap((action) =>
-  //       this.repository.process().pipe(
-  //         map((result) => {
-  //           console.log('Result', result);
-  //           if (result.success) return this.documentActions.processSucceeded();
-  //           else {
-  //             return this.documentActions.processFailed();
-  //           }
-  //         }),
-  //         catchError(() => EMPTY)
-  //       )
-  //     )
-  //   )
-  // );
+  process$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(this.documentActions.requestProcessDocument),
+      switchMap((action) =>
+        this.repository.process(action.id).pipe(
+          switchMap((result) => {
+            console.log('Result', result);
+            if (result.success) {
+              return of(
+                this.documentActions.processDocumentSucceeded({
+                  id: action.id,
+                }),
+                changeNotificationMessage({
+                  message: `Process ${this.documentTypeName} succeeded.`,
+                })
+              );
+            } else {
+              return of(
+                this.documentActions.processDocumentFailed({ id: action.id }),
+                changeNotificationMessage({
+                  message: `Process ${this.documentTypeName} failed. ${result.statusCode} - ${result.message}`,
+                })
+              );
+            }
+          }),
+          catchError(() => EMPTY)
+        )
+      )
+    )
+  );
 
   // ██   ██ ███████ ██      ██████  ███████ ██████
   // ██   ██ ██      ██      ██   ██ ██      ██   ██
