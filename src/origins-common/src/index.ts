@@ -45,7 +45,7 @@ export interface DocumentProvider<
     continuationToken?: string | null,
     sort?: DocumentSortCondition[],
   ) => Promise<GetDocumentsResponse<TDocumentForWrite>>;
-  purge: () => Promise<PurgeResponse>;
+  purge: (lucene?: string) => Promise<PurgeDocumentsResponse>;
 }
 
 export interface ObservableDocumentProvider<
@@ -66,7 +66,7 @@ export interface ObservableDocumentProvider<
     continuationToken?: string | null,
     sort?: DocumentSortCondition[],
   ) => Observable<GetDocumentsResponse<TDocumentForRead>>;
-  purge: () => Observable<PurgeResponse>;
+  purge: (lucene?: string) => Observable<PurgeDocumentsResponse>;
 }
 
 // ███    ███  ██████   ██████ ██   ██ 
@@ -219,7 +219,8 @@ TDocumentForRead extends OriginsDocument,
     // Split and spreading?
   }
 
-  purge(): Observable<PurgeResponse> {
+  purge(lucene?: string): Observable<PurgeDocumentsResponse> {
+    // TODO: Do some cheap version of lucene... although... it's just a mock
     this._documents = [];
     return of({
       success: true,
@@ -270,7 +271,8 @@ export interface DeleteDocumentResponse extends GeneralResponse {
   // Some systems return the record that was deleted
 }
 
-export interface PurgeResponse extends GeneralResponse {
+export interface PurgeDocumentsResponse extends GeneralResponse {
+  documentsDeleted?: number;
   // Might be some stuff here at some point
 }
 
@@ -305,6 +307,7 @@ class GetDocumentsResponseFactory<TDocument extends OriginsDocument> {
     message: string = `Documents found.`,
   ) => this.custom(true, 200, message, continuationToken, documents);
   notFound = (message: string = `Documents not found.`) => this.custom(false, 404, message);
+  internalServerError = (message: string = `Internal server error.`) => this.custom(false, 500, message);
 }
 
 class DocumentResponseFactory<TDocument extends OriginsDocument> {
@@ -366,6 +369,25 @@ class DeleteDocumentResponseFactory<TDocument extends OriginsDocument> extends G
 
 }
 
+class PurgeDocumentsResponseFactory<TDocument extends OriginsDocument>  {
+  custom = (
+    success: boolean,
+    statusCode: number,
+    message: string,
+    documentsDeleted?: number
+  ): PurgeDocumentsResponse => {
+    return {
+      success,
+      statusCode,
+      message,
+      documentsDeleted
+    };
+  };
+
+  ok = (documentsDeleted?: number, message: string = `Documents purged`) => this.custom(true, 200, message, documentsDeleted);
+  
+}
+
 export class ResponseFactory<TDocument extends OriginsDocument> {
   readonly getDocuments = new GetDocumentsResponseFactory<TDocument>();
 
@@ -376,5 +398,6 @@ export class ResponseFactory<TDocument extends OriginsDocument> {
   readonly updateDocument = new UpdateDocumentResponseFactory<TDocument>();
 
   readonly deleteDocument = new DeleteDocumentResponseFactory<TDocument>();
+  readonly purgeDocuments = new PurgeDocumentsResponseFactory();
   
 }
