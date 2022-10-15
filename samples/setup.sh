@@ -22,13 +22,28 @@ echo
 echo "Purging items and collections. This could take a few minutes..."
 echo
 echo
-curl "${ROOT_URL}/api/items/purge" -X POST 
+curl "${ROOT_URL}/api/items/purge?q=collectionId:\"animals\"" -X POST 
 echo
 echo
-curl "${ROOT_URL}/api/collections/purge" -X POST
+curl "${ROOT_URL}/api/items/purge?q=collectionId:\"places\"" -X POST 
+echo
+echo
+curl "${ROOT_URL}/api/items/purge?q=collectionId:\"sports\"" -X POST 
+# echo
+# echo
+# curl "${ROOT_URL}/api/items/purge" -X POST 
+echo
+echo
+curl "${ROOT_URL}/api/collections/purge?q=id:(\"animals\"%20\"places\"%20\"sports\")" -X POST
 echo
 echo
 
+echo "████████ ██   ██ ██    ██ ███    ███ ██████  ███████ "
+echo "   ██    ██   ██ ██    ██ ████  ████ ██   ██ ██      "
+echo "   ██    ███████ ██    ██ ██ ████ ██ ██████  ███████ "
+echo "   ██    ██   ██ ██    ██ ██  ██  ██ ██   ██      ██ "
+echo "   ██    ██   ██  ██████  ██      ██ ██████  ███████ "
+echo
 echo "Deleting thumbnails directory..."
 echo
 rm -rfv ${THUMBS_DIR}
