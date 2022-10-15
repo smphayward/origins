@@ -45,6 +45,7 @@ export interface DocumentProvider<
     continuationToken?: string | null,
     sort?: DocumentSortCondition[],
   ) => Promise<GetDocumentsResponse<TDocumentForWrite>>;
+  purge: () => Promise<PurgeResponse>;
 }
 
 export interface ObservableDocumentProvider<
@@ -65,6 +66,7 @@ export interface ObservableDocumentProvider<
     continuationToken?: string | null,
     sort?: DocumentSortCondition[],
   ) => Observable<GetDocumentsResponse<TDocumentForRead>>;
+  purge: () => Observable<PurgeResponse>;
 }
 
 // ███    ███  ██████   ██████ ██   ██ 
@@ -217,6 +219,15 @@ TDocumentForRead extends OriginsDocument,
     // Split and spreading?
   }
 
+  purge(): Observable<PurgeResponse> {
+    this._documents = [];
+    return of({
+      success: true,
+      statusCode: 200,
+      message: 'Successfully purged.',
+    });
+  }
+
   // ----- PROTECTED ABSTRACT ----- //
   protected abstract getDocumentForRead(document: TDocumentForWrite): TDocumentForRead;
 }
@@ -257,6 +268,10 @@ export interface UpdateDocumentResponse<TDocument extends OriginsDocument> exten
 export interface DeleteDocumentResponse extends GeneralResponse {
   // Might be some stuff here at some point
   // Some systems return the record that was deleted
+}
+
+export interface PurgeResponse extends GeneralResponse {
+  // Might be some stuff here at some point
 }
 
 
