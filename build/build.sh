@@ -4,13 +4,17 @@ set -e
 
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 OUTPUT_DIR=$( realpath "${SCRIPT_DIR}/dist" ) 
+COMMON_DIR=$( realpath "${SCRIPT_DIR}/../src/origins-common" )
 UI_DIR=$( realpath "${SCRIPT_DIR}/../src/origins-ui" )
 SERVER_DIR=$( realpath "${SCRIPT_DIR}/../src/origins-server" )
+
 
 echo "--- Directories ---"
 echo
 echo "Build Script: ${SCRIPT_DIR}"
 echo "Output:       ${OUTPUT_DIR}"
+echo 
+echo "Common:       ${COMMON_DIR}"
 echo "UI:           ${UI_DIR}"
 echo "Server:       ${SERVER_DIR}"
 echo
@@ -21,6 +25,14 @@ echo
 
 echo "--- Create Output Dir ---"
 mkdir -v $OUTPUT_DIR
+echo
+
+echo "--- Install Origins Common Dependencies ---"
+( cd $COMMON_DIR; npm install )
+echo
+
+echo "--- Build Origins Common ---"
+( cd $COMMON_DIR; npm run build )
 echo
 
 echo "--- Install Origins Server Dependencies ---"

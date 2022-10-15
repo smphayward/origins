@@ -45,7 +45,7 @@ services:
     container_name: origins-server
     environment:
      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
-     - COLLECTION_FamilyPhotos=/usr/origins/collections/family-photos
+     - COLLECTION_FamilyPhotos={"id":"0478AB6F-B4A9-4562-A6A0-71EACCEAD0C5","name':"Family Photos","rootDirectory":"/usr/origins/collections/family-photos"}
     volumes:
       - origins-thumbnails:/usr/origins/thumbnails
       - /mnt/Family-Photos/sorted:/usr/origins/collections/family-photos
