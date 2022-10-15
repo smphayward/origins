@@ -6,7 +6,7 @@ import { HttpDocumentProvider } from 'src/app/shared/services/http-document-prov
 @Injectable({
   providedIn: 'root',
 })
-export class ItemRepositoryService extends HttpDocumentProvider<
+export class ItemInfoProvider extends HttpDocumentProvider<
   ItemInfo,
   Item
 > {

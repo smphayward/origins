@@ -9,6 +9,7 @@ import {
   GetDocumentsResponse,
   ObservableDocumentProvider,
   OriginsDocument,
+  PurgeResponse,
   UpsertDocumentResponse,
 } from 'origins-common';
 
@@ -110,6 +111,18 @@ export abstract class HttpDocumentProvider<
       .pipe(map(this.httpResponseToDeleteResponse));
   }
 
+  purge(): Observable<PurgeResponse> {
+    return this.http
+        .post(`${this.urlRoot}/purge`, { observe: 'response' })
+        // This mapping is wrong.
+        // For some reason, post doesn't give HttpResponse
+        .pipe(map((x) => ({
+          statusCode: 200,
+          message: 'Done',
+          success: true 
+        })));
+  }
+
   // ----- HELPERS ----- //
   private httpResponseToUpsertResponse(
     res: HttpResponse<TDocumentForRead> | any
@@ -160,6 +173,21 @@ export abstract class HttpDocumentProvider<
   // }
 
   private httpResponseToDeleteResponse(res: HttpResponse<Object>): DeleteDocumentResponse {
+    if (res instanceof HttpResponse<Object>) {
+      return {
+        success: res.status < 400,
+        statusCode: res.status,
+        message: res.statusText,
+      };
+    }
+    return {
+      success: false,
+      statusCode: 500,
+      message: `unknown response deleting document. ${JSON.stringify(res)}`,
+    };
+  }
+
+  private httpResponseToPurgeResponse(res: HttpResponse<Object>): PurgeResponse {
     if (res instanceof HttpResponse<Object>) {
       return {
         success: res.status < 400,
