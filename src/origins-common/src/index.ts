@@ -46,7 +46,9 @@ export interface DocumentProvider<
     sort?: DocumentSortCondition[],
   ) => Promise<GetDocumentsResponse<TDocumentForWrite>>;
   purge: (lucene?: string) => Promise<PurgeDocumentsResponse>;
-  process: (id: string) => Promise<ProcessDocumentsResponse>;
+  // SH: This is for origins-server and origins-server's Elasticsearch implementation doesn't do processing
+  // Yes, there is a REST API for it but it's not part of that provider
+  //process: (id: string) => Promise<ProcessDocumentsResponse>;
 }
 
 export interface ObservableDocumentProvider<
