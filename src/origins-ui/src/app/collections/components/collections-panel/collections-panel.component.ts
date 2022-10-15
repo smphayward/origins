@@ -58,7 +58,7 @@ export class CollectionsPanelComponent implements OnInit {
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
         this.store.dispatch(
-          collectionActions.requestPurgeDocuments()
+          collectionActions.requestPurgeDocuments({})
         );
       }
     });

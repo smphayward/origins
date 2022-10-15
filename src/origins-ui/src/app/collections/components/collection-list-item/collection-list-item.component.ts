@@ -2,6 +2,7 @@ import { Component, Input, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
 import { map, startWith, tap } from 'rxjs';
+import { itemActions } from 'src/app/items/store/items.actions';
 import { ConfirmDialogComponent } from 'src/app/shared/components/confirm-dialog/confirm-dialog.component';
 import { collectionActions } from '../../store/collections.actions';
 import { selectCollectionById } from '../../store/collections.selectors';
@@ -78,6 +79,26 @@ export class CollectionListItemComponent implements OnInit {
       }
     });
   };
+
+  onPurgeItems = (collectionId: string, collectionName: string) => {
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      data: {
+        title: 'Delete items in collection?',
+        message: `Would you like to delete all items in collection '${collectionName}'?`,
+        cancelButtonText: 'No',
+        okButtonText: 'Delete All Items',
+      },
+    });
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        this.store.dispatch(
+          itemActions.requestPurgeDocuments({
+            lucene: `collectionId:"${collectionId}"`
+          })
+        );
+      }
+    });
+  }
 
   onProcess = () => {
 

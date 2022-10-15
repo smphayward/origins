@@ -173,10 +173,13 @@ export abstract class DocumentEffects<
     this.actions$.pipe(
       ofType(this.documentActions.requestPurgeDocuments),
       mergeMap((action) =>
-        this.repository.purge().pipe(
+        this.repository.purge(action.lucene).pipe(
           map((result) => {
             console.log('Result', result);
-            if (result.success) return this.documentActions.purgeDocumentsSucceeded();
+            if (result.success)
+              return this.documentActions.purgeDocumentsSucceeded({
+                documentsDeleted: result.documentsDeleted,
+              });
             else {
               return this.documentActions.purgeDocumentsFailed();
             }

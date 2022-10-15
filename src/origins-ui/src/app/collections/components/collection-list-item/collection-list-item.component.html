@@ -24,6 +24,11 @@
         Edit
       </button>
       <br>
+      <button mat-stroked-button class="purge-action-button" (click)="onPurgeItems(collectionId, collectionName)" style="width: 100%;">
+        <mat-icon>remove_circle_outline</mat-icon>
+        Purge All Items
+      </button>
+      <br>
       <button mat-stroked-button class="process-action-button" (click)="onProcess()" style="width: 100%;">
         <mat-icon>engineering</mat-icon>
         Process

@@ -1,10 +1,18 @@
 import { createAction, props } from '@ngrx/store';
 import { OriginsDocument } from 'origins-common';
 
-export class DocumentActions<TDocumentForRead extends OriginsDocument, TDocumentForWrite extends OriginsDocument> {
+export class DocumentActions<
+  TDocumentForRead extends OriginsDocument,
+  TDocumentForWrite extends OriginsDocument
+> {
   constructor(private feature: string) {}
 
-  // ----- READ OPERATIONS ------ //
+  // ██████  ███████  █████  ██████
+  // ██   ██ ██      ██   ██ ██   ██
+  // ██████  █████   ███████ ██   ██
+  // ██   ██ ██      ██   ██ ██   ██
+  // ██   ██ ███████ ██   ██ ██████
+
   readonly getAll = createAction(`[${this.feature}] Get All`);
 
   readonly searchByText = createAction(
@@ -28,11 +36,16 @@ export class DocumentActions<TDocumentForRead extends OriginsDocument, TDocument
   readonly fetchDocumentsFailed = createAction(
     `[${this.feature}] Fetch Documents Failed`,
     props<{
-      reason: string
+      reason: string;
     }>()
   );
 
-  // ----- WRITE OPERATIONS ----- //
+  // ██     ██ ██████  ██ ████████ ███████
+  // ██     ██ ██   ██ ██    ██    ██
+  // ██  █  ██ ██████  ██    ██    █████
+  // ██ ███ ██ ██   ██ ██    ██    ██
+  //  ███ ███  ██   ██ ██    ██    ███████
+
   readonly requestAddDocument = createAction(
     `[${this.feature}] Request Add Document`,
     props<{ document: TDocumentForWrite }>()
@@ -75,10 +88,15 @@ export class DocumentActions<TDocumentForRead extends OriginsDocument, TDocument
 
   readonly deleteDocumentFailed = createAction(
     `[${this.feature}] Deleted Document Failed`,
-    props<{ id: string, reason: string }>()
-  )
+    props<{ id: string; reason: string }>()
+  );
 
-  // ------ SELECTED Document ----- //
+  // ███████ ███████ ██      ███████  ██████ ████████
+  // ██      ██      ██      ██      ██         ██
+  // ███████ █████   ██      █████   ██         ██
+  //      ██ ██      ██      ██      ██         ██
+  // ███████ ███████ ███████ ███████  ██████    ██
+
   readonly moveToDocument = createAction(
     `[${this.feature}] Move To Document`,
     props<{ index: number }>()
@@ -96,18 +114,31 @@ export class DocumentActions<TDocumentForRead extends OriginsDocument, TDocument
     `[${this.feature}] Move To Next Document`
   );
 
-  // ------ Purge and Process ----- //
+  // ██████  ██    ██ ██████   ██████  ███████
+  // ██   ██ ██    ██ ██   ██ ██       ██
+  // ██████  ██    ██ ██████  ██   ███ █████
+  // ██      ██    ██ ██   ██ ██    ██ ██
+  // ██       ██████  ██   ██  ██████  ███████
+
   readonly requestPurgeDocuments = createAction(
-    `[${this.feature}] Request Purge Documents`
+    `[${this.feature}] Request Purge Documents`,
+    props<{ lucene?: string }>()
   );
 
   readonly purgeDocumentsSucceeded = createAction(
-    `[${this.feature}] Purge Documents Succeeded`    
+    `[${this.feature}] Purge Documents Succeeded`,
+    props<{ documentsDeleted?: number }>()
   );
 
   readonly purgeDocumentsFailed = createAction(
     `[${this.feature}] Purge Documents Failed`
-  )
+  );
+
+  // ██████  ██████   ██████   ██████ ███████ ███████ ███████
+  // ██   ██ ██   ██ ██    ██ ██      ██      ██      ██
+  // ██████  ██████  ██    ██ ██      █████   ███████ ███████
+  // ██      ██   ██ ██    ██ ██      ██           ██      ██
+  // ██      ██   ██  ██████   ██████ ███████ ███████ ███████
 
   readonly requestProcessDocument = createAction(
     `[${this.feature}] Request Process Document`,
@@ -116,12 +147,11 @@ export class DocumentActions<TDocumentForRead extends OriginsDocument, TDocument
 
   readonly processDocumentSucceeded = createAction(
     `[${this.feature}] Process Document Succeeded`,
-    props<{ id: string }>()    
+    props<{ id: string }>()
   );
 
   readonly processDocumentFailed = createAction(
     `[${this.feature}] Process Document Failed`,
     props<{ id: string }>()
-  )
-
+  );
 }
