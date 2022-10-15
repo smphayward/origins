@@ -46,6 +46,7 @@ export interface DocumentProvider<
     sort?: DocumentSortCondition[],
   ) => Promise<GetDocumentsResponse<TDocumentForWrite>>;
   purge: (lucene?: string) => Promise<PurgeDocumentsResponse>;
+  process: (id: string) => Promise<ProcessDocumentsResponse>;
 }
 
 export interface ObservableDocumentProvider<
@@ -67,6 +68,7 @@ export interface ObservableDocumentProvider<
     sort?: DocumentSortCondition[],
   ) => Observable<GetDocumentsResponse<TDocumentForRead>>;
   purge: (lucene?: string) => Observable<PurgeDocumentsResponse>;
+  process: (id: string) => Observable<ProcessDocumentsResponse>;
 }
 
 // ███    ███  ██████   ██████ ██   ██ 
@@ -231,6 +233,16 @@ TDocumentForRead extends OriginsDocument,
     });
   }
 
+
+  process(id: string): Observable<ProcessDocumentsResponse> {
+    // DO NOTHING
+    return of({
+      success: true,
+      statusCode: 200,
+      message: 'Successfully processed'
+    });
+  }
+
   // ----- PROTECTED ABSTRACT ----- //
   protected abstract getDocumentForRead(document: TDocumentForWrite): TDocumentForRead;
 }
@@ -275,6 +287,9 @@ export interface DeleteDocumentResponse extends GeneralResponse {
 
 export interface PurgeDocumentsResponse extends GeneralResponse {
   documentsDeleted?: number;
+}
+
+export interface ProcessDocumentsResponse extends GeneralResponse {
   // Might be some stuff here at some point
 }
 
