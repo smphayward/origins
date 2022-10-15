@@ -1,4 +1,4 @@
-import { catchError, map, Observable, of } from 'rxjs';
+import { catchError, map, Observable, of, tap } from 'rxjs';
 import { v4 as uuidv4 } from 'uuid';
 import { HttpClient, HttpResponse } from '@angular/common/http';
 import {
@@ -111,17 +111,20 @@ export abstract class HttpDocumentProvider<
     if (lucene && lucene.trim().length > 0) {
       url += `?q=${encodeURI(lucene)}`;
     }
-
+    
     return (
       this.http
         .post(url, { observe: 'response' })
         // This mapping is wrong.
         // For some reason, post doesn't give HttpResponse
         .pipe(
-          map((x) => ({
-            statusCode: 200,
-            message: 'Done',
-            success: true,
+          tap((x) => console.log('purge response', x)),
+          map((x: any) => ({
+            // For some reason, post doesn't give HttpResponse
+            statusCode: x.statusCode,
+            message: x.message,
+            success: x.success,
+            documentsDeleted: x.documentsDeleted
           }))
         )
     );
@@ -137,13 +140,13 @@ export abstract class HttpDocumentProvider<
     return (
       this.http
         .post(`${this.urlRoot}/${encodeURI(id)}/process`, { observe: 'response' })
-        // This mapping is wrong.
-        // For some reason, post doesn't give HttpResponse
         .pipe(
-          map((x) => ({
-            statusCode: 200,
-            message: 'Done',
-            success: true,
+          tap((x) => console.log('process response', x)),
+          map((x: any) => ({
+            // For some reason, post doesn't give HttpResponse
+            statusCode: x.statusCode,
+            message: x.message,
+            success: x.success,
           }))
         )
     );
