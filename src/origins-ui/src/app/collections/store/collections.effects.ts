@@ -11,7 +11,7 @@ export class CollectionsEffects extends DocumentEffects<
   Collection
 > {
   constructor(actions$: Actions, repository: CollectionInfoProvider) {
-    super(actions$, repository, collectionActions);
+    super(actions$, repository, collectionActions, 'collection');
   }
 }
 

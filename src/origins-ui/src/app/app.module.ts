@@ -54,6 +54,7 @@ import { CollectionListComponent } from './collections/components/collection-lis
 import { CollectionListItemComponent } from './collections/components/collection-list-item/collection-list-item.component';
 import { ConfirmDialogComponent } from './shared/components/confirm-dialog/confirm-dialog.component';
 import { AddEditCollectionComponent } from './collections/components/add-edit-collection/add-edit-collection.component';
+import { statusReducer } from './status/store/status.reducers';
 
 
 @NgModule({
@@ -102,7 +103,7 @@ import { AddEditCollectionComponent } from './collections/components/add-edit-co
     MatMenuModule,
 
     // Origins ngrx
-    StoreModule.forRoot({ items: itemsReducer, collections: collectionsReducer }, {}),
+    StoreModule.forRoot({ items: itemsReducer, collections: collectionsReducer, status: statusReducer }, {}),
     EffectsModule.forRoot([ ItemsEffects, CollectionsEffects]),
   ],
   providers: [],

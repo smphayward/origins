@@ -1,8 +1,10 @@
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
+import { resultMemoize } from '@ngrx/store';
 import { OriginsDocument, ObservableDocumentProvider, GetDocumentsResponse } from 'origins-common';
-import { EMPTY, iif } from 'rxjs';
-import { map, mergeMap, catchError, tap } from 'rxjs/operators';
+import { EMPTY, iif, of } from 'rxjs';
+import { map, mergeMap, catchError, tap, switchMap } from 'rxjs/operators';
+import { changeNotificationMessage } from 'src/app/status/store/status.actions';
 import { DocumentActions } from './document.actions';
 
 export abstract class DocumentEffects<
@@ -23,7 +25,8 @@ export abstract class DocumentEffects<
     private documentActions: DocumentActions<
       TDocumentForRead,
       TDocumentForWrite
-    >
+    >,
+    private documentTypeName: string
   ) {}
 
   // ██████  ███████  █████  ██████
@@ -35,13 +38,13 @@ export abstract class DocumentEffects<
   getAll$ = createEffect(() =>
     this.actions$.pipe(
       ofType(this.documentActions.getAll), // ofType(getAllCollections),
-      mergeMap(() =>
+      switchMap(() =>
         this.repository.getAll().pipe(
           tap((result) => {
             this.lastSearchByTextQuery = undefined;
             this.lastContinuationToken = result.continuationToken;
           }),
-          map((result) => this.mapGetManyResultToAction(result, false)),
+          switchMap((result) => this.mapGetManyResultToAction(result, false)),
           catchError(() => EMPTY)
         )
       )
@@ -51,13 +54,13 @@ export abstract class DocumentEffects<
   searchByText$ = createEffect(() =>
     this.actions$.pipe(
       ofType(this.documentActions.searchByText),
-      mergeMap((action) =>
+      switchMap((action) =>
         this.repository.search(action.query).pipe(
           tap((result) => {
             this.lastSearchByTextQuery = action.query;
             this.lastContinuationToken = result.continuationToken;
           }),
-          map((result) => this.mapGetManyResultToAction(result, false)),
+          switchMap((result) => this.mapGetManyResultToAction(result, false)),
           catchError(() => EMPTY)
         )
       )
@@ -80,7 +83,7 @@ export abstract class DocumentEffects<
           tap((result) => {
             this.lastContinuationToken = result.continuationToken;
           }),
-          map((result) => this.mapGetManyResultToAction(result, true)),
+          switchMap((result) => this.mapGetManyResultToAction(result, true)),
           catchError(() => EMPTY)
         )
       )
@@ -96,18 +99,28 @@ export abstract class DocumentEffects<
   add$ = createEffect(() =>
     this.actions$.pipe(
       ofType(this.documentActions.requestAddDocument),
-      mergeMap((action) =>
+      switchMap((action) =>
         this.repository.put(action.document).pipe(
-          map((result) => {
+          switchMap((result) => {
             console.log('Result', result);
             if (result.success && result.document)
-              return this.documentActions.addDocumentSucceeded({
-                document: result.document,
-              });
+              return of(
+                this.documentActions.addDocumentSucceeded({
+                  document: result.document,
+                }),
+                changeNotificationMessage({
+                  message: `Add ${this.documentTypeName} succeeded.`,
+                })
+              );
             else {
-              return this.documentActions.addDocumentFailed({
-                reason: result.message,
-              });
+              return of(
+                this.documentActions.addDocumentFailed({
+                  reason: result.message,
+                }),
+                changeNotificationMessage({
+                  message: `Delete ${this.documentTypeName} failed. ${result.statusCode} -- ${result.message}`,
+                })
+              );
             }
           }),
           catchError(() => EMPTY)
@@ -119,18 +132,28 @@ export abstract class DocumentEffects<
   update$ = createEffect(() =>
     this.actions$.pipe(
       ofType(this.documentActions.requestUpdateDocument),
-      mergeMap((action) =>
+      switchMap((action) =>
         this.repository.put(action.document).pipe(
-          map((result) => {
+          switchMap((result) => {
             console.log('Result', result);
             if (result.success && result.document)
-              return this.documentActions.updateDocumentSucceeded({
-                document: result.document,
-              });
+              return of(
+                this.documentActions.updateDocumentSucceeded({
+                  document: result.document,
+                }),
+                changeNotificationMessage({
+                  message: `Update ${this.documentTypeName} succeeded.`,
+                })
+              );
             else {
-              return this.documentActions.updateDocumentFailed({
-                reason: result.message,
-              });
+              return of(
+                this.documentActions.updateDocumentFailed({
+                  reason: result.message,
+                }),
+                changeNotificationMessage({
+                  message: `Delete ${this.documentTypeName} failed. ${result.statusCode} -- ${result.message}`,
+                })
+              );
             }
           }),
           catchError(() => EMPTY)
@@ -142,19 +165,29 @@ export abstract class DocumentEffects<
   deleteById$ = createEffect(() =>
     this.actions$.pipe(
       ofType(this.documentActions.requestDeleteDocumentById),
-      mergeMap((action) =>
+      switchMap((action) =>
         this.repository.delete(action.id).pipe(
-          map((result) => {
+          switchMap((result) => {
             console.log('Result', result);
             if (result.success)
-              return this.documentActions.deleteDocumentSucceeded({
-                id: action.id,
-              });
+              return of(
+                this.documentActions.deleteDocumentSucceeded({
+                  id: action.id,
+                }),
+                changeNotificationMessage({
+                  message: `Delete ${this.documentTypeName} succeeded.`,
+                })
+              );
             else {
-              return this.documentActions.deleteDocumentFailed({
-                id: action.id,
-                reason: result.message,
-              });
+              return of(
+                this.documentActions.deleteDocumentFailed({
+                  id: action.id,
+                  reason: result.message,
+                }),
+                changeNotificationMessage({
+                  message: `Delete ${this.documentTypeName} failed. ${result.statusCode} -- ${result.message}`,
+                })
+              );
             }
           }),
           catchError(() => EMPTY)
@@ -172,16 +205,26 @@ export abstract class DocumentEffects<
   purge$ = createEffect(() =>
     this.actions$.pipe(
       ofType(this.documentActions.requestPurgeDocuments),
-      mergeMap((action) =>
+      switchMap((action) =>
         this.repository.purge(action.lucene).pipe(
-          map((result) => {
+          switchMap((result) => {
             console.log('Result', result);
             if (result.success)
-              return this.documentActions.purgeDocumentsSucceeded({
-                documentsDeleted: result.documentsDeleted,
-              });
+              return of(
+                this.documentActions.purgeDocumentsSucceeded({
+                  documentsDeleted: result.documentsDeleted,
+                }),
+                changeNotificationMessage({
+                  message: `Purge removed ${result.documentsDeleted} ${this.documentTypeName}s.`,
+                })
+              );
             else {
-              return this.documentActions.purgeDocumentsFailed();
+              return of(
+                this.documentActions.purgeDocumentsFailed(),
+                changeNotificationMessage({
+                  message: `Purge failed. ${result.statusCode} - ${result.message}`,
+                })
+              );
             }
           }),
           catchError(() => EMPTY)
@@ -189,6 +232,27 @@ export abstract class DocumentEffects<
       )
     )
   );
+
+  // purge_old$ = createEffect(() =>
+  //   this.actions$.pipe(
+  //     ofType(this.documentActions.requestPurgeDocuments),
+  //     mergeMap((action) =>
+  //       this.repository.purge(action.lucene).pipe(
+  //         map((result) => {
+  //           console.log('Result', result);
+  //           if (result.success)
+  //             return this.documentActions.purgeDocumentsSucceeded({
+  //               documentsDeleted: result.documentsDeleted,
+  //             });
+  //           else {
+  //             return this.documentActions.purgeDocumentsFailed();
+  //           }
+  //         }),
+  //         catchError(() => EMPTY)
+  //       )
+  //     )
+  //   )
+  // );
 
   // ██████  ██████   ██████   ██████ ███████ ███████ ███████
   // ██   ██ ██   ██ ██    ██ ██      ██      ██      ██
@@ -214,8 +278,6 @@ export abstract class DocumentEffects<
   //   )
   // );
 
-
-
   // ██   ██ ███████ ██      ██████  ███████ ██████
   // ██   ██ ██      ██      ██   ██ ██      ██   ██
   // ███████ █████   ██      ██████  █████   ██████
@@ -227,14 +289,26 @@ export abstract class DocumentEffects<
     isContinuation: boolean
   ) => {
     if (result.success && result.documents) {
-      return this.documentActions.fetchDocumentsSucceeded({
-        documents: result.documents,
-        isContinuation,
-        moreDocumentsAvailable: result.continuationToken !== undefined,
-      });
+      return of(
+        this.documentActions.fetchDocumentsSucceeded({
+          documents: result.documents,
+          isContinuation,
+          moreDocumentsAvailable: result.continuationToken !== undefined,
+        }),
+        changeNotificationMessage({
+          message: `Read ${result.documents.length} ${this.documentTypeName}s.${
+            result.continuationToken ? ' (More available)' : ''
+          }`,
+        })
+      );
     }
-    return this.documentActions.fetchDocumentsFailed({
-      reason: result.message,
-    });
+    return of(
+      this.documentActions.fetchDocumentsFailed({
+        reason: result.message,
+      }),
+      changeNotificationMessage({
+        message: `Failed to get ${this.documentTypeName}s. ${result.statusCode} - ${result.message}`,
+      })
+    );
   };
 }

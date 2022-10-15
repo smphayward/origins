@@ -12,7 +12,7 @@ export class ItemsEffects extends DocumentEffects<ItemInfo, Item> {
     actions$: Actions,
     repository: ItemInfoProvider
   ) {
-    super(actions$, repository, itemActions);
+    super(actions$, repository, itemActions, 'item');
   }
 
 }
