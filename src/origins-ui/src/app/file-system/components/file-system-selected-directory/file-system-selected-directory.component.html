@@ -1,0 +1,22 @@
+<h1 style="color:white;padding:10px;">{{selectedDirectory.id}}</h1>
+
+<mat-list>
+  <div mat-subheader>Directories</div>
+  <mat-list-item *ngFor="let directory of selectedDirectory.directories;">
+    <mat-icon mat-list-icon>folder</mat-icon>
+    <div mat-line>{{directory.name}}</div>
+    <div mat-line>Some other info</div>
+  </mat-list-item>
+  <mat-divider></mat-divider>
+  <div mat-subheader>Files</div>
+  <!-- <mat-list-item *ngFor="let note of notes">
+    <mat-icon mat-list-icon>note</mat-icon>
+    <div mat-line>{{note.name}}</div>
+    <div mat-line> {{note.updated | date}} </div>
+  </mat-list-item> -->
+  <mat-list-item *ngFor="let file of selectedDirectory.files;">
+    <mat-icon mat-list-icon>image</mat-icon>
+    <div mat-line>{{file.name}}</div>
+    <div mat-line>Some other info</div>
+  </mat-list-item>
+</mat-list>

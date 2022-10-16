@@ -23,6 +23,7 @@
     "@angular/router": "^14.2.0",
     "@ngrx/effects": "^14.3.2",
     "@ngrx/store": "^14.3.2",
+    "angular-split": "^14.1.0",
     "lodash": "^4.17.21",
     "masonry-layout": "^4.2.2",
     "ngx-masonry": "^13.0.0",

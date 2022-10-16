@@ -1,0 +1,8 @@
+@import './../../../shared/shared.scss';
+
+:host { 
+  @extend .main-contents;
+
+  // Debugging
+  // border: solid 2px green;
+} 

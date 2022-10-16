@@ -7,18 +7,30 @@ import { SearchBoxComponent } from './shared/components/search-box/search-box.co
 import { SearchResultsGridComponent } from './items/components/search-results-grid/search-results-grid.component';
 import { SearchResultsGridItemComponent } from './items/components/search-results-grid-item/search-results-grid-item.component';
 import { ToolbarComponent } from './shared/components/toolbar/toolbar.component';
+import { FileSystemPanelComponent } from './file-system/components/file-system-panel/file-system-panel.component';
+import { FileSystemTreeComponent } from './file-system/components/file-system-tree/file-system-tree.component';
+import { FileSystemSelectedDirectoryComponent } from './file-system/components/file-system-selected-directory/file-system-selected-directory.component';
+import { FileSystemSelectedItemComponent } from './file-system/components/file-system-selected-item/file-system-selected-item.component';
+import { ImageLightboxComponent } from './items/components/image-lightbox/image-lightbox.component';
+import { ItemsPanelComponent } from './items/components/items-panel/items-panel.component';
+import { CollectionsPanelComponent } from './collections/components/collections-panel/collections-panel.component';
+import { NotFoundPanelComponent } from './shared/components/not-found-panel/not-found-panel.component';
+import { CollectionListComponent } from './collections/components/collection-list/collection-list.component';
+import { CollectionListItemComponent } from './collections/components/collection-list-item/collection-list-item.component';
+import { ConfirmDialogComponent } from './shared/components/confirm-dialog/confirm-dialog.component';
+import { AddEditCollectionComponent } from './collections/components/add-edit-collection/add-edit-collection.component';
 
 // Origins ngrx
 import { itemsReducer } from './items/store/items.reducers';
 import { collectionsReducer } from './collections/store/collections.reducers';
 import { ItemsEffects } from './items/store/items.effects';
 import { CollectionsEffects } from './collections/store/collections.effects';
-// import { SearchEffects } from './store/effects';
-// import { originsReducer } from './store/reducer';
+import { statusReducer } from './status/store/status.reducers';
 
 
 // Other Components
 import { NgxMasonryModule } from 'ngx-masonry';
+import { AngularSplitModule } from 'angular-split';
 
 // Angular
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -42,20 +54,10 @@ import { MatSliderModule } from '@angular/material/slider';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatToolbarModule } from '@angular/material/toolbar';
-
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { MatChipsModule } from '@angular/material/chips';
-import { ImageLightboxComponent } from './items/components/image-lightbox/image-lightbox.component';
-import { ItemsPanelComponent } from './items/components/items-panel/items-panel.component';
-import { CollectionsPanelComponent } from './collections/components/collections-panel/collections-panel.component';
-import { NotFoundPanelComponent } from './shared/components/not-found-panel/not-found-panel.component';
-import { CollectionListComponent } from './collections/components/collection-list/collection-list.component';
-import { CollectionListItemComponent } from './collections/components/collection-list-item/collection-list-item.component';
-import { ConfirmDialogComponent } from './shared/components/confirm-dialog/confirm-dialog.component';
-import { AddEditCollectionComponent } from './collections/components/add-edit-collection/add-edit-collection.component';
-import { statusReducer } from './status/store/status.reducers';
-
+import {MatTreeModule} from '@angular/material/tree';
 
 @NgModule({
   declarations: [
@@ -73,12 +75,17 @@ import { statusReducer } from './status/store/status.reducers';
     CollectionListItemComponent,
     ConfirmDialogComponent,
     AddEditCollectionComponent,
+    FileSystemPanelComponent,
+    FileSystemTreeComponent,
+    FileSystemSelectedDirectoryComponent,
+    FileSystemSelectedItemComponent,
   ],
   imports: [
     AppRoutingModule,
 
     // Other Components
     NgxMasonryModule,
+    AngularSplitModule,
 
     // Angular
     BrowserAnimationsModule,
@@ -101,6 +108,7 @@ import { statusReducer } from './status/store/status.reducers';
     MatGridListModule,
     MatChipsModule,
     MatMenuModule,
+    MatTreeModule,
 
     // Origins ngrx
     StoreModule.forRoot({ items: itemsReducer, collections: collectionsReducer, status: statusReducer }, {}),
