@@ -12,6 +12,7 @@ interface FileExtensions {
 
 interface ElasticsearchConfig {
   host: string;
+  indexPrefix: string;
 }
 
 export interface Config {
@@ -53,7 +54,8 @@ export const defaultConfig: Config = {
 
   // Elasticsearch
   elasticsearch: {
-    host: "http://192.168.2.226:9200" //"http://localhost:9200",
+    host: "http://192.168.2.226:9200", //"http://localhost:9200",
+    indexPrefix: ''
   },
 
   // Collections
@@ -79,6 +81,7 @@ const getConfigFromCommandLineArgs = () => {
 
     // Elasticsearch
     { name: "elasticsearch-host", type: String },
+    { name: "elasticsearch-index-prefix", type: String },
   ];
 
   const options = commandLineArgs(optionDefinitions);
@@ -97,6 +100,7 @@ const getConfigFromCommandLineArgs = () => {
     // Elasticsearch
     elasticsearch: {
       host: options["elasticsearch-host"],
+      indexPrefix: options["elasticsearch-index-prefix"]
     },
 
     // Collections
@@ -139,6 +143,7 @@ const getConfigFromEnvironmentVariables = () => {
     // Elasticsearch
     elasticsearch: {
       host: process.env["ELASTICSEARCH_HOSTS"],
+      indexPrefix: process.env["ELASTICSEARCH_INDEX_PREFIX"],
     },
 
     // Collections
@@ -184,6 +189,10 @@ export const getConfig = (): Config => {
         cla.elasticsearch.host ??
         env.elasticsearch.host ??
         defaultConfig.elasticsearch.host,
+      indexPrefix:
+        cla.elasticsearch.indexPrefix ??
+        env.elasticsearch.indexPrefix ??
+        defaultConfig.elasticsearch.indexPrefix,
     },
 
     collections: { ...env.collections, ...cla.collections },

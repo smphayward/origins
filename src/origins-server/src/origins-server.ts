@@ -92,7 +92,7 @@ const elasticsearchClientOptions: ClientOptions = {
 };
 
 const collectionProvider = new ElasticsearchCollectionProvider({
-  indexName: "origins_collections",
+  indexName: `${config.elasticsearch.indexPrefix}origins_collections`,
   elasticsearchClientOptions,
 });
 
@@ -102,7 +102,7 @@ const collectionProvider = new ElasticsearchCollectionProvider({
 // });
 
 const itemProvider = new ElasticsearchItemProvider({
-  indexName: "origins_items",
+  indexName: `${config.elasticsearch.indexPrefix}origins_items`,
   elasticsearchClientOptions,
 });
 
