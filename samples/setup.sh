@@ -4,9 +4,11 @@
 ROOT_URL="http://localhost:8080"
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 THUMBS_DIR="${SCRIPT_DIR}/thumbnails"
-ANIMALS_DIR="${SCRIPT_DIR}/collections/animals"
-PLACES_DIR="${SCRIPT_DIR}/collections/places"
-SPORTS_DIR="${SCRIPT_DIR}/collections/sports"
+COLLECTIONS_DIR="${SCRIPT_DIR}/collections"
+DATA_DIR="${SCRIPT_DIR}/data"
+ANIMALS_DIR="${DATA_DIR}/animals"
+PLACES_DIR="${DATA_DIR}/places"
+SPORTS_DIR="${DATA_DIR}/sports"
 ANIMALS_JSON="{\"id\":\"animals\",\"name\":\"Animals\",\"rootDirectory\":\"${ANIMALS_DIR}\"}"
 PLACES_JSON="{\"id\":\"places\",\"name\":\"Places\",\"rootDirectory\":\"${PLACES_DIR}\"}"
 SPORTS_JSON="{\"id\":\"sports\",\"name\":\"Sports\",\"rootDirectory\":\"${SPORTS_DIR}\"}"
@@ -37,6 +39,9 @@ echo
 curl "${ROOT_URL}/api/collections/purge?q=id:(\"animals\"%20\"places\"%20\"sports\")" -X POST
 echo
 echo
+rm -rfv "${DATA_DIR}"
+echo
+echo
 
 echo "████████ ██   ██ ██    ██ ███    ███ ██████  ███████ "
 echo "   ██    ██   ██ ██    ██ ████  ████ ██   ██ ██      "
@@ -51,6 +56,21 @@ echo
 echo "Re-creating thumbnails directory..."
 echo
 mkdir -p ${THUMBS_DIR}
+echo
+echo
+
+echo "██████   █████  ████████  █████  "
+echo "██   ██ ██   ██    ██    ██   ██ "
+echo "██   ██ ███████    ██    ███████ "
+echo "██   ██ ██   ██    ██    ██   ██ "
+echo "██████  ██   ██    ██    ██   ██ "
+echo
+echo
+echo "Copying 'collections' directory to 'data'."
+echo "This allows any testing that manipulates the files and directories"
+echo "  without destroying the original 'collections' contents."
+echo
+cp -rv ./collections ./data
 echo
 echo
 
