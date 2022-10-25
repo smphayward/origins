@@ -1,20 +1,22 @@
 <mat-tree [dataSource]="dataSource" [treeControl]="treeControl">
   <!-- This is the tree node template for leaf nodes -->
-  <mat-tree-node *matTreeNodeDef="let node" matTreeNodePadding [class.selected-node]="isSelected(node)" (click)="nodeClick(node)">
+  <mat-tree-node *matTreeNodeDef="let node" matTreeNodePadding
+    [class.selected-node]="isSelected(node)" (click)="nodeClick(node)">
     <!-- use a disabled button to provide padding for tree leaf -->
-    <button mat-icon-button >
+    <button mat-icon-button>
       <mat-icon class="mat-icon-rtl-mirror">folder</mat-icon>
     </button>
     <span class="node-text">{{node.name}}</span>
   </mat-tree-node>
   <!-- This is the tree node template for expandable nodes -->
-  <mat-tree-node *matTreeNodeDef="let node;when: hasChild" matTreeNodePadding  [class.selected-node]="isSelected(node)" (click)="nodeClick(node)">
-    <button mat-icon-button matTreeNodeToggle
-            [attr.aria-label]="'Toggle ' + node.name">
+  <mat-tree-node *matTreeNodeDef="let node;when: hasChild" matTreeNodePadding
+    [class.selected-node]="isSelected(node)" (click)="nodeClick(node)">
+    <button mat-icon-button matTreeNodeToggle [attr.aria-label]="'Toggle ' + node.name"
+      (click)="onCodeExpandCollapse(node)">
       <mat-icon class="mat-icon-rtl-mirror">
         {{treeControl.isExpanded(node) ? 'folder_open' : 'snippet_folder'}}
       </mat-icon>
     </button>
-    <span class="node-text" >{{node.name}}</span>
+    <span class="node-text">{{node.name}}</span>
   </mat-tree-node>
 </mat-tree>

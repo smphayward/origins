@@ -1,31 +1,20 @@
-import { Injectable } from '@angular/core';
-import { mockCollections } from './collection-mock-data';
-import { MockObservableCollectionInfoProvider } from 'origins-common/collections'
+export { CollectionInfoProvider } from './collection-info-provider.service.prod';
 
+// Not doing the mock thing any more
+// Using proxy.conf.json to re-direct to backend
 
-@Injectable({
-  providedIn: 'root',
-})
-export class CollectionInfoProvider extends MockObservableCollectionInfoProvider{
-  constructor(){
-    super(mockCollections)
-  }
-}
-
-
+// import { Injectable } from '@angular/core';
+// import { mockCollections } from './collection-mock-data';
+// import { MockObservableCollectionInfoProvider } from 'origins-common/collections'
 
 // @Injectable({
 //   providedIn: 'root',
 // })
-// export class CollectionRepositoryService extends MockRepositoryService<CollectionInfo, Collection> {
-//   constructor() {
-//     super(mockCollections);
-//   }
-
-//   protected override getRecordForRead(record: Collection): CollectionInfo {
-//     return {
-//       ...record,
-//       exists: true
-//     };
+// export class CollectionInfoProvider extends MockObservableCollectionInfoProvider{
+//   constructor(){
+//     super(mockCollections)
 //   }
 // }
+
+
+

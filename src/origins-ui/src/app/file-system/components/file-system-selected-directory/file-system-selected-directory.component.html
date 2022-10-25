@@ -1,22 +1,68 @@
-<h1 style="color:white;padding:10px;">{{selectedDirectory.id}}</h1>
+<div *ngIf="selectedDirectory$ | async as selectedDirectory; else nothingSelected">
 
-<mat-list>
-  <div mat-subheader>Directories</div>
-  <mat-list-item *ngFor="let directory of selectedDirectory.directories;">
-    <mat-icon mat-list-icon>folder</mat-icon>
-    <div mat-line>{{directory.name}}</div>
-    <div mat-line>Some other info</div>
-  </mat-list-item>
-  <mat-divider></mat-divider>
-  <div mat-subheader>Files</div>
-  <!-- <mat-list-item *ngFor="let note of notes">
-    <mat-icon mat-list-icon>note</mat-icon>
-    <div mat-line>{{note.name}}</div>
-    <div mat-line> {{note.updated | date}} </div>
-  </mat-list-item> -->
-  <mat-list-item *ngFor="let file of selectedDirectory.files;">
-    <mat-icon mat-list-icon>image</mat-icon>
-    <div mat-line>{{file.name}}</div>
-    <div mat-line>Some other info</div>
-  </mat-list-item>
-</mat-list>
+  <h1 style="color:white;padding:10px;">
+    <button (click)="onParent()"><mat-icon>keyboard_arrow_up</mat-icon></button>
+    {{selectedDirectory.name}}
+  </h1>
+
+  <div class="sub-header">Directories<span *ngIf="selectedDirectory?.childDirectories?.length === 0"> (None)</span></div>
+
+  
+
+  <app-file-system-object-row *ngFor="let directory of selectedDirectory.childDirectories;" [name]="directory.name"
+    [additionalInfo]="getDirectoryAdditionalInfo(directory)" [fullPath]="directory.fullPath"
+    [objectType]="directory.objectType">
+  </app-file-system-object-row>
+
+  <mat-divider style="margin-bottom:10px;"></mat-divider>
+  <div class="sub-header">Files<span *ngIf="selectedDirectory?.childFiles?.length === 0"> (None)</span></div>
+
+  <app-file-system-object-row *ngFor="let file of selectedDirectory.childFiles;" [name]="file.name"
+    [additionalInfo]="getFileAdditionalInfo(file)" [fullPath]="file.fullPath" [objectType]="file.objectType">
+  </app-file-system-object-row>
+
+</div>
+
+<ng-template #nothingSelected>
+  <h1 style="color:white;padding:10px;">
+    (Nothing Selected)
+  </h1>
+
+</ng-template>
+
+
+
+
+<!-- <div class="object-row">
+  <mat-icon class="object-icon">folder</mat-icon>
+
+  <div style="display:flex;flex-direction:column">
+    <span class="object-name">This is the name of the directory</span>
+    <span>3 directories, 5 files</span>
+  </div>
+  <div class="object-buttons-div">
+
+
+
+    <button mat-stroked-button class="new-action-button object-button">
+      <mat-icon>sell</mat-icon>
+      Tags
+    </button>
+
+    <button mat-stroked-button class="new-action-button object-button">
+      <mat-icon>engineering</mat-icon>
+      Process
+    </button>
+
+    <button mat-stroked-button class="new-action-button object-button">
+      <mat-icon>edit_note</mat-icon>
+      Rename
+    </button>
+
+    <button mat-stroked-button class="new-action-button object-button">
+      <mat-icon>delete</mat-icon>
+      Delete
+    </button>
+
+  </div>
+</div> -->

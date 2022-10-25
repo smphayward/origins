@@ -21,6 +21,7 @@ export const collectionsReducer = createReducer(
 
   // ----- WRITE DOCUMENTS ----- //
   on(CollectionActions.addCollectionSucceeded, ReducerFunctions.documentSuccessfullyAdded),
+  on(CollectionActions.updateCollectionSucceeded, ReducerFunctions.documentSuccessfullyUpdated),
   on(CollectionActions.deleteCollectionSucceeded, ReducerFunctions.documentSuccessfullyDeleted),
 
   // ----- PURGE ----- //

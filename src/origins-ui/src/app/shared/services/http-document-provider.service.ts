@@ -12,7 +12,7 @@ import {
   ProcessDocumentsResponse,
   PurgeDocumentsResponse,
   UpsertDocumentResponse,
-} from 'origins-common';
+} from "origins-common";
 
 export abstract class HttpDocumentProvider<
   TDocumentForRead extends OriginsDocument,

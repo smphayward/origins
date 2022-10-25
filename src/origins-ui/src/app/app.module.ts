@@ -21,12 +21,13 @@ import { ConfirmDialogComponent } from './shared/components/confirm-dialog/confi
 import { AddEditCollectionComponent } from './collections/components/add-edit-collection/add-edit-collection.component';
 
 // Origins ngrx
-import { itemsReducer } from './items/store/items.reducers';
-import { collectionsReducer } from './collections/store/collections.reducers';
-import { ItemsEffects } from './items/store/items.effects';
 import { CollectionsEffects } from './collections/store/collections.effects';
+import { collectionsReducer } from './collections/store/collections.reducers';
+import { FileSystemEffects } from './file-system/store/file-system.effects';
+import { fileSystemReducer } from './file-system/store/file-system.reducers';
+import { ItemsEffects } from './items/store/items.effects';
+import { itemsReducer } from './items/store/items.reducers';
 import { statusReducer } from './status/store/status.reducers';
-
 
 // Other Components
 import { NgxMasonryModule } from 'ngx-masonry';
@@ -57,7 +58,8 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { MatChipsModule } from '@angular/material/chips';
-import {MatTreeModule} from '@angular/material/tree';
+import { MatTreeModule } from '@angular/material/tree';
+import { FileSystemObjectRowComponent } from './file-system/components/file-system-object-row/file-system-object-row.component';
 
 @NgModule({
   declarations: [
@@ -79,6 +81,7 @@ import {MatTreeModule} from '@angular/material/tree';
     FileSystemTreeComponent,
     FileSystemSelectedDirectoryComponent,
     FileSystemSelectedItemComponent,
+    FileSystemObjectRowComponent,
   ],
   imports: [
     AppRoutingModule,
@@ -111,8 +114,16 @@ import {MatTreeModule} from '@angular/material/tree';
     MatTreeModule,
 
     // Origins ngrx
-    StoreModule.forRoot({ items: itemsReducer, collections: collectionsReducer, status: statusReducer }, {}),
-    EffectsModule.forRoot([ ItemsEffects, CollectionsEffects]),
+    StoreModule.forRoot(
+      {
+        items: itemsReducer,
+        collections: collectionsReducer,
+        status: statusReducer,
+        fileSystem: fileSystemReducer
+      },
+      {}
+    ),
+    EffectsModule.forRoot([ItemsEffects, CollectionsEffects, FileSystemEffects]),
   ],
   providers: [],
   bootstrap: [AppComponent],

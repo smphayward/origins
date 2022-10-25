@@ -1,0 +1,45 @@
+.object-row {
+  width: 100%;
+
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+
+  padding-left: 20px;
+  padding-right: 20px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  color: white;
+
+  // Debugging
+  // border: solid yellow 1px; 
+}
+
+.object-row-is-selected {
+  background-color: black;
+}
+
+// .object-row :hover {
+//   background-color: rgba(255, 255, 255, 0.1);
+// }
+
+.object-icon {
+  margin-right: 20px;
+}
+
+.object-name {
+  font-weight: bold;
+}
+
+.object-buttons-div {
+  margin-left: auto;
+  margin-right: 20px;
+
+  // Debugging
+  // border: solid red 2px;
+
+}
+
+.object-button {
+  margin-right: 30px;
+}

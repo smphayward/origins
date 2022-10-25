@@ -1,3 +1,29 @@
-<div style="width:100%;height:100%;">
-<div class="image-div" style="background-image: url('https://placekitten.com/900/600');"></div>
+<div *ngIf="selectedObject$ | async as selectedObject; else nothingSelected" class="main-div"
+  style="display:flex;flex-direction:column;">
+
+  <h1 class="main-header">
+    <button (click)="onPrevious()">
+      <mat-icon>navigate_before</mat-icon>
+    </button>
+    <button (click)="onNext()">
+      <mat-icon>navigate_next</mat-icon>
+    </button>
+    {{selectedObject.name}}</h1>
+  <span  class="main-header" style="margin-top:-15px;">{{selectedObject.fullPath}}</span>
+
+  <div *ngIf="selectedObject.objectType==='directory'" style="flex:1">
+    <h2>This is a directory</h2>
+    TODO: Put a bunch of thumbnails here probably or something.
+  </div>
+
+  <div *ngIf="selectedObject.objectType==='file'" class="image-div" style="flex:1"
+    [style.background-image]="'url(' + webDavUri(selectedObject.fullPath) + ')'">
+  </div>
+
 </div>
+
+<ng-template #nothingSelected>
+  <div class="main-div">
+    <h1 class="main-header">(Nothing Selected)</h1>
+  </div>
+</ng-template>
