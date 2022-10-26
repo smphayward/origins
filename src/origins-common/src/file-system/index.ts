@@ -1,5 +1,5 @@
 export { parsePropFindResponse } from './file-system.utils';
-export { FileSystemFile, BasicFileSystemObject } from './file-system.models';
+export { FileSystemFile, BasicFileSystemObject, FileSystemObjectPathInfo } from './file-system.models';
 export { FileSystemDirectoryWithChildrenArray } from './file-system-array.models';
 export { FileSystemObjectArray } from './file-system-array.models';
 export { FileSystemObjectArrayItem } from './file-system-array.models';

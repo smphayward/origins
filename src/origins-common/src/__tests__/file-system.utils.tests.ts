@@ -2,7 +2,7 @@ import { parseFullPath, parsePropFindResponse, isParent } from './../file-system
 import { updateFileSystemDictionaryTree } from './../file-system/file-system-dictionary.utils';
 import { updateFileSystemArrayTree, findObjectInArrayTree } from './../file-system/file-system-array.utils';
 import { propfindXml } from '../__data__/webdav-responses';
-import { FileSystemDirectory } from '../file-system/file-system.models';
+import { FileSystemDirectory, FileSystemObjectPathInfo } from '../file-system/file-system.models';
 
 // ██████   █████  ████████ ██   ██
 // ██   ██ ██   ██    ██    ██   ██
@@ -135,6 +135,29 @@ describe('convert PROPFIND response to array tree', () => {
   });
 });
 
+
+describe('delete object in array tree', () => {
+  test('successfully deletes object', () => {
+
+    // Arrange
+    const parsed = parsePropFindResponse(propfindXml);
+    let tree = updateFileSystemArrayTree([], parsed);
+
+    // Precondition
+    let actual = findObjectInArrayTree(tree, 'animals/Ram');
+    expect(actual?.fullPath).toBe("animals/Ram");
+
+    console.log('----------')
+
+    // Act
+    tree = updateFileSystemArrayTree(tree, [], [new FileSystemObjectPathInfo('animals/Ram')]);
+
+    // Assert
+    actual = findObjectInArrayTree(tree, 'animals/Ram');
+    expect(actual).toBe(undefined);
+    
+  });
+});
 
 
 // ███████ ██ ███    ██ ██████  

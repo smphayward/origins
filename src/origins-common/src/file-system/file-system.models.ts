@@ -2,7 +2,7 @@ import { parseFullPath } from './file-system.utils';
 
 // Made everyting immutable. How well is that going to work?
 
-export abstract class FileSystemObject {
+export class FileSystemObjectPathInfo {
   public readonly fullPath: string;
   public readonly parentFullPath?: string;
   public readonly collectionId: string;
@@ -10,9 +10,8 @@ export abstract class FileSystemObject {
   public readonly name: string;
   public readonly pathParts: string[];
   public readonly level: number;
-  public abstract get objectType(): 'directory' | 'file';
 
-  constructor(fullPath: string, public readonly createdDate: Date, public readonly lastModifiedDate: Date) {
+  constructor(fullPath: string) {
     const parsed = parseFullPath(fullPath);
 
     this.fullPath = parsed.fullPath;
@@ -21,7 +20,32 @@ export abstract class FileSystemObject {
     this.relativePath = parsed.relativePath;
     this.name = parsed.name;
     this.pathParts = parsed.pathParts;
-    this.level = this.pathParts.length - 1; // 0-based "tree level"
+    this.level = parsed.level;
+  }
+
+}
+
+export abstract class FileSystemObject extends FileSystemObjectPathInfo {
+  // public readonly fullPath: string;
+  // public readonly parentFullPath?: string;
+  // public readonly collectionId: string;
+  // public readonly relativePath: string;
+  // public readonly name: string;
+  // public readonly pathParts: string[];
+  // public readonly level: number;
+  public abstract get objectType(): 'directory' | 'file';
+
+  constructor(fullPath: string, public readonly createdDate: Date, public readonly lastModifiedDate: Date) {
+    super(fullPath);
+    // const parsed = parseFullPath(fullPath);
+
+    // this.fullPath = parsed.fullPath;
+    // this.parentFullPath = parsed.parentFullPath;
+    // this.collectionId = parsed.collectionId;
+    // this.relativePath = parsed.relativePath;
+    // this.name = parsed.name;
+    // this.pathParts = parsed.pathParts;
+    // this.level = parsed.level;
   }
 }
 

@@ -11,7 +11,7 @@ import {
   FileSystemObjectArray,
   FileSystemObjectArrayItem,
 } from './file-system-array.models';
-import { BasicFileSystemObject, FileSystemFile, FileSystemObject } from './file-system.models';
+import { BasicFileSystemObject, FileSystemFile, FileSystemObject, FileSystemObjectPathInfo } from './file-system.models';
 import { isParent, parseFullPath } from './file-system.utils';
 
 export const extractDirectoriesFromArray = (arr: FileSystemObjectArray): FileSystemDirectoryArray => {
@@ -63,28 +63,41 @@ const arrayToArray = (arr: BasicFileSystemObject[]): FileSystemObjectArray => {
   }, <FileSystemObjectArray>[]);
 };
 
-const updateArray = (existing: FileSystemObjectArray, newItems: FileSystemObjectArray): FileSystemObjectArray => {
+const updateArray = (
+  existing: FileSystemObjectArray, 
+  newObjects: FileSystemObjectArray,
+  objectsToDelete: FileSystemObjectPathInfo[] = []): FileSystemObjectArray => {
   let updated = existing;
-  for (let i = 0; i < newItems.length; i++) {
-    const newItem = newItems[i];
-    updated = updateArrayItem(updated, newItem);
+  for (let i = 0; i < newObjects.length; i++) {
+    const newObject = newObjects[i];
+    updated = updateArrayItem(updated, newObject);
+  }
+  for (let i = 0; i < objectsToDelete.length; i++) {
+    const objectToDelete = objectsToDelete[i];
+    const indexToDelete = existing.findIndex(obj => obj.fullPath === objectToDelete.fullPath);
+    if(indexToDelete >= 0) {
+      updated = [
+        ...updated.slice(0, indexToDelete),
+        ...updated.slice(indexToDelete + 1)
+      ]
+    }
   }
   return updated;
 };
 
 const updateArrayItem = (
   existing: FileSystemObjectArray,
-  newItem: FileSystemObjectArrayItem,
+  newObject: FileSystemObjectArrayItem,
 ): FileSystemObjectArray => {
   // See if the item already exists
-  const index = existing.findIndex((obj) => obj.fullPath === newItem.fullPath);
+  const index = existing.findIndex((obj) => obj.fullPath === newObject.fullPath);
 
   // If it doesn't exist, add it
   if (index === -1) {
-    return [...existing, newItem];
+    return [...existing, newObject];
   }
   // If it does exist, update it
-  return [...existing.slice(0, index), newItem, ...existing.slice(index + 1)];
+  return [...existing.slice(0, index), newObject, ...existing.slice(index + 1)];
 };
 
 // ████████ ██████  ███████ ███████
@@ -95,9 +108,11 @@ const updateArrayItem = (
 
 export const updateFileSystemArrayTree = (
   existing: FileSystemObjectArray,
-  newObjects: BasicFileSystemObject[],
+  newObjects: BasicFileSystemObject[] = [],
+  objectsToDelete: FileSystemObjectPathInfo[] = [],
   levelIfExistingIsEmpty: number = 0,
 ): FileSystemObjectArray => {
+
   // Everything in existing dictionary must be at same level
   const currentLevel = getRootLevelFromArray(existing, levelIfExistingIsEmpty);
 
@@ -112,12 +127,11 @@ export const updateFileSystemArrayTree = (
   // I'm not convinced we do.
   let newArr = existing;
 
-  // Split objects at current level from items at a different level
-  const newObjectsAtHigherLevel = newObjects.filter((obj) => obj.level > currentLevel);
-
   // Start with things at current level
   const newObjectsAtCurrentLevel = arrayToArray(newObjects).filter((obj) => obj.level === currentLevel);
-  newArr = updateArray(newArr, newObjectsAtCurrentLevel);
+  const objectsToDeleteAtCurrentLevel = objectsToDelete.filter(obj => obj.level === currentLevel);
+
+  newArr = updateArray(newArr, newObjectsAtCurrentLevel, objectsToDeleteAtCurrentLevel);
 
   // Now deal with stuff at the next level
   // This code DOES NOT deal with newObjects that DO NOT have a parent in the tree.
@@ -127,12 +141,18 @@ export const updateFileSystemArrayTree = (
     .map((obj) => <FileSystemDirectoryWithChildrenArray>obj)
     .forEach((dir) => {
       // Find all things that are descendents of the current directory
-      const newDescendents = newObjects.filter((obj) => isParent(dir, obj));
+      const newDescendents = newObjects.filter(obj => isParent(dir, obj));
+      const descendentsToDelete = objectsToDelete.filter(obj => isParent(dir, obj));
 
-      // Recurse only if it has descendents
-      if (newDescendents.length > 0) {
+      // Recurse only if it has descendents to add or delete
+      if (newDescendents.length > 0 || descendentsToDelete.length > 0) {
         const existingChildren = dir.children;
-        const newChildren = updateFileSystemArrayTree(existingChildren ?? [], newDescendents, currentLevel + 1);
+        const newChildren = updateFileSystemArrayTree(
+          existingChildren ?? [],
+          newDescendents,
+          descendentsToDelete,
+          currentLevel + 1,
+        );
         newArr = updateArrayItem(newArr, dir.clone(newChildren));
       }
     });

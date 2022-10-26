@@ -1,7 +1,7 @@
 import { XMLParser } from 'fast-xml-parser';
 import moment = require('moment');
 import { stringify } from 'querystring';
-import { BasicFileSystemObject, FileSystemDirectory, FileSystemFile,  FileSystemObject } from './file-system.models';
+import { BasicFileSystemObject, FileSystemDirectory, FileSystemFile,  FileSystemObject, FileSystemObjectPathInfo } from './file-system.models';
 
 // ██████   █████  ████████ ██   ██
 // ██   ██ ██   ██    ██    ██   ██
@@ -13,14 +13,7 @@ export const pathSeparator = '/';
 
 export const parseFullPath = (
   fullPath: string,
-): {
-  fullPath: string;
-  parentFullPath?: string;
-  collectionId: string;
-  relativePath: string;
-  name: string;
-  pathParts: string[];
-} => {
+): FileSystemObjectPathInfo => {
   if (fullPath.trim().length === 0) {
     throw new Error('fullPath cannot be empty.');
   }
@@ -35,6 +28,7 @@ export const parseFullPath = (
       relativePath: '/',
       name: fullPath,
       pathParts: [fullPath],
+      level: 0
     };
   }
 
@@ -52,10 +46,11 @@ export const parseFullPath = (
     relativePath: pathParts.length === 1 ? '/' : '/' + pathParts.slice(1).join(pathSeparator),
     name: pathParts[pathParts.length - 1],
     pathParts,
+    level: pathParts.length - 1 // 0-based "tree level"
   };
 };
 
-export const isParent = (candidateParent: FileSystemDirectory, candidateChild: FileSystemObject): boolean => {
+export const isParent = (candidateParent: FileSystemDirectory, candidateChild: FileSystemObjectPathInfo): boolean => {
 
   // Child can't have less than or equal number of path parts
   if(candidateChild.pathParts.length <= candidateParent.pathParts.length) {
