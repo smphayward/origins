@@ -40,7 +40,21 @@ export const changeSelectedObjectToPrevious = createAction(
   `[File System] Change Selected Object to Previous`
 );
 
+// ----- DELETE THINGS
+export const requestDeleteFileSystemObject = createAction(
+  `[File System] Request Delete Object`,
+  props<{ fullPath: string }>()
+);
 
+export const deleteFileSystemObjectSucceeded = createAction(
+  `[File System] Delete Object Succeeded`,
+  props<{ fullPath: string }>()
+);
+
+export const deleteFileSystemObjectFailed = createAction(
+  `[File System] Delete Object Failed`,
+  props<{ fullPath: string, reason: string }>()
+);
 
 // ----------------------
 

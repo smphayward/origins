@@ -5,6 +5,7 @@ import {
   changeSelectedObject,
   changeSelectedObjectToNext,
   changeSelectedObjectToPrevious,
+  deleteFileSystemObjectSucceeded,
   objectsLoaded,
 } from './file-system.actions';
 import { FileSystemState } from './file-system.models';
@@ -13,8 +14,9 @@ import {
   findDirectoryInArrayTree,
   findObjectInArrayTree,
   FileSystemDirectoryWithChildrenArray,
+  FileSystemObjectPathInfo
 } from 'origins-common/file-system';
-import { FileSystemObjectArrayItem } from 'origins-common/file-system/file-system-array.models';
+import { FileSystemObjectArray, FileSystemObjectArrayItem } from 'origins-common/file-system/file-system-array.models';
 
 export const initialState: FileSystemState = {
   objects: [],
@@ -116,6 +118,49 @@ export const fileSystemReducer = createReducer(
 
   on(changeSelectedObjectToNext, (state) => {
     return selectRelativeObject(state, +1);
+  }),
+
+  on(deleteFileSystemObjectSucceeded, (state, {fullPath}) => {
+    
+    const objectsToDelete = [new FileSystemObjectPathInfo(fullPath)];
+
+    // Do the delete
+    let newState = {
+      ...state,
+      objects: updateFileSystemArrayTree(state.objects, [], objectsToDelete)
+    };
+    
+    // If selected object is what got deleted, unselect it
+    if(newState.selectedObjectFullPath === fullPath) {
+      newState = {
+        ...newState,
+        selectedObjectFullPath: undefined,
+        selectedObject: undefined
+      };
+    }
+
+    // If selected directory is what got deleted, unselect it AND the selected object inside
+    if(newState.selectedDirectoryFullPath === fullPath) {
+      newState = {
+        ...newState,
+        selectedDirectoryFullPath: undefined,
+        selectedDirectory: undefined,
+        selectedObjectFullPath: undefined,
+        selectedObject: undefined
+      };
+    }
+
+    // If item that got deleted is child of currentDirectory, remove it
+    if(newState.selectedDirectory !== undefined) {
+      const newChildren = updateFileSystemArrayTree(newState.selectedDirectory.children, [], objectsToDelete);
+      newState = {
+        ...newState,
+        selectedDirectory: newState.selectedDirectory.clone( newChildren  )
+      };
+    }
+
+    return newState;
+
   })
 
 );
@@ -125,6 +170,8 @@ export const fileSystemReducer = createReducer(
 // ███████ █████   ██      ██████  █████   ██████  ███████ 
 // ██   ██ ██      ██      ██      ██      ██   ██      ██ 
 // ██   ██ ███████ ███████ ██      ███████ ██   ██ ███████ 
+
+
 
 const firstDirectoryOrFile = (dir?: FileSystemDirectoryWithChildrenArray): FileSystemObjectArrayItem | undefined => {
   if(dir === undefined) return undefined;
@@ -318,24 +365,3 @@ const selectRelativeObject = (state: FileSystemState, relativeAmount: number): F
 
 
 }
-
-// const selectFirstObject = (state: FileSystemState): FileSystemState => {
-//   // First, if there is no selected directory then we CAN'T select the first item
-//   if (!state.selectedDirectory) {
-//     return {
-//       ...state,
-//       selectedObject: undefined,
-//       selectedObjectFullPath: undefined,
-//     };
-//   }
-
-//   // Now do our best
-//   const so =
-//     state.selectedDirectory.childDirectories?.[0] ??
-//     state.selectedDirectory?.childFiles?.[0];
-//   return {
-//     ...state,
-//     selectedObject: so,
-//     selectedObjectFullPath: so?.fullPath,
-//   };
-// };

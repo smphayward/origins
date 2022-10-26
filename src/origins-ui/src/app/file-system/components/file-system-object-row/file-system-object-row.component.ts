@@ -1,7 +1,7 @@
 import { Component, HostListener, Input, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { requestFileSystemObjectProcessing } from 'src/app/processing/store/processing.actions';
-import { changeSelectedDirectory, changeSelectedObject } from '../../store/file-system.actions';
+import { changeSelectedDirectory, changeSelectedObject, requestDeleteFileSystemObject } from '../../store/file-system.actions';
 import { selectSelectedObject, selectSelectedObjectFullPath } from '../../store/file-system.selectors';
 
 @Component({
@@ -72,7 +72,12 @@ export class FileSystemObjectRowComponent implements OnInit {
   }
 
   onDelete() {
-    
+    // TODO: Confirm dialog - yes or no
+    this.store.dispatch(
+      requestDeleteFileSystemObject({
+        fullPath: this.fullPath
+      })
+    );
   }
 
 

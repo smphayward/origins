@@ -5,7 +5,7 @@
 import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { GeneralResponse } from "origins-common";
-import { map, Observable } from "rxjs";
+import { map, Observable, tap } from "rxjs";
 import { httpResponseToGeneralResponse } from "src/app/shared/utils/http-utils";
 
 
@@ -26,6 +26,7 @@ export class ProcessingProvider {
     return this.http
       .post<GeneralResponse>(url, body, { observe: 'response' })
       .pipe(
+        tap(response => console.log("Tapped response", response)),
         map(httpResponseToGeneralResponse)
       );
 
