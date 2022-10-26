@@ -1,5 +1,6 @@
 import { Component, HostListener, Input, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
+import { requestFileSystemObjectProcessing } from 'src/app/processing/store/processing.actions';
 import { changeSelectedDirectory, changeSelectedObject } from '../../store/file-system.actions';
 import { selectSelectedObject, selectSelectedObjectFullPath } from '../../store/file-system.selectors';
 
@@ -47,5 +48,32 @@ export class FileSystemObjectRowComponent implements OnInit {
     
     //class="object-icon"
   }
+
+  onTags() {
+
+  }
+
+  onProcess() {
+    if(this.objectType === 'directory'){
+      // TODO: If it's a directory, prompt whether to do this recursively.
+      // Or maybe just assume yes always.
+      // For now, we'll just assume we want it to be recursive and set depth to -1.
+    }
+    this.store.dispatch(
+      requestFileSystemObjectProcessing({
+        fullPath: this.fullPath,
+        depth: -1,
+      })
+    );
+  }
+
+  onRename() {
+    
+  }
+
+  onDelete() {
+    
+  }
+
 
 }

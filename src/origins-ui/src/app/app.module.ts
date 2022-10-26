@@ -28,6 +28,7 @@ import { fileSystemReducer } from './file-system/store/file-system.reducers';
 import { ItemsEffects } from './items/store/items.effects';
 import { itemsReducer } from './items/store/items.reducers';
 import { statusReducer } from './status/store/status.reducers';
+import { ProcessingEffects } from './processing/store/processing.effects';
 
 // Other Components
 import { NgxMasonryModule } from 'ngx-masonry';
@@ -123,7 +124,7 @@ import { FileSystemObjectRowComponent } from './file-system/components/file-syst
       },
       {}
     ),
-    EffectsModule.forRoot([ItemsEffects, CollectionsEffects, FileSystemEffects]),
+    EffectsModule.forRoot([ItemsEffects, CollectionsEffects, FileSystemEffects, ProcessingEffects]),
   ],
   providers: [],
   bootstrap: [AppComponent],

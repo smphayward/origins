@@ -1,14 +1,12 @@
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { catchError, EMPTY, map, of, switchMap, tap } from 'rxjs';
-import { FileSystemProvider } from '../services/file-system-provider.service';
-import {
-  requestLoadAllObjects,
-  objectsLoaded
-} from './file-system.actions';
+import { changeNotificationMessage } from 'src/app/status/store/status.actions';
+import { ProcessingProvider } from '../services/processing-provider.service';
+import { processingSucceeded, requestFileSystemObjectProcessing } from './processing.actions';
 
 @Injectable()
-export class FileSystemEffects {
+export class ProcessingEffects {
   // private lastSearchByTextQuery: string | undefined = undefined;
   // private lastContinuationToken: string | undefined = undefined;
 
@@ -16,7 +14,7 @@ export class FileSystemEffects {
 
   constructor(
     private actions$: Actions,
-    private repository: FileSystemProvider
+    private provider: ProcessingProvider
   ) {}
 
   // ██████  ███████  █████  ██████
@@ -29,22 +27,22 @@ export class FileSystemEffects {
 
   requestLoadAll$ = createEffect(() =>
     this.actions$.pipe(
-      ofType(requestLoadAllObjects),
+      ofType(requestFileSystemObjectProcessing),
       switchMap((action) =>
-        this.repository.getAll().pipe(
-          //tap(response => console.log("getAll Response", response)),
-          switchMap((response) =>
-            of(
-              objectsLoaded({
-                objects: response,
-                // TODO: Figure out how to make this true
-                removeAllExistingObjects: false,
-              })
+        this.provider
+          .processFileSystemObject(action.fullPath, action.depth)
+          .pipe(
+            //tap(response => console.log("getAll Response", response)),
+            switchMap((response) =>
+              of(
+                processingSucceeded(),
+                changeNotificationMessage({
+                  message: `Successfully processed '${action.fullPath}'.`,
+                })
+              )
             )
           )
-        )
       )
     )
   );
-
 }

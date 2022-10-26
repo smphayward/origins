@@ -11,22 +11,22 @@
   </div>
   <div class="object-buttons-div">
 
-    <button mat-stroked-button class="new-action-button object-button">
+    <button mat-stroked-button class="new-action-button object-button" (click)="onTags()">
       <mat-icon>sell</mat-icon>
       Tags
     </button>
 
-    <button mat-stroked-button class="new-action-button object-button">
+    <button mat-stroked-button class="new-action-button object-button" (click)="onProcess()" >
       <mat-icon>engineering</mat-icon>
       Process
     </button>
 
-    <button mat-stroked-button class="new-action-button object-button">
+    <button mat-stroked-button class="new-action-button object-button" (click)="onRename()">
       <mat-icon>edit_note</mat-icon>
       Rename
     </button>
 
-    <button mat-stroked-button class="new-action-button object-button">
+    <button mat-stroked-button class="new-action-button object-button"  (click)="onDelete()">
       <mat-icon>delete</mat-icon>
       Delete
     </button>
