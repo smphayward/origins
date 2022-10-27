@@ -1,20 +1,16 @@
-export { CollectionInfoProvider } from './collection-info-provider.service.prod';
+import { HttpClient } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import { CollectionInfo, Collection } from 'origins-common/collections';
+import { HttpDocumentProvider } from 'src/app/shared/services/http-document-provider.service';
 
-// Not doing the mock thing any more
-// Using proxy.conf.json to re-direct to backend
-
-// import { Injectable } from '@angular/core';
-// import { mockCollections } from './collection-mock-data';
-// import { MockObservableCollectionInfoProvider } from 'origins-common/collections'
-
-// @Injectable({
-//   providedIn: 'root',
-// })
-// export class CollectionInfoProvider extends MockObservableCollectionInfoProvider{
-//   constructor(){
-//     super(mockCollections)
-//   }
-// }
-
-
-
+@Injectable({
+  providedIn: 'root',
+})
+export class CollectionInfoProvider extends HttpDocumentProvider<
+  CollectionInfo,
+  Collection
+> {
+  constructor(http: HttpClient) {
+    super(http, '/api/collections');
+  }
+}
