@@ -11,23 +11,3 @@ export class ItemInfoProvider extends MockObservableItemInfoProvider{
     super(mockItemsBig)
   }
 }
-
-// @Injectable({
-//   providedIn: 'root',
-// })
-// export class ItemProviderService extends MockObservableDocumentProvider<ItemInfo, Item> {
-//   constructor() {
-//     super(mockItemsBig);
-//   }
-
-//   protected override getDocumentForRead(record: Item): ItemInfo {
-//     return {
-//       ...record,
-//       _links: {
-//         thumb: { _href: ''},
-//         webdav: { _href: ''},
-//         self: { _href: ''},
-//       }      
-//     };
-//   }
-// }

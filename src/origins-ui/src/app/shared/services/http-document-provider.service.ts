@@ -36,6 +36,7 @@ export abstract class HttpDocumentProvider<
     continuationToken?: string | null,
     sort?: DocumentSortCondition[]
   ): Observable<GetDocumentsResponse<TDocumentForRead>> {
+    if(!maxResults) maxResults = 60;
     let url = `${this.urlRoot}?max=${maxResults}`;
     if (continuationToken) {
       url += `&continue=${continuationToken}`;
@@ -54,6 +55,7 @@ export abstract class HttpDocumentProvider<
     continuationToken?: string | null,
     sort?: DocumentSortCondition[]
   ): Observable<GetDocumentsResponse<TDocumentForRead>> {
+    if(!maxResults) maxResults = 60;
     // Give back nothing if no query given
     if (!lucene || lucene.trim().length === 0) {
       return of({
