@@ -1,5 +1,5 @@
 import express, { Router } from "express";
-import { DocumentProvider, DocumentSortCondition, GeneralResponse, OriginsDocument, UpsertDocumentResponse } from "origins-common";
+import { DocumentProvider, DocumentSortCondition, GeneralResponse, OriginsDocument, UpsertDocumentResponse } from 'origins-common';
 //import { Document } from "../_boneyard/models";
 //import { DocumentProvider, DocumentSortCondition } from "./DocumentProvider";
 import { QueryStringParser } from "./QueryStringParser";
@@ -33,7 +33,7 @@ export const createDocumentRouter = <TDocument extends OriginsDocument>(
     }
   }
 
-  // Request COntext
+  // Request Context
   const getRequestContext = (req: express.Request): RequestContext => {
     return {
       requestUrlWithoutPath: req.headers[

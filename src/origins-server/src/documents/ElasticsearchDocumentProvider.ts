@@ -215,7 +215,12 @@ export class ElasticsearchDocumentProvider<TDocument extends OriginsDocument>
     maxResults: number = 25,
     continuationToken: string | null = null
   ): Promise<GetDocumentsResponse<TDocument>> {
-    
+    console.log("Searching internal", {
+      query,
+      sort,
+      maxResults,
+      continuationToken
+    });
     try {
       const response = await this._client.search<TDocument>({
         index: this._config.indexName,
@@ -231,7 +236,7 @@ export class ElasticsearchDocumentProvider<TDocument extends OriginsDocument>
       // TODO: Make TDocument include _links and add the link to "get more" here, if possible
       // Though maybe not in this class but rather in DocumentRouterFactory
       const newContinuationToken = this.createContinuationToken(response);
-      console.log(`continuation token: ${newContinuationToken}`);
+      console.log(`new continuation token: ${newContinuationToken}`);
   
       const documents = response.hits.hits
         .map((h) => h._source)
@@ -258,6 +263,7 @@ export class ElasticsearchDocumentProvider<TDocument extends OriginsDocument>
     if (sort) {
       return base64Url.encode(JSON.stringify(sort));
     }
+    console.log('no sort from elasticsearch so no continuation token.');
     return undefined;
   }
 

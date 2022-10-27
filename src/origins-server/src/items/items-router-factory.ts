@@ -16,7 +16,9 @@ export const createItemsRouter = (
   return createDocumentRouter(
     provider,
     queryStringParser,
-    []
+    [
+      { field: 'fileCreated', order: 'asc' }
+    ]
   ).onFormatDocument((item: Item, context) => {
     let formattedDocument: ItemInfo = {
       ... item,
