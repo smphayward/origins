@@ -85,6 +85,24 @@ All media in these sample collection taken from https://wordpress.org/openverse/
 "Mustache" by Mussi Katz is marked with Public Domain Mark 1.0. To view the terms, visit https://creativecommons.org/publicdomain/mark/1.0/?ref=openverse.
 "A man with a handlebar mustache c1913" by crackdog is marked with Public Domain Mark 1.0. To view the terms, visit https://creativecommons.org/publicdomain/mark/1.0//?ref=openverse.
 
+"CCF-Brill Trolley Bus at Oak & 41st, 1967" by blizzy63 is marked with Public Domain Mark 1.0. To view the terms, visit https://creativecommons.org/publicdomain/mark/1.0/?ref=openverse.
+"UK14OXF oxford bus company" by martin 65 is marked with Public Domain Mark 1.0. To view the terms, visit https://creativecommons.org/publicdomain/mark/1.0/?ref=openverse.
+"BC Hydro Trolley Bus, 1972" by blizzy63 is marked with Public Domain Mark 1.0. To view the terms, visit https://creativecommons.org/publicdomain/mark/1.0/?ref=openverse.
+"E4BUS school bus in sheffield" by martin 65 is marked with Public Domain Mark 1.0. To view the terms, visit https://creativecommons.org/publicdomain/mark/1.0//?ref=openverse.
+"021242:Marlborough Crescent Bus Station, Newcastle upon Tyne c.1920" by Newcastle Libraries is marked with Public Domain Mark 1.0. To view the terms, visit https://creativecommons.org/publicdomain/mark/1.0//?ref=openverse.
+
+"Once A Milk Delivery Truck - iPhone 6" by jody.claborn is marked with Public Domain Mark 1.0. To view the terms, visit https://creativecommons.org/publicdomain/mark/1.0/?ref=openverse.
+"Public Domain: Documerica: Logging Trucks, 1972 (NARA/EPA)" by pingnews.com is marked with Public Domain Mark 1.0. To view the terms, visit https://creativecommons.org/publicdomain/mark/1.0/?ref=openverse.
+"Construction truck fell off the road in Sawyer, N.D." by USACE HQ is marked with Public Domain Mark 1.0. To view the terms, visit https://creativecommons.org/publicdomain/mark/1.0/?ref=openverse.
+"Truck Stop at Siska Lodge, 1952" by blizzy63 is marked with Public Domain Mark 1.0. To view the terms, visit https://creativecommons.org/publicdomain/mark/1.0/?ref=openverse.
+"Milk Run: Farmer's Co-op truck full of milk cans driving into town, 1940." by polkbritton is marked with Public Domain Mark 1.0. To view the terms, visit https://creativecommons.org/publicdomain/mark/1.0/?ref=openverse.
+
+"Boat dock Clear Lake, Oregon" by Bonnie Moreland (free images) is marked with Public Domain Mark 1.0. To view the terms, visit https://creativecommons.org/publicdomain/mark/1.0/?ref=openverse.
+"RAF World War Two 100 Class High Speed Launch HSL 110 - Air Sea Rescue boat" by whatsthatpicture is marked with Public Domain Mark 1.0. To view the terms, visit https://creativecommons.org/publicdomain/mark/1.0/?ref=openverse.
+"Mail boat delivery, Railway Pier, Port of Melbourne, Victoria circa 1910" by Aussie~mobs is marked with Public Domain Mark 1.0. To view the terms, visit https://creativecommons.org/publicdomain/mark/1.0/?ref=openverse.
+"002528:Ships and boats at anchor on the River Tyne around 1890." by Newcastle Libraries is marked with Public Domain Mark 1.0. To view the terms, visit https://creativecommons.org/publicdomain/mark/1.0/?ref=openverse.
+"Boat harbour, Urangan, Hervey Bay, July 1970" by Queensland State Archives is marked with Public Domain Mark 1.0. To view the terms, visit https://creativecommons.org/publicdomain/mark/1.0/?ref=openverse.
+
 
 
 

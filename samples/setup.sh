@@ -88,23 +88,18 @@ echo "██      ██   ██ ██      ██   ██    ██    █�
 echo " ██████ ██   ██ ███████ ██   ██    ██    ███████ "
 echo
 echo
-echo "Processing animals..."
 curl "${ROOT_URL}/api/collections/animals" -X PUT -H "Content-Type:application/json" -d "${ANIMALS_JSON}" 
 echo
 echo
-echo "Processing places..."
 curl "${ROOT_URL}/api/collections/places" -X PUT -H "Content-Type:application/json" -d "${PLACES_JSON}" 
 echo
 echo
-echo "Processing sports..."
 curl "${ROOT_URL}/api/collections/sports" -X PUT -H "Content-Type:application/json" -d "${SPORTS_JSON}" 
 echo
 echo
-echo "Processing music..."
 curl "${ROOT_URL}/api/collections/music" -X PUT -H "Content-Type:application/json" -d "${MUSIC_JSON}" 
 echo
 echo
-echo "Processing transportation..."
 curl "${ROOT_URL}/api/collections/transportation" -X PUT -H "Content-Type:application/json" -d "${TRANSPORTATION_JSON}" 
 echo
 echo
@@ -121,18 +116,23 @@ echo
 echo "Processing collections. This could take a few minutes..."
 echo
 echo
+echo "Processing animals..."
 curl "${ROOT_URL}/api/collections/animals/process" -X POST
 echo
 echo
+echo "Processing places..."
 curl "${ROOT_URL}/api/collections/places/process" -X POST 
 echo
 echo
+echo "Processing sports..."
 curl "${ROOT_URL}/api/collections/sports/process" -X POST 
 echo
 echo
+echo "Processing music..."
 curl "${ROOT_URL}/api/collections/music/process" -X POST 
 echo
 echo
+echo "Processing transportation..."
 curl "${ROOT_URL}/api/collections/transportation/process" -X POST 
 echo
 echo
